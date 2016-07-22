@@ -1,6 +1,5 @@
 <html>
 <head>
-
 <link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet" href="static/dist/css/AdminLTE.min.css">
 <link rel="stylesheet" href="static/dist/css/skins/_all-skins.min.css">
@@ -34,14 +33,25 @@
 		t=t+"<td>"+task.taskDesc+"</td>";
 		t=t+"<td>"+task.status+"</td>";
 		t=t+"<td>"+task.autostart+"</td>";
+		t=t+"<td><input value='启动' type='button' onclick=\"taskoper(\'"+task.taskName+"\',\'start\')\"/></td>";
 		t=t+"</tr>";
 		return t;
+	}
+	function taskoper(taskname,operation){
+		document.taskOperate.taskname.value=taskname;
+		document.taskOperate.operation.value=operation;
+		document.taskOperate.submit();
 	}
 
 </script>
 </head>
-<body>
 <body class="hold-transition skin-blue sidebar-mini">
+<form name="taskOperate" action="/grab/taskoperate" method="post">
+<input type="hidden" name="taskname"/>
+<input type="hidden" name="operation"/>
+</form>
+
+
       <div class="row">
         <div class="col-xs-12">
 	<div class="box">

@@ -3,7 +3,7 @@
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
-	<bean id="scheduler" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	<bean id="scheduler" scope="singleton" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 		<list>
 			<ref bean="simpleTrigger" />
@@ -23,7 +23,7 @@
 	
 	
 	<bean id="task" scope="singleton" class="com.purang.grab.task.CommonTask">
-		<property name="taskName" value="test"></property>
+		<property name="taskName" value="task"></property>
 		<property name="taskDesc" value="中国货币网 债券发行 同业存单"></property>
 		<property name="url" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100041"></property>
 		<property name="threadCount" value="5"></property>
@@ -60,7 +60,7 @@
 	
 	<!-- 第一层获取数据 设置继续-->
 	<bean id="processor1" class="com.purang.grab.processor.BondAnnounceProcessor1">
-<!-- 		<property name="exitRule" ref="ruleExit"></property> -->
+		<property name="exitRule" ref="ruleExit"></property>
 		<property name="pageRule" ref="rulePage"></property>
 		<property name="fieldRuleList">
         	<list>

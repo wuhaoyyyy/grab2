@@ -23,9 +23,9 @@ import us.codecraft.webmagic.Task;
 import us.codecraft.webmagic.pipeline.Pipeline;
 
 
-public class GrabServlet extends HttpServlet {
+public class TaskOperateServlet extends HttpServlet {
 
-	private static final Logger logger = Logger.getLogger(GrabServlet.class);
+	private static final Logger logger = Logger.getLogger(TaskOperateServlet.class);
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -37,8 +37,8 @@ public class GrabServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		String taskName=req.getParameter("taskname");
-		String operation=req.getParameter("operation");
+		String taskName=(String) req.getParameter("taskname");
+		String operation=(String) req.getParameter("operation");
 		logger.info(taskName+":"+operation);
 		
 		BeanFactory beanFactory=TaskInfoUtils.getTaskFactory(taskName);

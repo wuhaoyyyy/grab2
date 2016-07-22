@@ -39,6 +39,8 @@
     <filter-name>encodingFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+  
+  <!-- tasklist -->
   <servlet>
   	<servlet-name>tasklistservlet</servlet-name>
     <servlet-class>com.purang.grab.servlet.TaskListServlet</servlet-class>
@@ -47,5 +49,13 @@
   	<servlet-name>tasklistservlet</servlet-name>
   	<url-pattern>/tasklist</url-pattern>
   </servlet-mapping>
-  
+  <!-- taskoper -->
+  <servlet>
+  	<servlet-name>taskoperateservlet</servlet-name>
+    <servlet-class>com.purang.grab.servlet.TaskOperateServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>taskoperateservlet</servlet-name>
+  	<url-pattern>/taskoperate</url-pattern>
+  </servlet-mapping>
 </web-app>

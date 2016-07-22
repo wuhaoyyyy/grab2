@@ -41,7 +41,7 @@ public class TaskInfoUtils {
 		File[] allTask=taskDict.listFiles();
 		for(File file:allTask){
 			String fileName=file.getName();
-			if(!taskName.equals(taskName)) continue;
+			if(!fileName.equals(taskName)) continue;
 			String taskConfigPath=taskDictStr+taskName+"\\"+taskName+"-beans.xml";
 			Resource resource = new FileSystemResource(taskConfigPath);
 			DefaultListableBeanFactory factory= new DefaultListableBeanFactory(); 
