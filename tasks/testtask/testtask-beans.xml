@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+	<!--  -->
+	<bean id="dataprocess" scope="singleton" class="com.purang.grab.pageprocessor.DataProcess">
+<!-- 		<property name="taskName" value="test"></property> -->
+<!-- 		<property name="url" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100041"></property> -->
+		<property name="site" ref="site"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/><!--公告来源   中国货币网     -->
+				<entry key="announceType1" value="201"/> <!--公告类型：原始披露一级	债券类	201	债券发行 -->
+				<entry key="bondType1" value="201"/> <!-- 债券类型:原始披露一级	债券类	201	同业存单 -->
+			</map>
+		</property>
+		
+		<property name="fieldRuleList">
+        	<list>
+        		<ref bean="ruleTitle" />
+        		<ref bean="ruleDate" />
+        	</list>
+		</property>
+		<property name="pageRule" ref="rulePage"></property>
+		
+		<property name="urlList">
+			<list>
+				<ref bean="rule3" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="site" class="com.purang.grab.site.CommonSite">
+		<property name="charset" value="UTF-8"></property>
+		<property name="sleepTime" value="5000"></property>
+		<property name="timeOut" value="5000"></property>
+		<property name="useGzip" value="false"></property>
+		<property name="headers">
+			<map>
+				<entry key="Accept-Encoding" value="deflate"/><!--公告来源   中国货币网     -->
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="ruleTitle" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="标题"></property> 
+		<property name="field" value="标题"></property> 
+		<property name="rule" value="/html/body/table/tbody/tr/td/a/text()"></property> 
+		<property name="type" value="xpath"></property> 
+	</bean>
+	<bean id="ruleDate" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="日期"></property> 
+		<property name="field" value="标题"></property>
+		<property name="rule" value="/html/body/table/tbody/tr/td[2]/text()"></property> 
+		<property name="type" value="xpath"></property> 
+	</bean>
+	
+	<bean id="rulePage" class="com.purang.grab.rule.PagerRule">
+		<property name="title" value="下一页"></property> 
+		<property name="field" value="标题"></property>
+		<property name="rule" value="[title=&quot;下一页&quot;]"></property> 
+		<property name="type" value="css"></property> 
+	</bean>
+	
+	<bean id="rule3" class="com.purang.grab.rule.GrabRule">
+		<property name="name" value="url"></property> 
+		<property name="field" value="标题"></property>
+		<property name="rule" value="/html/body/table/tbody/tr/td/a"></property> 
+		<property name="type" value="xpath"></property> 
+	</bean>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<bean id="ruleend" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="下一页"></property> 
+		<property name="rule" value="[title=&quot;下一页&quot;]"></property> 
+		<property name="type" value="css"></property> 
+	</bean>
+	
+	
+	
+	<!-- 下一页获取 -->
+	<!-- 结束条件 -->
+	<!-- 继续抓取条件 -->
+</beans>

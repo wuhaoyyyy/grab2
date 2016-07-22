@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.purang.grab.dao.BondAnnouncementDao">
+  
+	<insert id="insert">
+		INSERT INTO P12005(
+			fv,
+			ft,
+			f1,
+			f2,
+			f3,
+			f4,
+			f5,
+			f6,
+			f7,
+			f8,
+			f9,
+			f10,
+			f11,
+			f12,
+			f13,
+			f14,
+			f15,
+			fs,
+			fp,
+			fu
+		) VALUES (
+			#{fv},
+			#{ft},
+			#{mainInnerCode},
+			#{innerCode},
+			#{announceDate},
+			#{announceSource},
+			#{announceType1},
+			#{announceType2},
+			#{bondType1},
+			#{bondType2},
+			#{announceTitle1},
+			#{link1},
+			#{announceTitle2},
+			#{link2},
+			#{publisherId},
+			#{valid},
+			#{attachment},
+			#{publishState},
+			#{createDateString},
+			#{updateDateString}
+		)
+	</insert>
+  
+	<insert id="insertList">
+		INSERT INTO P12005(
+			fv,
+			ft,
+			f1,
+			f2,
+			f3,
+			f4,
+			f5,
+			f6,
+			f7,
+			f8,
+			f9,
+			f10,
+			f11,
+			f12,
+			f13,
+			f14,
+			f15,
+			fs,
+			fp,
+			fu
+		) VALUES <foreach collection="list" item="item" index="index" separator=",">(
+			#{item.fv},
+			#{item.ft},
+			#{item.mainInnerCode},
+			#{item.innerCode},
+			#{item.announceDate},
+			#{item.announceSource},
+			#{item.announceType1},
+			#{item.announceType2},
+			#{item.bondType1},
+			#{item.bondType2},
+			#{item.announceTitle1},
+			#{item.link1},
+			#{item.announceTitle2},
+			#{item.link2},
+			#{item.publisherId},
+			#{item.valid},
+			#{item.attachment},
+			#{item.publishState},
+			#{item.createDateString},
+			#{item.updateDateString}
+		)</foreach>
+	</insert>
+</mapper>

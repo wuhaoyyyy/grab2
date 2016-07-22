@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+	<!--  -->
+	<bean id="preprocess" class="com.purang.grab.pageprocessor.PreProcess">
+		<property name="preprocessList">
+			<list>
+				<bean class="com.purang.grab.pageprocessor.PageProcessorPreProcessDefault">
+					<constructor-arg name="sleepTime" value="5000" /> 
+			        <constructor-arg name="charset" value="UTF-8" /> 
+			        <constructor-arg name="useGzip" value="false" /> 
+			        <constructor-arg name="header">  
+				       <map>  
+				          <entry key="Accept-Encoding" value="deflate"></entry>  
+				       </map>  
+				    </constructor-arg> 
+            	</bean>
+            	
+            	<bean class="com.purang.grab.pageprocessor.PageProcessorPreProcessDefault">
+					<constructor-arg name="sleepTime" value="5000" /> 
+			        <constructor-arg name="charset" value="UTF-8" /> 
+			        <constructor-arg name="useGzip" value="false" /> 
+			        <constructor-arg name="header">  
+				       <map>  
+				          <entry key="Accept-Encoding" value="deflate"></entry>  
+				       </map>  
+				    </constructor-arg> 
+            	</bean>
+            	
+            	<bean class="com.purang.grab.pageprocessor.PageProcessorPreProcessDefault">
+					<constructor-arg name="sleepTime" value="5000" /> 
+			        <constructor-arg name="charset" value="UTF-8" /> 
+			        <constructor-arg name="useGzip" value="false" /> 
+			        <constructor-arg name="header">  
+				       <map>  
+				          <entry key="Accept-Encoding" value="deflate"></entry>  
+				       </map>  
+				    </constructor-arg> 
+            	</bean>
+			</list>
+		</property>
+	</bean>
+	
+	
+	<!--  -->
+	<bean id="dataprocess"></bean>
+</beans>
