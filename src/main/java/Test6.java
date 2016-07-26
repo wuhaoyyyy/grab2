@@ -13,7 +13,7 @@ public class Test6 {
 
 	public static void main(String[] args) {
 		ApplicationContext ac = ApplicationContextUtils.getInstance() ;
-		Resource rs = new FileSystemResource(System.getProperty("user.dir")+"\\tasks\\task\\task-beans.xml");
+		Resource rs = new FileSystemResource(System.getProperty("user.dir")+"\\src\\main\\webapp\\tasks\\上海清算所-发行披露-中期票据\\上海清算所-发行披露-中期票据-beans.xml");
 		BeanFactory taskBeanFactory = new XmlBeanFactory(rs);
 		Scheduler scheduler = (Scheduler) taskBeanFactory.getBean("scheduler"); 
 		try {

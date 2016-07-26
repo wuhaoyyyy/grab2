@@ -47,7 +47,7 @@ public class TaskOperateServlet extends HttpServlet {
 			if(operation.equals("start")){
 				scheduler.start();
 			}
-			else if(operation.equals("close")){
+			else if(operation.equals("shutdown")){
 				scheduler.shutdown();
 			}
 		} catch (SchedulerException e) {

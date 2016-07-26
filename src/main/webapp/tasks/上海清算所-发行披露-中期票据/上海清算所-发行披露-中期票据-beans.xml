@@ -17,20 +17,21 @@
 	</bean>
 	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 		<property name="jobDetail" ref="job" />
-		<property name="startDelay" value="0" /><!-- 调度工厂实例化后，经过0秒开始执行调度 -->
-		<property name="repeatInterval" value="300000000" /><!-- 每300秒调度一次 -->
+		<property name="startDelay" value="0" />
+		<property name="repeatCount" value="1" /><!-- 只执行一次 -->
+		<property name="repeatInterval" value="100000000000000000" /><!--  -->
 	</bean>
 	
 	
 	<bean id="task" scope="singleton" class="com.purang.grab.task.CommonTask">
-		<property name="taskName" value="test"></property>
-		<property name="url" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100041"></property>
+		<property name="taskName" value="上海清算所-发行披露-中期票据"></property>
+		<property name="taskDesc" value="上海清算所-发行披露-中期票据"></property>
+		<property name="url" value="http://www.shclearing.com/xxpl/fxpl/mtn/"></property>
 		<property name="threadCount" value="5"></property>
 		<property name="processor" ref="processor"></property>
 		<property name="pipelineList">
         	<list>
         		<ref bean="pipeline1" /><!-- 自定义 -->
-<!--         		<ref bean="pipeline2" />自定义 -->
         	</list>
 		</property>
 	</bean>
@@ -39,31 +40,28 @@
 		<property name="site" ref="site"></property>
 		<property name="processorList">
         	<list>
-        		<ref bean="processor1" /><!-- 自定义 -->
+        		<ref bean="processor1" />
         		<ref bean="processor2" />
         	</list>
 		</property>
 	</bean>
 	<bean id="site" class="com.purang.grab.site.CommonSite">
 		<property name="charset" value="UTF-8"></property>
-		<property name="sleepTime" value="1000"></property>
-		<property name="timeOut" value="50000"></property>
+		<property name="sleepTime" value="2000"></property>
+		<property name="timeOut" value="60000"></property>
 		<property name="useGzip" value="false"></property>
 		<property name="headers">
 			<map>
-				<entry key="Accept-Encoding" value="deflate"/><!--公告来源   中国货币网     -->
+				<entry key="Accept-Encoding" value="deflate"/>   
 			</map>
 		</property>
 	</bean>
 	
-	
-	<!-- 第一层获取数据 设置继续-->
-	<bean id="processor1" class="com.purang.grab.processor.BondAnnounceProcessor1">
-<!-- 		<property name="exitRule" ref="ruleExit"></property> -->
+	<bean id="processor1" class="com.purang.grab.processor.ShClearingProcessor1">
 		<property name="pageRule" ref="rulePage"></property>
 		<property name="fieldRuleList">
         	<list>
-        		<ref bean="ruleTitle1" /><!-- 一级标题announceTitle1 -->
+        		<ref bean="ruleTitle1" />
         		<ref bean="ruleDate1" />
         	</list>
 		</property>
@@ -73,17 +71,17 @@
 			</list>
 		</property>
 	</bean>
-	<bean id="processor2" class="com.purang.grab.processor.BondAnnounceProcessor2">
+	<bean id="processor2" class="com.purang.grab.processor.ShClearingProcessor2">
 	</bean>
 	
 	<!-- 第一层结果处理 导入数据库 -->
-	<bean id="pipeline1" class="com.purang.grab.pipeline.BondAnnouncePipeline">
+	<bean id="pipeline1" class="com.purang.grab.pipeline.ShClearingPipeline">
 		<property name="className" value="com.purang.grab.entity.BondAnnouncement"></property>
 		<property name="defaultValue">
 			<map>
-				<entry key="announceSource" value="2"/><!--公告来源   中国货币网     -->
-				<entry key="announceType1" value="201"/> <!--公告类型：原始披露一级	债券类	201	债券发行 -->
-				<entry key="bondType1" value="201"/> <!-- 债券类型:原始披露一级	债券类	201	同业存单 -->
+				<entry key="announceSource" value="3"/><!--公告来源   上海清算所     -->
+				<entry key="announceType1" value="301"/> <!--公告类型：原始披露一级	301	发行披露 -->
+				<entry key="bondType1" value="301"/> <!-- 债券类型:原始披露一级	债券类	301	中期票据 -->
 			</map>
 		</property>
 	
@@ -93,33 +91,28 @@
 	<bean id="ruleTitle1" class="com.purang.grab.rule.FieldRule">
 		<property name="title" value="标题"></property> 
 		<property name="field" value="announceTitle1"></property> 
-		<property name="rule" value="/html/body/table/tbody/tr/td/a/text()"></property> 
+		<property name="rule" value="//ul[@class='list']/li/a/text()"></property> 
 		<property name="type" value="xpath"></property> 
 	</bean>
 	<bean id="ruleDate1" class="com.purang.grab.rule.FieldRule">
 		<property name="title" value="日期"></property> 
 		<property name="field" value="announceDate"></property> 
-		<property name="rule" value="/html/body/table/tbody/tr/td[2]/text()"></property> 
+		<property name="rule" value="//ul[@class='list']/li/span/text()"></property> 
 		<property name="type" value="xpath"></property> 
 	</bean>
 	<bean id="ruleUrl1" class="com.purang.grab.rule.FieldRule">
 		<property name="name" value="url"></property> 
 		<property name="field" value="link1"></property> 
-		<property name="rule" value="/html/body/table/tbody/tr/td/a"></property> 
+		<property name="rule" value="//ul[@class='list']/li/a"></property> 
 		<property name="type" value="xpath"></property> 
 	</bean>
 	
 	
-	
-	
-	
-	
-	
-	<bean id="rulePage" class="com.purang.grab.rule.PagerRule">
+	<bean id="rulePage" class="com.purang.grab.rule.UrlPagerRule">
 		<property name="title" value="下一页"></property> 
 		<property name="field" value="下一页"></property> 
-		<property name="rule" value="[title=&quot;下一页&quot;]"></property> 
-		<property name="type" value="css"></property> 
+		<property name="rule" value="/html/body/div[4]/div[2]/div[5]/span[3]"></property> 
+		<property name="type" value="xpath"></property> 
 	</bean>
 	<bean id="ruleExit" class="com.purang.grab.rule.DateExitRule">
 		<property name="title" value="退出"></property> 

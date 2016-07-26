@@ -18,7 +18,7 @@
 	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 		<property name="jobDetail" ref="job" />
 		<property name="startDelay" value="0" /><!-- 调度工厂实例化后，经过0秒开始执行调度 -->
-		<property name="repeatInterval" value="300000000" /><!-- 每300秒调度一次 -->
+		<property name="repeatInterval" value="180000" /><!-- 每300秒调度一次 -->
 	</bean>
 	
 	

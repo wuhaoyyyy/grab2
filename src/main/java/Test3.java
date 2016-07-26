@@ -17,7 +17,7 @@ public class Test3 {
 	public static void main(String[] args) {
 		CloseableHttpClient httpclient = HttpClients.createDefault();  
         try {    
-            HttpGet httpget = new HttpGet("http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100041");
+            HttpGet httpget = new HttpGet("http://www.shclearing.com/xxpl/fxpl/mtn/");
             httpget.setHeader("Accept-Encoding", "deflate");  
             System.out.println("executing request " + httpget.getURI());  
             CloseableHttpResponse response = httpclient.execute(httpget);  

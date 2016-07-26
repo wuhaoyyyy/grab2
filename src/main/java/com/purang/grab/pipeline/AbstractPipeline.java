@@ -1,17 +1,27 @@
 package com.purang.grab.pipeline;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 
 import com.purang.grab.common.persistence.BaseEntity;
 import com.purang.grab.util.FtpUtils;
@@ -85,7 +95,7 @@ public abstract class AbstractPipeline implements Pipeline {
 	}
 	
 	
-	public void downloadFileToFtp(String url,String filename){
+	public void downloadFileToFtpGet(String url,String filename){
 		try {
 			HttpClient client = new DefaultHttpClient();  
 			HttpGet httpget = new HttpGet(url);  
@@ -102,5 +112,45 @@ public abstract class AbstractPipeline implements Pipeline {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void downloadFileToFtpPost(String url,String filename){
+		
+//		HttpClient client = new DefaultHttpClient();  
+//		HttpPost httppost=new HttpPost("http://www.shclearing.com/wcm/shch/pages/client/download/download.jsp");
+//		List<NameValuePair> nvps = new ArrayList <NameValuePair>(); 
+//		String postFileName=fileArray[i].substring(fileArray[i].indexOf("/")+1);
+//		nvps.add(new BasicNameValuePair("FileName", postFileName)); 
+//		nvps.add(new BasicNameValuePair("DownName", descArray[i]));  
+//		try {
+//			httppost.setEntity(new UrlEncodedFormEntity(nvps)); 
+//			HttpResponse response = client.execute(httppost);  
+//			HttpEntity entity = response.getEntity();  
+//			InputStream is = entity.getContent();
+//			
+//			File f=new File("F:\\grabfiles\\"+descArray[i]);
+//			OutputStream os=new FileOutputStream(f);
+//			
+//			byte[] b=new byte[1024];
+//			while((is.read(b))!=-1){
+//				os.write(b);
+//			}
+//			is.close();
+//			os.close();
+//			
+//			//FtpUtils.upload(is, descArray[i]);
+//			
+//		} catch (UnsupportedEncodingException e) {
+//			e.printStackTrace();
+//		} catch (ClientProtocolException e) {
+//			e.printStackTrace();
+//		} catch (IllegalStateException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		
+		
+
 	}
 }

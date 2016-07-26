@@ -7,9 +7,19 @@ import us.codecraft.webmagic.utils.UrlUtils;
 
 public class CommonTask extends Task{
 	
+
+	protected int i = 0;  
 	@Override
 	public void doTask(){
-		System.out.println(taskName+"执行中…"+i++);  
+//		while(true){
+//			System.out.println(taskName+"执行中…"+i++); 
+//			try {
+//				Thread.sleep(2000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		} 
 		start();
 	}
 	

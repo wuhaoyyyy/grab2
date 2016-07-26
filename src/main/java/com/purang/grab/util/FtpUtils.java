@@ -34,7 +34,7 @@ public class FtpUtils {
 			ftpClient.setSendBufferSize(1024);
 			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
 			ftpClient.setControlEncoding("GBK");
-			//ftpClient.enterLocalPassiveMode();
+//			ftpClient.enterLocalPassiveMode();
 			
 			FTPFile[] f= ftpClient.listDirectories();
 			for(FTPFile ftpFile:f){
@@ -57,6 +57,7 @@ public class FtpUtils {
 			ftpClient.setSendBufferSize(1024);
 			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
 			ftpClient.setControlEncoding("GBK");
+//			ftpClient.enterRemotePassiveMode();
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		} catch (SocketException e) {
@@ -70,8 +71,9 @@ public class FtpUtils {
     public static void upload(InputStream is, String remoteFile) {
     	FTPClient ftpClient=getConnection();
     	try {
-    		if(!getConnection().storeFile(remoteFile, is)){
-    			System.out.println("upload error");
+    		if(!ftpClient.storeFile(remoteFile, is)){
+    			//ftpClient.getReplyString()
+    			System.out.println(ftpClient.getReplyString());
     		}
     		else{
     			
@@ -88,8 +90,9 @@ public class FtpUtils {
 
     public static void uploadStream(InputStream is, String remoteFile) {
     	try {
-    		OutputStream os = ftpClient.storeFileStream(remoteFile);
-            byte[] buffer=new byte[50];  
+    		FTPClient ftpClientt=getConnection();
+    		OutputStream os = ftpClientt.storeFileStream(remoteFile);
+            byte[] buffer=new byte[1024];  
             int ch = 0;  
             while ((ch = is.read(buffer)) != -1) {  
                 os.write(buffer,0,ch);  
@@ -97,6 +100,7 @@ public class FtpUtils {
             is.close();  
             os.flush();  
             os.close();  
+            ftpClientt.completePendingCommand();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -110,4 +114,34 @@ public class FtpUtils {
 		}
     	return null;
     }
+    
+    public OutputStream getFtpFile(FTPClient ftpClient, String dir, String fileName){
+    	try {
+			FTPFile[] ftpFiles = ftpClient.listFiles(dir);
+			for(FTPFile ftpFile:ftpFiles){
+				if(ftpFile.getName().equals(fileName)) return ftpClient.storeFileStream(dir+"/"+fileName);
+			}
+			
+			return null;
+			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+    }
+    
+    /** 判断Ftp目录是否存在,如果不存在则创建目录 */
+	public void isDirExist(FTPClient ftpClient, String dir) {
+		try {
+			ftpClient.cwd(dir); // 想不到什么好办法来判断目录是否存在，只能用异常了(比较笨).请知道的告诉我一声`
+		} catch (IOException e1) {
+			try {
+				ftpClient.sendCommand("MKD " + dir + "/r/n");
+				ftpClient.getReply();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

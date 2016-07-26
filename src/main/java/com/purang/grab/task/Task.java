@@ -13,7 +13,6 @@ public abstract class Task {
 	protected String taskDesc=null;
 	protected String url=null;
 	protected int timeout=0;
-	protected static int i = 0;  
 	protected int threadCount=1;
 	protected CommonProcessor processor=null;
 	protected List<Pipeline> pipelineList=new ArrayList<Pipeline>();

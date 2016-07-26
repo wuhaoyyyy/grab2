@@ -35,7 +35,7 @@ public class BondAnnouncePipeline extends AbstractPipeline{
 			BondAnnouncementService service = (BondAnnouncementService) ac.getBean("bondAnnouncementService");
         	service.insert(bondAnnouncement);
         	String fileDownloadUrl=result.get("fileDownloadUrl").toString();
-        	downloadFileToFtp(fileDownloadUrl,String.valueOf(bondAnnouncement.getFt()+".pdf"));
+        	downloadFileToFtpGet(fileDownloadUrl,String.valueOf(bondAnnouncement.getFt()+".pdf"));
 		}
 		else if(type.equals("depo")){
 			List<String> announceTitle2=(List<String>) result.get("announceTitle2");
@@ -53,7 +53,7 @@ public class BondAnnouncePipeline extends AbstractPipeline{
 				bondAnnouncement.setAnnounceDate(DateUtils.getString(bondAnnouncement.getAnnounceDate(),"yyyy-MM-dd","yyyyMMdd"));
 				BondAnnouncementService service = (BondAnnouncementService) ac.getBean("bondAnnouncementService");
 				service.insert(bondAnnouncement);
-	        	downloadFileToFtp(fileDownloadUrl.get(i),String.valueOf(bondAnnouncement.getFt()+".pdf"));
+	        	downloadFileToFtpGet(fileDownloadUrl.get(i),String.valueOf(bondAnnouncement.getFt()+".pdf"));
 			}
 		}
 		
