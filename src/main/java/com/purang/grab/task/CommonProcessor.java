@@ -1,4 +1,4 @@
-package com.purang.grab.pageprocessor;
+package com.purang.grab.task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,26 +17,18 @@ public class CommonProcessor implements PageProcessor{
 	public String getBaseUrl() {
 		return baseUrl;
 	}
-
 	public void setBaseUrl(String baseUrl) {
 		this.baseUrl = baseUrl;
 	}
-
-
 	public Site getSite() {
 		return site;
 	}
-
-
 	public void setSite(Site site) {
 		this.site = site;
 	}
-	
-
 	public List<Processor> getProcessorList() {
 		return processorList;
 	}
-
 	public void setProcessorList(List<Processor> processorList) {
 		this.processorList = processorList;
 	}

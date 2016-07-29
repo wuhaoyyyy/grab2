@@ -18,15 +18,15 @@
 	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 		<property name="jobDetail" ref="job" />
 		<property name="startDelay" value="0" />
-		<property name="repeatCount" value="1" /><!-- 只执行一次 -->
-		<property name="repeatInterval" value="100000000000000000" /><!--  -->
+		<property name="repeatCount" value="0" /><!-- 只执行一次 -->
+		<property name="repeatInterval" value="1" /><!--  -->
 	</bean>
 	
 	
 	<bean id="task" scope="singleton" class="com.purang.grab.task.CommonTask">
-		<property name="taskName" value="上海清算所-发行披露-中期票据"></property>
-		<property name="taskDesc" value="上海清算所-发行披露-中期票据"></property>
-		<property name="url" value="http://www.shclearing.com/xxpl/fxpl/mtn/"></property>
+		<property name="taskName" value="上海清算所-发行披露-短期融资券"></property>
+		<property name="taskDesc" value="上海清算所-发行披露-短期融资券"></property>
+		<property name="url" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=146&amp;start=0&amp;limit=20"></property>
 		<property name="threadCount" value="5"></property>
 		<property name="processor" ref="processor"></property>
 		<property name="pipelineList">
@@ -36,7 +36,7 @@
 		</property>
 	</bean>
 	
-	<bean id="processor" scope="singleton" class="com.purang.grab.pageprocessor.CommonProcessor">
+	<bean id="processor" scope="singleton" class="com.purang.grab.task.CommonProcessor">
 		<property name="site" ref="site"></property>
 		<property name="processorList">
         	<list>
@@ -59,17 +59,6 @@
 	
 	<bean id="processor1" class="com.purang.grab.processor.ShClearingProcessor1">
 		<property name="pageRule" ref="rulePage"></property>
-		<property name="fieldRuleList">
-        	<list>
-        		<ref bean="ruleTitle1" />
-        		<ref bean="ruleDate1" />
-        	</list>
-		</property>
-		<property name="urlList">
-			<list>
-				<ref bean="ruleUrl1" />
-			</list>
-		</property>
 	</bean>
 	<bean id="processor2" class="com.purang.grab.processor.ShClearingProcessor2">
 	</bean>
@@ -81,38 +70,23 @@
 			<map>
 				<entry key="announceSource" value="3"/><!--公告来源   上海清算所     -->
 				<entry key="announceType1" value="301"/> <!--公告类型：原始披露一级	301	发行披露 -->
-				<entry key="bondType1" value="301"/> <!-- 债券类型:原始披露一级	债券类	301	中期票据 -->
+				<entry key="bondType1" value="302"/> <!-- 债券类型:原始披露一级	债券类	302	短期融资券 -->
 			</map>
 		</property>
 	
 	</bean>
 	
-	
-	<bean id="ruleTitle1" class="com.purang.grab.rule.FieldRule">
-		<property name="title" value="标题"></property> 
-		<property name="field" value="announceTitle1"></property> 
-		<property name="rule" value="//ul[@class='list']/li/a/text()"></property> 
-		<property name="type" value="xpath"></property> 
-	</bean>
-	<bean id="ruleDate1" class="com.purang.grab.rule.FieldRule">
-		<property name="title" value="日期"></property> 
-		<property name="field" value="announceDate"></property> 
-		<property name="rule" value="//ul[@class='list']/li/span/text()"></property> 
-		<property name="type" value="xpath"></property> 
-	</bean>
-	<bean id="ruleUrl1" class="com.purang.grab.rule.FieldRule">
-		<property name="name" value="url"></property> 
-		<property name="field" value="link1"></property> 
-		<property name="rule" value="//ul[@class='list']/li/a"></property> 
-		<property name="type" value="xpath"></property> 
-	</bean>
+
 	
 	
 	<bean id="rulePage" class="com.purang.grab.rule.UrlPagerRule">
 		<property name="title" value="下一页"></property> 
 		<property name="field" value="下一页"></property> 
-		<property name="rule" value="/html/body/div[4]/div[2]/div[5]/span[3]"></property> 
-		<property name="type" value="xpath"></property> 
+		<property name="url" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=146"></property> 
+		<property name="startField" value="start"></property> 
+		<property name="pageSizeField" value="limit"></property> 
+		<property name="pageSize" value="20"></property> 
+		<property name="start" value="0"></property> 
 	</bean>
 	<bean id="ruleExit" class="com.purang.grab.rule.DateExitRule">
 		<property name="title" value="退出"></property> 

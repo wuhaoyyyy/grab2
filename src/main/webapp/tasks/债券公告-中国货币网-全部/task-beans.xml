@@ -36,7 +36,7 @@
 		</property>
 	</bean>
 	
-	<bean id="processor" scope="singleton" class="com.purang.grab.pageprocessor.CommonProcessor">
+	<bean id="processor" scope="singleton" class="com.purang.grab.task.CommonProcessor">
 		<property name="site" ref="site"></property>
 		<property name="processorList">
         	<list>

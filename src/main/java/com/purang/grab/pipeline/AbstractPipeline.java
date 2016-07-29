@@ -11,6 +11,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -33,6 +38,8 @@ import us.codecraft.webmagic.pipeline.Pipeline;
 
 public abstract class AbstractPipeline implements Pipeline {
 
+
+	ExecutorService executorService=Executors.newFixedThreadPool(10);
 	String className;
 	public HashMap<String, String> defaultValue;
 	
@@ -113,6 +120,98 @@ public abstract class AbstractPipeline implements Pipeline {
 			e.printStackTrace();
 		}
 	}
+	
+	public void downloadFileToFtpGet2(String url, String fileDir ,String fielName){
+		try {
+			HttpClient client = new DefaultHttpClient();  
+			HttpGet httpget = new HttpGet(url);  
+			HttpResponse response = client.execute(httpget);  
+			HttpEntity entity = response.getEntity();  
+			InputStream is = entity.getContent();
+			
+			FtpUtils.upload(is, fileDir, fielName);
+			
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void downloadFileToFtpGet(String url, String fileDir ,String fielName){
+		try {
+			HttpClient client = new DefaultHttpClient();  
+			HttpGet httpget = new HttpGet(url);  
+			HttpResponse response = client.execute(httpget);  
+			HttpEntity entity = response.getEntity();  
+			InputStream is = entity.getContent();
+			
+			FtpUtils.upload(is, fileDir, fielName);
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+//		executorService.execute(new Runnable() {
+//			@Override
+//			public void run() {
+//				try {
+//					HttpClient client = new DefaultHttpClient();  
+//					HttpGet httpget = new HttpGet(url);  
+//					HttpResponse response = client.execute(httpget);  
+//					HttpEntity entity = response.getEntity();  
+//					InputStream is = entity.getContent();
+//					
+//					FtpUtils.upload(is, fileDir, fielName);
+//					
+//				} catch (ClientProtocolException e) {
+//					e.printStackTrace();
+//				} catch (IllegalStateException e) {
+//					e.printStackTrace();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+		
+//		Callable<String> callable=new Callable<String>() {
+//			
+//			@Override
+//			public String call() throws Exception {
+//				try {
+//					HttpClient client = new DefaultHttpClient();  
+//					HttpGet httpget = new HttpGet(url);  
+//					HttpResponse response = client.execute(httpget);  
+//					HttpEntity entity = response.getEntity();  
+//					InputStream is = entity.getContent();
+//					
+//					FtpUtils.upload(is, fileDir, fielName);
+//					return "";
+//				} catch (ClientProtocolException e) {
+//					e.printStackTrace();
+//				} catch (IllegalStateException e) {
+//					e.printStackTrace();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//				return null;
+//			}
+//		};
+//		Future<String> futures=executorService.submit(callable);
+//		try {
+//			futures.get();
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		} catch (ExecutionException e) {
+//			e.printStackTrace();
+//		}
+	}
+	
 
 	public void downloadFileToFtpPost(String url,String filename){
 		

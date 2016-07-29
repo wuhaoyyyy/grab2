@@ -18,9 +18,6 @@
   </listener> 
  
   <!--  -->
-  <listener>
-  	<listener-class>com.purang.grab.taskinfo.TaskInfoListener</listener-class>
-  </listener>
   <!--  -->
 
   <filter>
@@ -40,6 +37,16 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
   
+  
+  <!-- taskgrouplist -->
+  <servlet>
+  	<servlet-name>taskgroupservlet</servlet-name>
+    <servlet-class>com.purang.grab.servlet.TaskGroupListServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>taskgroupservlet</servlet-name>
+  	<url-pattern>/taskgrouplist</url-pattern>
+  </servlet-mapping>
   <!-- tasklist -->
   <servlet>
   	<servlet-name>tasklistservlet</servlet-name>

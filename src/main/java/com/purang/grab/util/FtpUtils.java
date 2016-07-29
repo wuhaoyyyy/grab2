@@ -11,10 +11,16 @@ import java.net.SocketException;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPReply;
 
 public class FtpUtils {
+
+	private static Log taskLog = LogFactory.getLog("grabtask");
+	private static int downloadCount=0;
     private static String encode="GBK";
     private static FTPClient ftpClient;
     public static String ftpserver;
@@ -33,7 +39,7 @@ public class FtpUtils {
 			ftpClient.login(ftpuser, ftppsw);
 			ftpClient.setSendBufferSize(1024);
 			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-			ftpClient.setControlEncoding("GBK");
+			ftpClient.setControlEncoding(encode);
 //			ftpClient.enterLocalPassiveMode();
 			
 			FTPFile[] f= ftpClient.listDirectories();
@@ -56,7 +62,8 @@ public class FtpUtils {
 			ftpClient.login(ftpuser, ftppsw);
 			ftpClient.setSendBufferSize(1024);
 			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-			ftpClient.setControlEncoding("GBK");
+			ftpClient.setControlEncoding(encode);
+			
 //			ftpClient.enterRemotePassiveMode();
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
@@ -82,11 +89,36 @@ public class FtpUtils {
 			e.printStackTrace();
 		}
     	try {
+    		is.close();
 			ftpClient.disconnect();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
     }
+    
+
+    public static void upload(InputStream is, String fileDir ,String fielName) {
+    	FTPClient ftpClient=getConnection();
+    	Mkdirs(ftpClient, fileDir);
+    	try {
+    		if(!ftpClient.storeFile(fielName, is)){
+    			//ftpClient.getReplyString()
+    			System.out.println(ftpClient.getReplyString());
+    		}
+    		else{
+    			taskLog.info("文件下载完成..."+downloadCount++);
+    		}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	try {
+    		is.close();
+			ftpClient.disconnect();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+
 
     public static void uploadStream(InputStream is, String remoteFile) {
     	try {
@@ -132,16 +164,48 @@ public class FtpUtils {
     }
     
     /** 判断Ftp目录是否存在,如果不存在则创建目录 */
-	public void isDirExist(FTPClient ftpClient, String dir) {
+	public static void changeDir(FTPClient ftpClient, String dir) {
 		try {
-			ftpClient.cwd(dir); // 想不到什么好办法来判断目录是否存在，只能用异常了(比较笨).请知道的告诉我一声`
-		} catch (IOException e1) {
-			try {
-				ftpClient.sendCommand("MKD " + dir + "/r/n");
-				ftpClient.getReply();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			ftpClient.makeDirectory(dir);
+			ftpClient.changeWorkingDirectory(dir);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
+	
+	public static Boolean Mkdirs(FTPClient ftpClient,String path){
+        Boolean success = false;
+        String[] subDirs = path.split("/");
+        
+        String LOCAL_CHARSET = "GBK";
+        String SERVER_CHARSET = "ISO-8859-1";
+        
+        //check if is absolute path
+        if(path.substring(0, 0).equalsIgnoreCase("/")){
+            subDirs[0] = "/" + subDirs[0];
+        }
+        boolean tmpMkdirs = false;
+        try {
+            // 开启服务器对UTF-8的支持，如果服务器支持就用UTF-8编码，否则就使用本地编码（GBK）.
+            if(FTPReply.isPositiveCompletion(ftpClient.sendCommand("OPTS UTF8", "ON"))) {
+                LOCAL_CHARSET = "UTF-8";
+            }
+            ftpClient.setControlEncoding(LOCAL_CHARSET);
+            
+            String orginPath = ftpClient.printWorkingDirectory();
+            for(String subDir : subDirs){
+                //encoding
+                String strSubDir = new String(subDir.getBytes(LOCAL_CHARSET),SERVER_CHARSET);
+                tmpMkdirs = ftpClient.makeDirectory(strSubDir);
+                boolean tmpDoCommand = ftpClient.sendSiteCommand("chmod 755 " + strSubDir);
+                ftpClient.changeWorkingDirectory(strSubDir);
+                success = success || tmpMkdirs;
+            }
+            //ftpClient.changeWorkingDirectory(orginPath);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return success;
+    }
 }

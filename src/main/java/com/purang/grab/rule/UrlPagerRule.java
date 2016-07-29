@@ -12,18 +12,53 @@ import com.purang.grab.util.CommonUtils;
  */
 public class UrlPagerRule extends PagerRule {
 
+	private String url;
+	private String startField;
+	private String pageSizeField;
+	private String pageSize;
+	private String start;
+	
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	public String getStartField() {
+		return startField;
+	}
+	public void setStartField(String startField) {
+		this.startField = startField;
+	}
+	public String getPageSize() {
+		return pageSize;
+	}
+	public void setPageSize(String pageSize) {
+		this.pageSize = pageSize;
+	}
+	
+	public String getPageSizeField() {
+		return pageSizeField;
+	}
+	public void setPageSizeField(String pageSizeField) {
+		this.pageSizeField = pageSizeField;
+	}
+	public String getStart() {
+		return start;
+	}
+	public void setStart(String start) {
+		this.start = start;
+	}
 	@Override
 	public String getNextPage(Html html){
-		//int totalPageCount=CommonUtils.getSelectorLinkResult(html, rule, type);
-		return CommonUtils.getSelectorLinkResult(html, rule, type);
+		this.start=String.valueOf(Integer.parseInt(start)+Integer.parseInt(pageSize));
+		return url+"&"+startField+"="+start+"&"+pageSizeField+"="+pageSize;
 	}
 	@Override
 	public List<String> getNextPageList(Html html){
 		List<String> r=new ArrayList<>();
-		for(int i=2;i<21;i++){
-			String s="http://www.shclearing.com/xxpl/fxpl/mtn/index_"+i+".html";
-			r.add(s);
-		}
 		return r;
 	}
+	
+	
 }

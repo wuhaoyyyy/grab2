@@ -13,12 +13,12 @@ import com.purang.grab.rule.PagerRule;
 
 public abstract class Processor {
 
-	int level = 0;
-	Map<String, String> defaultValue;
-	List<FieldRule> fieldRuleList;
-	List<FieldRule> urlList;
-	ExitRule exitRule;
-	PagerRule pageRule;
+	protected int level = 0;
+	protected Map<String, String> defaultValue;
+	protected List<FieldRule> fieldRuleList;
+	protected List<FieldRule> urlList;
+	protected ExitRule exitRule;
+	protected PagerRule pageRule;
 
 	public int getLevel() {
 		return level;

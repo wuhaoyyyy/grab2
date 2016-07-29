@@ -15,8 +15,7 @@ import net.sf.json.JsonConfig;
 import com.purang.grab.task.Task;
 import com.purang.grab.util.TaskInfoUtils;
 
-public class TaskListServlet extends HttpServlet {
-
+public class TaskGroupListServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Override
@@ -28,11 +27,10 @@ public class TaskListServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		String taskGroup=req.getParameter("taskgroup");
-		List<Task> taskList=TaskInfoUtils.getTaskList(taskGroup);
+		List<String> taskGroupList=TaskInfoUtils.getTaskGroupList();
 		JsonConfig jsonConfig=new JsonConfig();
-		jsonConfig.setExcludes(new String[]{"processor","pipelineList"});
-		JSONArray jsonArray=JSONArray.fromObject(taskList, jsonConfig);
+		jsonConfig.setExcludes(new String[]{});
+		JSONArray jsonArray=JSONArray.fromObject(taskGroupList, jsonConfig);
 		PrintWriter out = resp.getWriter();  
         out.write(jsonArray.toString());  
 	}

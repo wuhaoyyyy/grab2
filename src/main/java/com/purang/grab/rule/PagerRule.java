@@ -8,7 +8,6 @@ import com.purang.grab.util.CommonUtils;
 import us.codecraft.webmagic.selector.Html;
 
 public class PagerRule extends AbstractRule {
-	
 	public String getNextPage(Html html){
 		return CommonUtils.getSelectorLinkResult(html, rule, type);
 	}

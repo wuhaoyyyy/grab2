@@ -3,12 +3,13 @@ package com.purang.grab.task;
 import java.util.ArrayList;
 import java.util.List;
 
+import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.pipeline.Pipeline;
-
-import com.purang.grab.pageprocessor.CommonProcessor;
 
 public abstract class Task {
 	  
+
+	public Spider spider;
 	protected String taskName=null;
 	protected String taskDesc=null;
 	protected String url=null;
@@ -79,4 +80,5 @@ public abstract class Task {
 	}
 	public void doTask(){};
 	public void start(){};
+	public void stop(){};
 }

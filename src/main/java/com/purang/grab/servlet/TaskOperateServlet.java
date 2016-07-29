@@ -7,25 +7,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.xml.XmlBeanFactory;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-
 import com.purang.grab.util.TaskInfoUtils;
 
-import us.codecraft.webmagic.ResultItems;
-import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.Task;
-import us.codecraft.webmagic.pipeline.Pipeline;
-
+import com.purang.grab.task.Task;
 
 public class TaskOperateServlet extends HttpServlet {
 
-	private static final Logger logger = Logger.getLogger(TaskOperateServlet.class);
+	private static final long serialVersionUID = 1L;
+	private static Log taskLog = LogFactory.getLog("grabtask");
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -37,22 +31,33 @@ public class TaskOperateServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
+		String taskgroup=(String) req.getParameter("taskgroup");
 		String taskName=(String) req.getParameter("taskname");
 		String operation=(String) req.getParameter("operation");
-		logger.info(taskName+":"+operation);
+		taskLog.info(taskName+":"+operation);
 		
-		BeanFactory beanFactory=TaskInfoUtils.getTaskFactory(taskName);
-		Scheduler scheduler = (Scheduler) beanFactory.getBean("scheduler"); 
 		try {
 			if(operation.equals("start")){
-				scheduler.start();
+				BeanFactory beanFactory=TaskInfoUtils.getTaskFactoryNew(taskgroup,taskName);//每次启动重新实例化Scheduler
+				Scheduler scheduler = (Scheduler) beanFactory.getBean("scheduler"); 
+				if(!scheduler.isStarted()||scheduler.isInStandbyMode()){
+					scheduler.start();
+				}
 			}
-			else if(operation.equals("shutdown")){
-				scheduler.shutdown();
+			else if(operation.equals("stop")){
+				BeanFactory beanFactory=TaskInfoUtils.getTaskFactory(taskgroup,taskName);
+				Scheduler scheduler = (Scheduler) beanFactory.getBean("scheduler"); 
+				Task task= (Task)beanFactory.getBean("task"); 
+				if(scheduler.isStarted()&&!scheduler.isInStandbyMode()){
+					scheduler.shutdown();
+					task.stop();
+				}
 			}
 		} catch (SchedulerException e) {
+			taskLog.error(e.toString());
 			e.printStackTrace();
 		}
+		resp.sendRedirect("tasklist.jsp");
 	}
 	
 }
