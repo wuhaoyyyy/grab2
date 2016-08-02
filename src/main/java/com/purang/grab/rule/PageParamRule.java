@@ -10,7 +10,7 @@ import com.purang.grab.util.CommonUtils;
 /*
  * 根据总页数 构造所有url
  */
-public class UrlPagerRule extends PagerRule {
+public class PageParamRule extends PageRule {
 
 	private String url;
 	private String startField;
@@ -54,11 +54,5 @@ public class UrlPagerRule extends PagerRule {
 		this.start=String.valueOf(Integer.parseInt(start)+Integer.parseInt(pageSize));
 		return url+"&"+startField+"="+start+"&"+pageSizeField+"="+pageSize;
 	}
-	@Override
-	public List<String> getNextPageList(Html html){
-		List<String> r=new ArrayList<>();
-		return r;
-	}
-	
 	
 }

@@ -9,7 +9,7 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
 
-public class CommonProcessor implements PageProcessor{
+public class CommonPageProcessor implements PageProcessor{
 	private String baseUrl;
     private Site site;
 	private List<Processor> processorList=new ArrayList<Processor>();
@@ -36,8 +36,9 @@ public class CommonProcessor implements PageProcessor{
 	@Override
 	public void process(Page page) {
 		int level=(int) page.getRequest().getExtra("level");
-		Processor processor=processorList.get(level);
+		Processor processor=processorList.get(level);//这里限定根据level选取对应processor处理 processor里无须判断，但processor里需要加上level传给pipline处理
 		processor.setLevel(level);
+		page.putField("level",level);//交给pipeline处理
 		processor.process(page);
 	}
 	

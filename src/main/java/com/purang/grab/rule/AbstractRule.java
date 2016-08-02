@@ -6,76 +6,113 @@ import us.codecraft.webmagic.selector.Html;
 
 public abstract class AbstractRule implements Rule {
 	
-	protected String title=null;
-	protected String name=null;
-	protected String type=null;
-	protected String rule=null;
-	protected String field=null;
-	protected String fieldtype=null;
+	protected String title=null;//无用
+	protected String name=null;//无用
+	protected String ruleType=null;//css xpath
+	protected String ruleExpression=null;//表达式
+	protected String ruleResultType=null;//结果 1--string string 2--string link 3--list string 4--list link
+	protected String field=null;//导出的field
+	protected String fieldtype=null;//无用
+	
+	
 	
 	public String getTitle() {
 		return title;
 	}
 
+
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
+
+
 
 	public String getName() {
 		return name;
 	}
 
+
+
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	public String getType() {
-		return type;
+
+
+	public String getRuleType() {
+		return ruleType;
 	}
 
-	public void setType(String type) {
-		this.type = type;
-	}
-	
 
-	public String getRule() {
-		return rule;
+
+	public void setRuleType(String ruleType) {
+		this.ruleType = ruleType;
 	}
 
-	public void setRule(String rule) {
-		this.rule = rule;
+
+
+	public String getRuleExpression() {
+		return ruleExpression;
 	}
-	
+
+
+
+	public void setRuleExpression(String ruleExpression) {
+		this.ruleExpression = ruleExpression;
+	}
+
+
+
+	public String getRuleResultType() {
+		return ruleResultType;
+	}
+
+
+
+	public void setRuleResultType(String ruleResultType) {
+		this.ruleResultType = ruleResultType;
+	}
+
+
 
 	public String getField() {
 		return field;
 	}
 
+
+
 	public void setField(String field) {
 		this.field = field;
 	}
+
+
 
 	public String getFieldtype() {
 		return fieldtype;
 	}
 
+
+
 	public void setFieldtype(String fieldtype) {
 		this.fieldtype = fieldtype;
 	}
 
+
+
 	@Override
-	public String getRuleResult(Html html) {
-//		switch(fieldtype){
-//			case "result":
-//				return CommonUtils.getSelectorResult(html, this.name, this.type);
-//			case "resultlist":
-//				return CommonUtils.getSelectorListResult(html, this.name, this.type);
-//			case "link":
-//				return CommonUtils.getSelectorLinkResult(html, this.name, this.type);
-//			case "linklist":
-//				return CommonUtils.getSelectorLinkListResult(html, this.name, this.type);
-//		}
-		return CommonUtils.getSelectorResult(html, this.rule, this.type);
+	public Object getRuleResult(Html html) {
+		switch(ruleResultType){
+			case "1":
+				return CommonUtils.getSelectorResult(html, this.name, this.ruleType);
+			case "2":
+				return CommonUtils.getSelectorListResult(html, this.name, this.ruleType);
+			case "3":
+				return CommonUtils.getSelectorLinkResult(html, this.name, this.ruleType);
+			case "4":
+				return CommonUtils.getSelectorLinkListResult(html, this.name, this.ruleType);
+		}
+		return null;
 	}
 
 	

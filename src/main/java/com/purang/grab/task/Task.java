@@ -7,17 +7,15 @@ import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.pipeline.Pipeline;
 
 public abstract class Task {
-	  
-
 	public Spider spider;
 	protected String taskName=null;
 	protected String taskDesc=null;
 	protected String url=null;
+	protected List<String> urlList=null;
 	protected int timeout=0;
 	protected int threadCount=1;
-	protected CommonProcessor processor=null;
-	protected List<Pipeline> pipelineList=new ArrayList<Pipeline>();
-	
+	protected CommonPageProcessor processor=null;
+	protected List<Pipeline> pipelineList=new ArrayList<Pipeline>();	
 	protected Boolean autostart=false;
 	protected String status;
 	
@@ -53,6 +51,13 @@ public abstract class Task {
 	public void setUrl(String url) {
 		this.url = url;
 	}
+	
+	public List<String> getUrlList() {
+		return urlList;
+	}
+	public void setUrlList(List<String> urlList) {
+		this.urlList = urlList;
+	}
 	public int getTimeout() {
 		return timeout;
 	}
@@ -66,10 +71,10 @@ public abstract class Task {
 	public void setThreadCount(int threadCount) {
 		this.threadCount = threadCount;
 	}
-	public CommonProcessor getProcessor() {
+	public CommonPageProcessor getProcessor() {
 		return processor;
 	}
-	public void setProcessor(CommonProcessor processor) {
+	public void setProcessor(CommonPageProcessor processor) {
 		this.processor = processor;
 	}
 	public List<Pipeline> getPipelineList() {

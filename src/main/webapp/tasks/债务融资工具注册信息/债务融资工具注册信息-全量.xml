@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<bean id="scheduler" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+		<list>
+			<ref bean="simpleTrigger" />
+		</list>
+		</property>
+	</bean>
+	<bean id="job" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="task"></property>
+		<property name="targetMethod" value="doTask" />
+		<property name="concurrent" value="false" /><!-- 作业不并发调度 -->
+	</bean>
+	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="job" />
+		<property name="startDelay" value="0" />
+		<property name="repeatCount" value="0" /><!-- 只执行一次 -->
+		<property name="repeatInterval" value="1" /><!-- 只执行一次 -->
+	</bean>
+	
+	<bean id="site" class="com.purang.grab.site.CommonSite">
+		<property name="charset" value="UTF-8"></property>
+		<property name="sleepTime" value="2000"></property>
+		<property name="timeOut" value="60000"></property>
+		<property name="useGzip" value="false"></property>
+		<property name="headers">
+			<map>
+				<entry key="Accept-Encoding" value="deflate"/>   
+			</map>
+		</property>
+	</bean>
+	
+	<!-- url第一页和后面的不一样 -->
+	<!-- url翻页方式   1、直接判断下一页按钮是否存在  2、url带翻页参数：细分 a、url直接带页码参数  b、url带start limit参数（map表示）3、url带翻页直接表现在url上   4、多种组合 -->
+	<!-- 翻页 NextPageRule(可以处理urllist)下一页获取不为空  UrlPageRule（index_1   index_2...）（如何处理urllist） UrlPageParaRule（用参数替换？？）(&a=&b= 不能用map 没法确定具体参数是什么)-->
+	<!-- url如何与固定值对应 -->
+	<!-- 结果处理  导入数据库、调用存储过程、导出excel -->
+	<!-- post请求 -->
+	<!-- 代理设置 -->
+	<!-- 文件下载 保存 -->
+	<!-- 处理json -->
+	
+	
+	<!--PageUrlRule   url上可以找出翻页规律的（非url带参数）对应的处理类   -->
+	<!--PageParamRule url上带参数可以找出翻页规律的对应的处理类                    -->	
+	<!--PageNextRule  直接点下一页可以找到下一页的url的对应的处理类             -->
+	
+	
+	
+	<!-- url列表 下一页不为空 调用存储过程 -->
+	<bean id="task" scope="singleton" class="com.purang.grab.task.CommonTask">
+		<property name="taskName" value="债务融资工具注册信息-全量"></property>
+		<property name="taskDesc" value="债务融资工具注册信息-全量"></property>
+		<property name="urlList">
+        	<list>
+	        	<value>http://www.nafmii.org.cn/dcmfx/tzs/scp/</value>
+				<value>http://www.nafmii.org.cn/dcmfx/tzs/smecn/</value>
+				<value>http://www.nafmii.org.cn/dcmfx/tzs/cp/</value>
+				<value>http://www.nafmii.org.cn/dcmfx/tzs/mtn/</value>
+				<value>http://www.nafmii.org.cn/dcmfx/tzs/ppn/</value>
+				<value>http://www.nafmii.org.cn/dcmfx/tzs/zczcpj/</value>
+				<value>http://www.nafmii.org.cn/dcmfx/tzs/PRN1/</value>
+				<value>http://www.nafmii.org.cn/dcmfx/tzs/zced/</value>
+				<value>http://www.nafmii.org.cn/dcmfx/tzs/dfi/</value>
+				<value>http://www.nafmii.org.cn/dcmfx/tzs/gn/</value>
+        	</list>
+		</property>
+		<property name="threadCount" value="5"></property>
+		<property name="processor" ref="processor"></property>
+		<property name="pipelineList">
+        	<list>
+        		<ref bean="pipeline1" /><!-- 自定义 -->
+        	</list>
+		</property>
+	</bean>
+	
+	<bean id="processor" scope="singleton" class="com.purang.grab.task.CommonPageProcessor">
+		<property name="site" ref="site"></property>
+		<property name="processorList">
+        	<list>
+        		<ref bean="commonprocessor" />
+        	</list>
+		</property>
+	</bean>
+	
+	<bean id="commonprocessor" class="com.purang.grab.processor.CommonProcessor">
+		<property name="pageRule" ref="rulePage"></property>
+	</bean>
+	
+	<!-- 第一层结果处理 导入数据库 -->
+	<bean id="pipeline1" class="com.purang.grab.pipeline.ShClearingPipeline">
+		<property name="className" value="com.purang.grab.entity.BondAnnouncement"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/><!--公告来源   上海清算所     -->
+				<entry key="announceType1" value="301"/> <!--公告类型：原始披露一级	301	发行披露 -->
+				<entry key="bondType1" value="301"/> <!-- 债券类型:原始披露一级	债券类	301	中期票据 -->
+			</map>
+		</property>
+	
+	</bean>
+	
+
+	
+	
+	<bean id="rulePage" class="com.purang.grab.rule.UrlPagerRule">
+		<property name="title" value="下一页"></property> 
+		<property name="field" value="下一页"></property> 
+		<property name="url" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=145"></property> 
+		<property name="startField" value="start"></property> 
+		<property name="pageSizeField" value="limit"></property> 
+		<property name="pageNoSize" value="20"></property> 
+		<property name="pageSize" value="20"></property> 
+		<property name="start" value="0"></property> 
+	</bean>
+	<bean id="ruleExit" class="com.purang.grab.rule.DateExitRule">
+		<property name="title" value="退出"></property> 
+		<property name="field" value="退出"></property> 
+		<property name="dateFormat" value="yyyy-MM-dd"></property> 
+		<property name="rule" value="/html/body/table/tbody/tr/td[2]/text()"></property> 
+		<property name="type" value="xpath"></property> 
+	</bean>
+	
+</beans>

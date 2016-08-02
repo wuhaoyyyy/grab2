@@ -74,7 +74,7 @@ public class TaskInfoUtils {
 	}
 	
 	/*
-	 * 获取 task
+	 * 获取 task   前台列表显示的是配置文件的taskname，读取xml的是文件名    文件名要和taskname一致，map的key是xml文件全路径
 	 */
 	public static Task getTask(String taskGroup,String taskConfigFileName){
 		BeanFactory factory= getTaskFactory(taskGroup,taskConfigFileName);  

@@ -1,7 +1,5 @@
 package com.purang.grab.processor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,7 +7,7 @@ import us.codecraft.webmagic.Page;
 
 import com.purang.grab.rule.ExitRule;
 import com.purang.grab.rule.FieldRule;
-import com.purang.grab.rule.PagerRule;
+import com.purang.grab.rule.PageRule;
 
 public abstract class Processor {
 
@@ -18,7 +16,7 @@ public abstract class Processor {
 	protected List<FieldRule> fieldRuleList;
 	protected List<FieldRule> urlList;
 	protected ExitRule exitRule;
-	protected PagerRule pageRule;
+	protected PageRule pageRule;
 
 	public int getLevel() {
 		return level;
@@ -52,11 +50,11 @@ public abstract class Processor {
 		this.urlList = urlList;
 	}
 
-	public PagerRule getPageRule() {
+	public PageRule getPageRule() {
 		return pageRule;
 	}
 
-	public void setPageRule(PagerRule pageRule) {
+	public void setPageRule(PageRule pageRule) {
 		this.pageRule = pageRule;
 	}
 	
@@ -68,10 +66,6 @@ public abstract class Processor {
 		this.exitRule = exitRule;
 	}
 
-	public void process(Page page){
-		Object level=page.getRequest().getExtra("level");
-		page.putField("level",level);//交给pipeline处理
-		this.setLevel((Integer)level);
-	}
+	public abstract void process(Page page);
 
 }
