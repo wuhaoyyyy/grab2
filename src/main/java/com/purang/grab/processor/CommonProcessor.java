@@ -8,7 +8,7 @@ public class CommonProcessor extends Processor{
 	@Override
 	public void process(Page page) {
 		// TODO Auto-generated method stub
-		
+		page.getRequest()
 	}
 	
 	
