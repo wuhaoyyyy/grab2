@@ -3,11 +3,16 @@ package com.purang.grab.task;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.purang.grab.request.PagerRequest;
+
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.pipeline.Pipeline;
-import us.codecraft.webmagic.utils.UrlUtils;
 
+/**
+ * quartz job执行task
+ *
+ */
 public class CommonTask extends Task{
 	
 	protected int i = 0;  
@@ -20,14 +25,29 @@ public class CommonTask extends Task{
 	@Override
 	public void start(){
 		taskLog.info(this.getTaskName()+"-"+(++i)+"start...");
-		this.processor.setBaseUrl(url);
-		Request request=new Request(UrlUtils.canonicalizeUrl(url,url));
-		request.putExtra("level", 0);
+
 		if(spider!=null){
 			spider.start();
 			return;
 		}
-		spider = Spider.create(processor).addRequest(request).thread(threadCount);
+		
+		spider = Spider.create(processor).thread(threadCount).setExitWhenComplete(true).startUrls(urlList);
+		//初始化url列表
+		for(String url:urlList){
+			Request request=new Request();
+			request.setUrl(url);
+			request.putExtra("level",0);
+			spider.addRequest(request);
+		}
+		//初始化request列表
+		for(Request request:requestList){
+			//初始化request列表中PagerRequest的第一页
+			if(request instanceof PagerRequest){
+				PagerRequest pagerRequest=(PagerRequest)request;
+				spider.addRequest(pagerRequest.getNextPager());
+			}
+		}
+		
 		for(Pipeline pipeline:pipelineList){
 			spider.addPipeline(pipeline);
 		}
@@ -36,7 +56,10 @@ public class CommonTask extends Task{
 	@Override
 	public void stop(){
 		spider.stop();
-		//spider.close();
+	}
+	@Override
+	public void close(){
+		spider.close();
 	}
 	
 	

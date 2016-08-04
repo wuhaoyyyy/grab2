@@ -1,8 +1,12 @@
 package com.purang.grab.util;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
+import us.codecraft.webmagic.selector.Html;
 
 public class DateUtils {
 	
@@ -11,6 +15,7 @@ public class DateUtils {
 	 */
 	public static String getString(String datestr,String fromfmt, String tofmt) {	
 		try {
+			if(fromfmt.equals("chinese")) return getStringFromChStr(datestr,tofmt);
 			Date date=new SimpleDateFormat(fromfmt).parse(datestr);
 			return (new SimpleDateFormat(tofmt)).format(date);
 		} catch (Exception e) {
@@ -61,5 +66,12 @@ public class DateUtils {
 		calendar.set(y,m, d);
 		Date date=calendar.getTime();
 		return (new SimpleDateFormat(fmt)).format(date);
+	}
+	
+	/*
+	 * 传object string或list
+	 */
+	public static String a(Object date) {
+		return null;
 	}
 }

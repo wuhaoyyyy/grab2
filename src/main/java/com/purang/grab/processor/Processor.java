@@ -7,7 +7,6 @@ import us.codecraft.webmagic.Page;
 
 import com.purang.grab.rule.ExitRule;
 import com.purang.grab.rule.FieldRule;
-import com.purang.grab.rule.PageRule;
 
 public abstract class Processor {
 
@@ -16,7 +15,6 @@ public abstract class Processor {
 	protected List<FieldRule> fieldRuleList;
 	protected List<FieldRule> urlList;
 	protected ExitRule exitRule;
-	protected PageRule pageRule;
 
 	public int getLevel() {
 		return level;
@@ -48,14 +46,6 @@ public abstract class Processor {
 
 	public void setUrlList(List<FieldRule> urlList) {
 		this.urlList = urlList;
-	}
-
-	public PageRule getPageRule() {
-		return pageRule;
-	}
-
-	public void setPageRule(PageRule pageRule) {
-		this.pageRule = pageRule;
 	}
 	
 	public ExitRule getExitRule() {

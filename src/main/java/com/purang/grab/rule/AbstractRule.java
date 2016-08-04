@@ -10,7 +10,7 @@ public abstract class AbstractRule implements Rule {
 	protected String name=null;//无用
 	protected String ruleType=null;//css xpath
 	protected String ruleExpression=null;//表达式
-	protected String ruleResultType=null;//结果 1--string string 2--string link 3--list string 4--list link
+	protected String ruleResultType=null;//结果 1--string string 2--string list 3--link string 4--link list
 	protected String field=null;//导出的field
 	protected String fieldtype=null;//无用
 	
@@ -104,13 +104,13 @@ public abstract class AbstractRule implements Rule {
 	public Object getRuleResult(Html html) {
 		switch(ruleResultType){
 			case "1":
-				return CommonUtils.getSelectorResult(html, this.name, this.ruleType);
+				return CommonUtils.getSelectorResult(html, this.ruleExpression, this.ruleType);
 			case "2":
-				return CommonUtils.getSelectorListResult(html, this.name, this.ruleType);
+				return CommonUtils.getSelectorListResult(html, this.ruleExpression, this.ruleType);
 			case "3":
-				return CommonUtils.getSelectorLinkResult(html, this.name, this.ruleType);
+				return CommonUtils.getSelectorLinkResult(html, this.ruleExpression, this.ruleType);
 			case "4":
-				return CommonUtils.getSelectorLinkListResult(html, this.name, this.ruleType);
+				return CommonUtils.getSelectorLinkListResult(html, this.ruleExpression, this.ruleType);
 		}
 		return null;
 	}

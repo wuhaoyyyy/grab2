@@ -27,7 +27,7 @@ public class CommonUtils {
 		return null;
 	}
 	public static String getSelectorResult(Html html,String rule,String type){
-		String text="";
+		String text=null;
 		switch(type){
 			case "css":
 				text=html.css(rule).toString();
@@ -55,7 +55,7 @@ public class CommonUtils {
 	}
 	
 	public static String getSelectorLinkResult(Html html,String rule,String type){
-		String text="";
+		String text=null;
 		switch(type){
 			case "css":
 				text=html.css(rule).links().toString();

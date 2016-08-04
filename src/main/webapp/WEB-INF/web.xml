@@ -2,6 +2,30 @@
  "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
  "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
+
+	<!-- 结果处理，默认以list方式处理，单个记录填充为list -->
+	
+	<!-- url第一页和后面的不一样 -->
+	<!-- url翻页方式   1、直接判断下一页按钮是否存在  2、url带翻页参数：细分 a、url直接带页码参数  b、url带start limit参数（map表示）3、url带翻页直接表现在url上   4、多种组合 -->
+	<!-- 翻页 NextPageRule(可以处理urllist)下一页获取不为空  UrlPageRule（index_1   index_2...）（如何处理urllist） UrlPageParaRule（用参数替换？？）(&a=&b= 不能用map 没法确定具体参数是什么)-->
+	<!-- url如何与固定值对应 -->
+	<!-- 结果处理  导入数据库、调用存储过程、导出excel -->
+	<!-- post请求 -->
+	<!-- 代理设置 -->
+	<!-- 文件下载 保存 -->
+	<!-- 处理json -->
+	
+	
+	<!--PageUrlRule   url上可以找出翻页规律的（非url带参数）对应的处理类   -->
+	<!--PageParamRule url上带参数可以找出翻页规律的对应的处理类                    -->	
+	<!--PageNextRule  直接点下一页可以找到下一页的url的对应的处理类             -->
+	
+	<!-- url类  url 参数map  翻页  request getNextPage  -->
+	
+	<!-- url列表 下一页不为空 调用存储过程    -->
+
+
+
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
   <!-- log4j -->
