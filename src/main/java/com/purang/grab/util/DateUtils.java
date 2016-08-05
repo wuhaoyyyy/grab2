@@ -68,6 +68,10 @@ public class DateUtils {
 		return (new SimpleDateFormat(fmt)).format(date);
 	}
 	
+	public static String getCurrentDate(String format){
+		return getString(new Date(),format);
+	}
+	
 	/*
 	 * 传object string或list
 	 */

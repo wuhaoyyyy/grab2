@@ -26,10 +26,10 @@ public class CommonTask extends Task{
 	public void start(){
 		taskLog.info(this.getTaskName()+"-"+(++i)+"start...");
 
-		if(spider!=null){
-			spider.start();
-			return;
-		}
+//		if(spider!=null){
+//			spider.start();
+//			return;
+//		}
 		
 		spider = Spider.create(processor).thread(threadCount).setExitWhenComplete(true).startUrls(urlList);
 		//初始化url列表
@@ -44,6 +44,7 @@ public class CommonTask extends Task{
 			//初始化request列表中PagerRequest的第一页
 			if(request instanceof PagerRequest){
 				PagerRequest pagerRequest=(PagerRequest)request;
+				pagerRequest.init();
 				spider.addRequest(pagerRequest.getNextPager());
 			}
 		}

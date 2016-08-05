@@ -30,30 +30,32 @@ public class DateExitRule extends ExitRule {
 	}
 	
 	@Override
-	public Boolean getExit(Html html) {
-		Boolean exitResult=true;
+	public int getExit(Html html) {
+		int exitResult=-1;
 		Date date=new Date();
 		String todaystr=DateUtils.getString(date, toDateFormat);
 		Object dateobj=this.getRuleResult(html);
 		if(dateobj instanceof String){
 			String datestr=DateUtils.getString(dateobj.toString(), fromDateFormat,toDateFormat);
 			if(datestr.equals(todaystr)){
-				exitResult=false;
+				exitResult=-1;
 			}
 			else{
-				exitResult=true;
+				exitResult=0;
 			}
 		}
 		else if(dateobj instanceof List){
+			int i=0;
 			for(String s:(ArrayList<String>)dateobj){
 				String datestr=DateUtils.getString(s, fromDateFormat,toDateFormat);
 				if(datestr.equals(todaystr)){
-					exitResult=false;
+					exitResult=-1;
 				}
 				else{
-					exitResult=true;
+					exitResult=i;
 					break;
 				}
+				i++;
 			}
 		}
 		return exitResult;

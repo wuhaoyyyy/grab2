@@ -6,7 +6,7 @@
 	<bean id="scheduler" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 		<list>
-			<ref bean="simpleTrigger" />
+			<ref bean="cronTrigger" />
 		</list>
 		</property>
 	</bean>
@@ -15,13 +15,12 @@
 		<property name="targetMethod" value="doTask" />
 		<property name="concurrent" value="false" /><!-- 作业不并发调度 -->
 	</bean>
-	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-		<property name="jobDetail" ref="job" />
-		<property name="startDelay" value="0" />
-		<property name="repeatCount" value="0" /><!-- 只执行一次 -->
-		<property name="repeatInterval" value="1" /><!-- 只执行一次 -->
-	</bean>
 	
+	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">  
+        <property name="jobDetail" ref="job"/>  
+        <property name="cronExpression" value="0/30 * * * * ? *"></property>  
+    </bean>  
+
 	<bean id="site" class="com.purang.grab.site.CommonSite">
 		<property name="charset" value="UTF-8"></property>
 		<property name="sleepTime" value="2000"></property>
@@ -39,33 +38,33 @@
 			</set>
 		</property>
 	</bean>
-	<bean id="task" scope="singleton" class="com.purang.grab.task.CommonTask">
-		<property name="taskName" value="债务融资工具注册信息-全量"></property>
-		<property name="taskDesc" value="债务融资工具注册信息-全量"></property>
+	<bean id="task" class="com.purang.grab.task.CommonTask">
+		<property name="taskName" value="债务融资工具注册信息-每日"></property>
+		<property name="taskDesc" value="债务融资工具注册信息-每日"></property>
 		<property name="urlList">
         	<list>
-	        	<value>http://www.nafmii.org.cn/dcmfx/tzs/scp/</value>
-				<value>http://www.nafmii.org.cn/dcmfx/tzs/smecn/</value>
-				<value>http://www.nafmii.org.cn/dcmfx/tzs/cp/</value>
-				<value>http://www.nafmii.org.cn/dcmfx/tzs/mtn/</value>
-				<value>http://www.nafmii.org.cn/dcmfx/tzs/ppn/</value>
-				<value>http://www.nafmii.org.cn/dcmfx/tzs/zczcpj/</value>
-				<value>http://www.nafmii.org.cn/dcmfx/tzs/PRN1/</value>
-				<value>http://www.nafmii.org.cn/dcmfx/tzs/zced/</value>
+<!-- 	        	<value>http://www.nafmii.org.cn/dcmfx/tzs/scp/</value> -->
+<!-- 				<value>http://www.nafmii.org.cn/dcmfx/tzs/smecn/</value> -->
+<!-- 				<value>http://www.nafmii.org.cn/dcmfx/tzs/cp/</value> -->
+<!-- 				<value>http://www.nafmii.org.cn/dcmfx/tzs/mtn/</value> -->
+<!-- 				<value>http://www.nafmii.org.cn/dcmfx/tzs/ppn/</value> -->
+<!-- 				<value>http://www.nafmii.org.cn/dcmfx/tzs/zczcpj/</value> -->
+<!-- 				<value>http://www.nafmii.org.cn/dcmfx/tzs/PRN1/</value> -->
+<!-- 				<value>http://www.nafmii.org.cn/dcmfx/tzs/zced/</value> -->
 				<value>http://www.nafmii.org.cn/dcmfx/tzs/dfi/</value>
 				<value>http://www.nafmii.org.cn/dcmfx/tzs/gn/</value>
         	</list>
 		</property>
 		<property name="requestList">
         	<list>
-        		<ref bean="scp"/>
-        		<ref bean="smecn"/>
-        		<ref bean="cp"/>
-        		<ref bean="mtn"/>
-        		<ref bean="ppn"/>
-        		<ref bean="zczcpj"/>
-        		<ref bean="PRN1"/>
-        		<ref bean="zced"/>
+<!--         		<ref bean="scp"/> -->
+<!--         		<ref bean="smecn"/> -->
+<!--         		<ref bean="cp"/> -->
+<!--         		<ref bean="mtn"/> -->
+<!--         		<ref bean="ppn"/> -->
+<!--         		<ref bean="zczcpj"/> -->
+<!--         		<ref bean="PRN1"/> -->
+<!--         		<ref bean="zced"/> -->
         		<ref bean="dfi"/>
         		<ref bean="gn"/>
         	</list>
@@ -80,7 +79,7 @@
 	</bean>
 	
 
-	<bean id="processor" scope="singleton" class="com.purang.grab.task.CommonPageProcessor">
+	<bean id="processor" class="com.purang.grab.task.CommonPageProcessor">
 		<property name="site" ref="site"></property>
 		<property name="processorList">
         	<list>
@@ -98,7 +97,7 @@
 				<ref bean="pubdatefieldrule"/>
 			</list>
 		</property>
-<!-- 		<property name="exitRule" ref="dateexitrule"></property> -->
+		<property name="exitRule" ref="dateexitrule"></property>
 	</bean>
 
 	<bean id="pipeline1" class="com.purang.grab.pipeline.CommonPipeline">
@@ -126,6 +125,7 @@
 				<entry key="绿色债务融资工具（GN）" value="99"/>  
 			</map>
 		</property>
+		<property name="selectExpression" value="select count(1) from p12002_grab p where p.f1=[pubdate] and p.f3=[url]"></property>
 		<property name="insertExpression" value="INSERT INTO p12002_grab (fv, ft, f1, f3, f7, f16, fs, fp, fu) VALUES([(auto)id],[(auto)id],[pubdate],[url],[title],[(map)type],[fsPublishStatus],[(auto)date],[(auto)date])"></property>
 	</bean>
 

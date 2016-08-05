@@ -8,11 +8,13 @@ public class ExitRule extends AbstractRule {
 		return super.getRuleResult(html);
 	}
 	
-	//默认存在不为空即不退出
-	public Boolean getExit(Html html){
+    /*
+     * 返回list开始移除index，-1不退出
+     */
+	public int getExit(Html html){
 		Object obj=this.getRuleResult(html);
-		if(obj==null||obj.toString().equals("")) return true;
-		else return false;
+		if(obj==null||obj.toString().equals("")) return 0;
+		else return -1;
 	}
 	
 

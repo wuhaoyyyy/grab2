@@ -11,6 +11,7 @@ import com.purang.grab.rule.FieldRule;
 public abstract class Processor {
 
 	protected int level = 0;
+	protected boolean isJson=false;
 	protected Map<String, String> defaultValue;
 	protected List<FieldRule> fieldRuleList;
 	protected List<FieldRule> urlList;
