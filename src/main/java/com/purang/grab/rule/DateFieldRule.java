@@ -3,6 +3,7 @@ package com.purang.grab.rule;
 import java.util.ArrayList;
 import java.util.List;
 
+import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.selector.Html;
 
 import com.purang.grab.util.DateUtils;
@@ -30,9 +31,13 @@ public class DateFieldRule extends FieldRule {
 	}
 
 	@Override
-	public Object getRuleResult(Html html) {
-		Object date=super.getRuleResult(html);
-		
+	public Object getRuleResult(Page page) {
+		Object date=super.getRuleResult(page);
+
+		return getFormatDate(date);
+	}
+	
+	private Object getFormatDate(Object date){
 		if(date instanceof String){
 			String datestr=DateUtils.getString(date.toString(), fromDateFormat,toDateFormat);
 			return datestr;

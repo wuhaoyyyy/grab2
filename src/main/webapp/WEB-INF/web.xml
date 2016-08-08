@@ -24,8 +24,11 @@
 	
 	<!-- url列表 下一页不为空 调用存储过程    -->
 
-
-
+	<!-- gotolink 固定值 -->
+	<!-- sql语句生成[(auto)id] 系统函数CommonUtils.getAutoValue  
+			        [(map)type] save实现类的mapValue配置
+			        []  fieldrule 的结果以及 save实现类的defaultValue配置  
+	-->
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
   <!-- log4j -->

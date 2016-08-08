@@ -3,6 +3,7 @@ package com.purang.grab.processor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.json.JSONObject;
 
@@ -24,23 +25,48 @@ public class CommonProcessor extends Processor{
 			taskLog.info("exit-404:"+page.getRequest().getUrl());
 			return;
 		}
-
+		
 		HashMap<String, Object> result=new HashMap<String, Object>();
-		//json处理
-		if(isJson){
-			page.getJson().jsonPath("").all();
-			
+		if(page.getRequest().getExtra("result")!=null){
+			result=(HashMap<String, Object>) page.getRequest().getExtra("result");		
 		}
-		else{
-			for(FieldRule fieldRule:fieldRuleList){
-				result.put(fieldRule.getField(),fieldRule.getRuleResult(page.getHtml()));
+		for(FieldRule fieldRule:fieldRuleList){
+			result.put(fieldRule.getField(),fieldRule.getRuleResult(page));
+		}
+		if(page.getRequest().getExtra("defaultValue")!=null){
+			result.putAll((Map<String, String>) page.getRequest().getExtra("defaultValue"));			
+		}	
+		int count=CommonUtils.mapValueToList(result);
+		
+		//gotolink处理
+
+		if(gotoLinkList!=null){		
+			//默认gotolink和result列表一一对应
+			for(FieldRule linkRule:gotoLinkList){
+				HashMap<String, Object> linkresult=new HashMap<String, Object>();
+				linkresult.put(linkRule.getField(),linkRule.getRuleResult(page));
+				CommonUtils.mapValueToList(linkresult);
+				List<String> linkList=(List<String>) linkresult.get(linkRule.getField());
+				int i=0;
+				for(String link:linkList){
+					Request request=new Request();
+					request.putExtra("level", Integer.parseInt(page.getRequest().getExtra("level").toString())+1);
+					request.putExtra("result", CommonUtils.getSingleMap(result, i));
+					request.setUrl(link);
+					page.addTargetRequest(request);
+					i++;
+				}
 			}
-			CommonUtils.mapValueToList(result);
-			page.putField("result",result);
 		}
+		
+		//没有gotolink才交给CommonPipeline处理，
+		if(gotoLinkList==null||gotoLinkList.size()<1){
+			page.putField("result",result);			
+		}
+		
 		//判断是否有退出
 		if(exitRule!=null) {
-			int exit=exitRule.getExit(page.getHtml());
+			int exit=exitRule.getExit(page);
 			if(exit>-1) {
 				for(String key:result.keySet()){
 					List list=(List) result.get(key);
@@ -52,18 +78,15 @@ public class CommonProcessor extends Processor{
 				return;
 			}
 		}
-		
+		if(count<=0) {
+			taskLog.info("exit-nodata:"+page.getRequest().getUrl());
+			return;
+		}
 		Request request=page.getRequest();
 		if(request instanceof PagerRequest){
 			PagerRequest pagerRequest=(PagerRequest)request;
 			page.addTargetRequest(pagerRequest.getNextPager());
-		}
-		
-		
-		
-		
-		
-		
+		}		
 		
 	}
 	

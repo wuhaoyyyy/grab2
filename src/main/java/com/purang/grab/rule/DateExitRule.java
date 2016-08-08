@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.selector.Html;
 
 import com.purang.grab.util.DateUtils;
@@ -30,11 +31,11 @@ public class DateExitRule extends ExitRule {
 	}
 	
 	@Override
-	public int getExit(Html html) {
+	public int getExit(Page page) {
 		int exitResult=-1;
 		Date date=new Date();
 		String todaystr=DateUtils.getString(date, toDateFormat);
-		Object dateobj=this.getRuleResult(html);
+		Object dateobj=this.getRuleResult(page);
 		if(dateobj instanceof String){
 			String datestr=DateUtils.getString(dateobj.toString(), fromDateFormat,toDateFormat);
 			if(datestr.equals(todaystr)){

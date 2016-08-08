@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.purang.grab.util.ApplicationContextUtils;
 import com.purang.grab.util.CommonUtils;
+import com.purang.grab.util.StringUtils;
 
 public class InsertSave implements Save{
 
@@ -49,8 +50,13 @@ public class InsertSave implements Save{
 	}
 
 	public void save(HashMap<String, Object> result){
-		//与配置文件的默认值合并，再全部转为list
-		result.putAll(defaultValue);
+		//与配置文件的默认值合并，再全部转为list   不用putall 在result里则不替换。    生成sql要求sql的配置必需在resultmap里，否者替换不了[] 导入报错
+		for(String key:defaultValue.keySet()){
+			if(result.get(key)==null||result.get(key).equals("")){
+				result.put(key, defaultValue.get(key));
+			}
+		}
+		
 		CommonUtils.mapValueToList(result);
 		
 		SqlSessionFactory ssf =(SqlSessionFactory) ApplicationContextUtils.getInstance().getBean("sqlSessionFactory");
@@ -59,13 +65,15 @@ public class InsertSave implements Save{
 		List list=(List)result.get(result.keySet().iterator().next());
 		int listsize=list.size();
 		for(int i=0;i<listsize;i++){
-			String select=CommonUtils.getSingleSql(selectExpression,result,mapValue,i);
-			HashMap<String, String> selectMap=new HashMap<String, String>();
-			selectMap.put("select", select);
-			int selectcount=session.selectOne("com.purang.grab.dao.CommonDao.select", selectMap);
-			if(selectcount>0) {
-				session.close();
-				return;
+			if(StringUtils.isNotBlank(selectExpression)){
+				String select=CommonUtils.getSingleSql(selectExpression,result,mapValue,i);
+				HashMap<String, String> selectMap=new HashMap<String, String>();
+				selectMap.put("select", select);
+				int selectcount=session.selectOne("com.purang.grab.dao.CommonDao.select", selectMap);
+				if(selectcount>0) {
+					session.close();
+					return;
+				}
 			}
 
 			String insert=CommonUtils.getSingleSql(insertExpression,result,mapValue,i);

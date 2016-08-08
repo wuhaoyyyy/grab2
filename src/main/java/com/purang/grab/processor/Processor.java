@@ -11,10 +11,9 @@ import com.purang.grab.rule.FieldRule;
 public abstract class Processor {
 
 	protected int level = 0;
-	protected boolean isJson=false;
 	protected Map<String, String> defaultValue;
 	protected List<FieldRule> fieldRuleList;
-	protected List<FieldRule> urlList;
+	protected List<FieldRule> gotoLinkList;
 	protected ExitRule exitRule;
 
 	public int getLevel() {
@@ -24,7 +23,7 @@ public abstract class Processor {
 	public void setLevel(int level) {
 		this.level = level;
 	}
-
+	
 	public Map<String, String> getDefaultValue() {
 		return defaultValue;
 	}
@@ -41,12 +40,12 @@ public abstract class Processor {
 		this.fieldRuleList = fieldRuleList;
 	}
 
-	public List<FieldRule> getUrlList() {
-		return urlList;
+	public List<FieldRule> getGotoLinkList() {
+		return gotoLinkList;
 	}
 
-	public void setUrlList(List<FieldRule> urlList) {
-		this.urlList = urlList;
+	public void setGotoLinkList(List<FieldRule> gotoLinkList) {
+		this.gotoLinkList = gotoLinkList;
 	}
 	
 	public ExitRule getExitRule() {

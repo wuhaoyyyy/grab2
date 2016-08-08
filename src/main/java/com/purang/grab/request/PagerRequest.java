@@ -1,8 +1,7 @@
 package com.purang.grab.request;
 
-import us.codecraft.webmagic.Request;
 
-public class PagerRequest extends Request {
+public class PagerRequest extends CommonPager {
 
 	private static final long serialVersionUID = 1L;
 	private String startUrl;
@@ -37,16 +36,19 @@ public class PagerRequest extends Request {
 
 	public PagerRequest getNextPager(){
 		PagerRequest pagerRequest=new PagerRequest();
-		pagerRequest.setStartUrl(this.startUrl);
-		start++;
+		start=start+tolerance;
+		pagerRequest.setStartUrl(startUrl);
 		pagerRequest.setStart(start);
+		pagerRequest.setTolerance(tolerance);
 		pagerRequest.setUrl(getNextUrl());
+		pagerRequest.setDefaultValue(defaultValue);
 		pagerRequest.putExtra("level",0);
+		pagerRequest.putExtra("defaultValue", this.getDefaultValue());
 		return pagerRequest;
 	}
 	
 	public String getNextUrl(){
-		String url=startUrl.replace("[*]", String.valueOf(start-1));
+		String url=startUrl.replace("[*]", String.valueOf(start-tolerance));
 		return url;
 	}
 	

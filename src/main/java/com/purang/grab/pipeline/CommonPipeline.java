@@ -21,10 +21,9 @@ public class CommonPipeline extends AbstractPipeline {
 
 	@Override
 	public void process(ResultItems resultItems, Task task) {
+		
 		HashMap<String, Object> result=resultItems.get("result");
 		if(result==null) return;
-		HashMap<String, Object> downloadresult=resultItems.get("downloadresult");
-		List<HashMap<String,String>> resultMapList=new ArrayList<HashMap<String,String>>();
 		save.save(result);
 	}
 }

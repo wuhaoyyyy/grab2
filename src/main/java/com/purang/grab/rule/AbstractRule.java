@@ -2,6 +2,7 @@ package com.purang.grab.rule;
 
 import com.purang.grab.util.CommonUtils;
 
+import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.selector.Html;
 
 public abstract class AbstractRule implements Rule {
@@ -101,16 +102,16 @@ public abstract class AbstractRule implements Rule {
 
 
 	@Override
-	public Object getRuleResult(Html html) {
+	public Object getRuleResult(Page page) {
 		switch(ruleResultType){
 			case "1":
-				return CommonUtils.getSelectorResult(html, this.ruleExpression, this.ruleType);
+				return CommonUtils.getSelectorResult(page, this.ruleExpression, this.ruleType);
 			case "2":
-				return CommonUtils.getSelectorListResult(html, this.ruleExpression, this.ruleType);
+				return CommonUtils.getSelectorListResult(page, this.ruleExpression, this.ruleType);
 			case "3":
-				return CommonUtils.getSelectorLinkResult(html, this.ruleExpression, this.ruleType);
+				return CommonUtils.getSelectorLinkResult(page, this.ruleExpression, this.ruleType);
 			case "4":
-				return CommonUtils.getSelectorLinkListResult(html, this.ruleExpression, this.ruleType);
+				return CommonUtils.getSelectorLinkListResult(page, this.ruleExpression, this.ruleType);
 		}
 		return null;
 	}

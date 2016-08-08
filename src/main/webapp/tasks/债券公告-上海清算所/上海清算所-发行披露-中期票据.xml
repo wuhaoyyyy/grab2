@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<bean id="scheduler" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+		<list>
+			<ref bean="simpleTrigger" />
+		</list>
+		</property>
+	</bean>
+	<bean id="job" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="task"></property>
+		<property name="targetMethod" value="doTask" />
+		<property name="concurrent" value="false" /><!-- 作业不并发调度 -->
+	</bean>
+	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="job" />
+		<property name="startDelay" value="0" />
+		<property name="repeatCount" value="0" /><!-- 只执行一次 -->
+		<property name="repeatInterval" value="1" /><!--  -->
+	</bean>
+	
+	
+	<bean id="task" scope="singleton" class="com.purang.grab.task.CommonTask">
+		<property name="taskName" value="上海清算所-发行披露-中期票据"></property>
+		<property name="taskDesc" value="上海清算所-发行披露-中期票据"></property>
+		<property name="requestList">
+        	<list>
+        		<ref bean="request145"/>
+        		<ref bean="request146"/>
+        		<ref bean="request147"/>
+        		<ref bean="request148"/>
+        		<ref bean="request149"/>
+        		<ref bean="request150"/>
+        		<ref bean="request151"/>
+        		<ref bean="request152"/>
+        		<ref bean="request153"/>
+        		<ref bean="request154"/>
+        		<ref bean="request449"/>
+        		<ref bean="request981"/>
+        	</list>
+		</property>
+		<property name="threadCount" value="5"></property>
+		<property name="processor" ref="processor"></property>
+		<property name="pipelineList">
+        	<list>
+        		<ref bean="pipeline1" /><!-- 自定义 -->
+        	</list>
+		</property>
+	</bean>
+	
+	<bean id="processor" scope="singleton" class="com.purang.grab.task.CommonPageProcessor">
+		<property name="site" ref="site"></property>
+		<property name="processorList">
+        	<list>
+        		<ref bean="commonprocessor" />
+        		<ref bean="shClearingDownloadProcessor" />
+        	</list>
+		</property>
+	</bean>
+	<bean id="site" class="com.purang.grab.site.CommonSite">
+		<property name="charset" value="UTF-8"></property>
+		<property name="sleepTime" value="2000"></property>
+		<property name="timeOut" value="60000"></property>
+		<property name="useGzip" value="false"></property>
+		<property name="headers">
+			<map>
+				<entry key="Accept-Encoding" value="deflate"/>   
+			</map>
+		</property>
+	</bean>
+	
+	
+	
+	<bean id="commonprocessor" class="com.purang.grab.processor.CommonProcessor">
+		<property name="fieldRuleList">
+			<list>
+				<ref bean="titlefieldrule"/>
+				<ref bean="pubdatefieldrule"/>
+				<ref bean="linkurlfieldrule"/>
+			</list>
+		</property>
+		<property name="gotoLinkList" ref="gotolink"></property><!-- shClearingDownloadProcessor -->
+	</bean>
+	
+	<bean id="shClearingDownloadProcessor" class="com.purang.grab.processor.ShClearingDownloadProcessor">
+	</bean>
+	
+	<bean id="titlefieldrule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="类型"></property> 
+		<property name="field" value="title1"></property> 
+		<property name="ruleExpression" value="$.datas[*].title"></property> 
+		<property name="ruleType" value="xjson"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+	<bean id="pubdatefieldrule" class="com.purang.grab.rule.DateFieldRule">
+		<property name="title" value="日期"></property> 
+		<property name="field" value="pubdate"></property> 
+		<property name="fromDateFormat" value="chinese"></property>
+		<property name="toDateFormat" value="yyyyMMdd"></property>
+		<property name="ruleExpression" value="$.datas[*].pubdate"></property> 
+		<property name="ruleType" value="xjson"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+	<bean id="linkurlfieldrule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="链接"></property> 
+		<property name="field" value="linkurl1"></property> 
+		<property name="ruleExpression" value="$.datas[*].linkurl"></property> 
+		<property name="ruleType" value="xjson"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+	
+	<bean id="dateexitrule" class="com.purang.grab.rule.DateExitRule">
+		<property name="title" value="日期"></property> 
+		<property name="field" value="pubdate"></property> 
+		<property name="fromDateFormat" value="chinese"></property>
+		<property name="toDateFormat" value="yyyyMMdd"></property>
+		<property name="ruleExpression" value="$.datas[*].pubdate"></property> 
+		<property name="ruleType" value="xjson"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+
+
+	<bean id="gotolink" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="打开链接"></property> 
+		<property name="field" value="gotolink"></property> 
+		<property name="ruleExpression" value="$.datas[*].linkurl"></property> 
+		<property name="ruleType" value="xjson"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+	
+	<bean id="pipeline1" class="com.purang.grab.pipeline.ShClearingPipeline">
+		<property name="save" ref="insertsave"></property>
+	</bean>
+	
+	<bean id="insertsave" class="com.purang.grab.save.InsertSave">
+		<property name="defaultValue">
+			<map>
+				<entry key="fsPublishStatus" value="2"/>   
+				<entry key="fnUpdateName" value="grab"/>   
+			</map>
+		</property>
+		<property name="selectExpression" value="select count(1) from  P12005  p where p.f3=[pubdate] and p.f4=[announceSource] and p.f5=[announceType1] and p.f7=[bondType1] and p.f9=[title1] and p.f10=[linkurl1] and p.f11=[title2]"></property>
+		<property name="insertExpression" value="INSERT INTO P12005 (fv, ft, f3, f4, f5, f7, f9, f10, f11, f12, f15, fs, fp, fu) VALUES([(auto)id],[(auto)id],[pubdate],[announceSource],[announceType1],[bondType1],[title1],[linkurl1],[title2],[linkurl2],[ftp],[fsPublishStatus],[(auto)date],[(auto)date])"></property>
+	</bean>
+	
+	
+	<bean id="request145" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=145&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="400"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/><!--公告来源   上海清算所     -->
+				<entry key="announceType1" value="301"/> <!--公告类型：原始披露一级	301	发行披露 -->
+				<entry key="bondType1" value="301"/> <!-- 债券类型:原始披露一级	债券类	301	中期票据 -->
+			</map>
+		</property>
+	</bean>
+	<bean id="request146" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=146&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="400"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/><!--公告来源   上海清算所     -->
+				<entry key="announceType1" value="301"/> <!--公告类型：原始披露一级	301	发行披露 -->
+				<entry key="bondType1" value="302"/> <!-- 债券类型:原始披露一级	债券类	302	短期融资券 -->
+			</map>
+		</property>
+	</bean>
+	<bean id="request147" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=147&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="400"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/><!--公告来源   上海清算所     -->
+				<entry key="announceType1" value="301"/> <!--公告类型：原始披露一级	301	发行披露 -->
+				<entry key="bondType1" value="303"/> <!-- 债券类型:原始披露一级	债券类	303	超短期融资券 -->
+			</map>
+		</property>
+	</bean>
+	<bean id="request148" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=148&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="400"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/><!--公告来源   上海清算所     -->
+				<entry key="announceType1" value="301"/> <!--公告类型：原始披露一级	301	发行披露 -->
+				<entry key="bondType1" value="304"/> <!-- 债券类型:原始披露一级	债券类	304	金融企业短期融资券 -->
+			</map>
+		</property>
+	</bean>
+	<bean id="request149" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=149&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="400"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/><!--公告来源   上海清算所     -->
+				<entry key="announceType1" value="301"/> <!--公告类型：原始披露一级	301	发行披露 -->
+				<entry key="bondType1" value="305"/> <!-- 债券类型:原始披露一级	债券类	非公开定向债务融资工具 -->
+			</map>
+		</property>
+	</bean>
+	<bean id="request150" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=150&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="400"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/><!--公告来源   上海清算所     -->
+				<entry key="announceType1" value="301"/> <!--公告类型：原始披露一级	301	发行披露 -->
+				<entry key="bondType1" value="306"/> <!-- 债券类型:原始披露一级	债券类	金融债 -->
+			</map>
+		</property>
+	</bean>
+	<bean id="request151" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=151&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="400"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/><!--公告来源   上海清算所     -->
+				<entry key="announceType1" value="301"/> <!--公告类型：原始披露一级	301	发行披露 -->
+				<entry key="bondType1" value="307"/> <!-- 债券类型:原始披露一级	债券类	信贷资产支持证券 -->
+			</map>
+		</property>
+	</bean>
+	<bean id="request152" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=152&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="400"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/><!--公告来源   上海清算所     -->
+				<entry key="announceType1" value="301"/> <!--公告类型：原始披露一级	301	发行披露 -->
+				<entry key="bondType1" value="308"/> <!-- 债券类型:原始披露一级	债券类	非金融企业资产支持票据 -->
+			</map>
+		</property>
+	</bean>
+	<bean id="request153" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=153&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="400"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/><!--公告来源   上海清算所     -->
+				<entry key="announceType1" value="301"/> <!--公告类型：原始披露一级	301	发行披露 -->
+				<entry key="bondType1" value="309"/> <!-- 债券类型:原始披露一级	债券类	区域集优中小企业集合票据 -->
+			</map>
+		</property>
+	</bean>
+	<bean id="request154" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=154&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="400"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/><!--公告来源   上海清算所     -->
+				<entry key="announceType1" value="301"/> <!--公告类型：原始披露一级	301	发行披露 -->
+				<entry key="bondType1" value="310"/> <!-- 债券类型:原始披露一级	债券类	信用风险缓释凭证 -->
+			</map>
+		</property>
+	</bean>
+	<bean id="request449" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=449&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="400"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/><!--公告来源   上海清算所     -->
+				<entry key="announceType1" value="301"/> <!--公告类型：原始披露一级	301	发行披露 -->
+				<entry key="bondType1" value="311"/> <!-- 债券类型:原始披露一级	债券类	同业存单 -->
+			</map>
+		</property>
+	</bean>
+	<bean id="request981" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=981&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="400"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/><!--公告来源   上海清算所     -->
+				<entry key="announceType1" value="301"/> <!--公告类型：原始披露一级	301	发行披露 -->
+				<entry key="bondType1" value="399"/> <!-- 债券类型:原始披露一级	债券类	qita -->
+			</map>
+		</property>
+	</bean>
+</beans>

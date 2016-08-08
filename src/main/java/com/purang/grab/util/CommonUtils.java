@@ -8,8 +8,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.selector.Html;
 
 public class CommonUtils {
@@ -30,53 +32,64 @@ public class CommonUtils {
 		}
 		return null;
 	}
-	public static String getSelectorResult(Html html,String rule,String type){
+	public static String getSelectorResult(Page page,String rule,String type){
 		String text=null;
 		switch(type){
 			case "css":
-				text=html.css(rule).toString().trim();
+				text=page.getHtml().css(rule).toString().trim();
 				break;
 			case "xpath":
-				text=html.xpath(rule).toString().trim();
+				text=page.getHtml().xpath(rule).toString().trim();
+				break;
+			case "xjson":
+				text=page.getJson().jsonPath(rule).get().trim();
 				break;
 		}
 		return text;
 		
 	}
 	
-	public static List<String> getSelectorListResult(Html html,String rule,String type){
+	public static List<String> getSelectorListResult(Page page,String rule,String type){
 		List<String> result=null;
 		switch(type){
 			case "css":
-				result=html.css(rule).all();
+				result=page.getHtml().css(rule).all();
 				break;
 			case "xpath":
-				result=html.xpath(rule).all();
+				result=page.getHtml().xpath(rule).all();
+				break;
+			case "xjson":
+				result=page.getJson().jsonPath(rule).all();
 				break;
 		}
 		return result;
 
 	}
 	
-	public static String getSelectorLinkResult(Html html,String rule,String type){
+	public static String getSelectorLinkResult(Page page,String rule,String type){
 		String text=null;
 		switch(type){
 			case "css":
-				text=html.css(rule).links().toString().trim();
+				text=page.getHtml().css(rule).links().toString().trim();
 				break;
 			case "xpath":
-				text=html.xpath(rule).links().toString().trim();
+				text=page.getHtml().xpath(rule).links().toString().trim();
+				break;
+			case "xjson":
+				text=page.getJson().jsonPath(rule).links().toString().trim();
 				break;
 		}
 		return text;
 		
 	}
-	public static List<String> getSelectorLinkListResult(Html html,String rule,String type){
+	public static List<String> getSelectorLinkListResult(Page page,String rule,String type){
 		switch(type){
 			case "css":
-				return html.css(rule).links().all();
+				return page.getHtml().css(rule).links().all();
 			case "xpath":
-				return html.xpath(rule).links().all();
+				return page.getHtml().xpath(rule).links().all();
+			case "xjson":
+				return page.getJson().jsonPath(rule).links().all();
 		}
 		return null;
 	}
@@ -97,7 +110,7 @@ public class CommonUtils {
 	/*
 	 * 将map的value全部转为list
 	 */
-	public static void mapValueToList(HashMap<String, Object> map){
+	public static int mapValueToList(HashMap<String, Object> map){
 		boolean isList=false;
 		int listsize=0;
 		for(String key:map.keySet()){
@@ -128,7 +141,21 @@ public class CommonUtils {
 				map.put(key, l);
 			}
 		}
+		return listsize;
 	}
+	/*
+	 * h获取map中一行
+	 */
+	
+	public static Map getSingleMap(Map<String, Object> map,int i){
+		Map<String,String> singleMap=new HashMap<String, String>();
+		for(String key:map.keySet()){
+			List<String> v=(List<String>)map.get(key);
+			singleMap.put(key, v.get(i));
+		}
+		return singleMap;
+	}
+	
 	
 	public static String getSingleSql(String sql,HashMap<String, Object> map,HashMap<String, String> mapValue,int index){
 		for(String key:map.keySet()){
@@ -139,7 +166,7 @@ public class CommonUtils {
 			}
 			else if(sql.indexOf(mapkey)>0){
 				sql=sql.replace(mapkey, "'"+mapValue.get(currentvalue)+"'");
-			}	
+			}
 		}
 		for(String autoField:CommonUtils.AUTOFIELD){
 			if(sql.indexOf(autoField)>0){

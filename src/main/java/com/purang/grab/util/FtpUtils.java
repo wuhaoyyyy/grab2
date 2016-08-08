@@ -44,7 +44,7 @@ public class FtpUtils {
 			
 			FTPFile[] f= ftpClient.listDirectories();
 			for(FTPFile ftpFile:f){
-				System.out.println(ftpFile.getName());
+				//System.out.println(ftpFile.getName());
 			}
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
@@ -100,13 +100,14 @@ public class FtpUtils {
     public static void upload(InputStream is, String fileDir ,String fielName) {
     	FTPClient ftpClient=getConnection();
     	Mkdirs(ftpClient, fileDir);
+    	taskLog.info("文件下载中..."+downloadCount++);
     	try {
     		if(!ftpClient.storeFile(fielName, is)){
     			//ftpClient.getReplyString()
     			System.out.println(ftpClient.getReplyString());
     		}
     		else{
-    			taskLog.info("文件下载完成..."+downloadCount++);
+    			taskLog.info("文件下载完成..."+downloadCount--);
     		}
 		} catch (Exception e) {
 			e.printStackTrace();

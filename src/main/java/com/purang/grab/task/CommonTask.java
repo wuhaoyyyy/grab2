@@ -30,25 +30,28 @@ public class CommonTask extends Task{
 //			spider.start();
 //			return;
 //		}
-		
-		spider = Spider.create(processor).thread(threadCount).setExitWhenComplete(true).startUrls(urlList);
+
+		spider = Spider.create(processor).thread(threadCount).setExitWhenComplete(true);
 		//初始化url列表
-		for(String url:urlList){
-			Request request=new Request();
-			request.setUrl(url);
-			request.putExtra("level",0);
-			spider.addRequest(request);
+		if(urlList!=null){
+			for(String url:urlList){
+				Request request=new Request();
+				request.setUrl(url);
+				request.putExtra("level",0);
+				spider.addRequest(request);
+			}			
 		}
 		//初始化request列表
-		for(Request request:requestList){
-			//初始化request列表中PagerRequest的第一页
-			if(request instanceof PagerRequest){
-				PagerRequest pagerRequest=(PagerRequest)request;
-				pagerRequest.init();
-				spider.addRequest(pagerRequest.getNextPager());
-			}
+		if(requestList!=null){
+			for(Request request:requestList){
+				//初始化request列表中PagerRequest的第一页
+				if(request instanceof PagerRequest){
+					PagerRequest pagerRequest=(PagerRequest)request;
+					pagerRequest.init();
+					spider.addRequest(pagerRequest.getNextPager());
+				}
+			}			
 		}
-		
 		for(Pipeline pipeline:pipelineList){
 			spider.addPipeline(pipeline);
 		}

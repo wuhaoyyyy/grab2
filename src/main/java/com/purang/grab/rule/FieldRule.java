@@ -1,11 +1,11 @@
 package com.purang.grab.rule;
 
-import us.codecraft.webmagic.selector.Html;
+import us.codecraft.webmagic.Page;
 
 public class FieldRule extends AbstractRule{
 	
 	@Override
-	public Object getRuleResult(Html html) {
-		return super.getRuleResult(html);
+	public Object getRuleResult(Page page) {
+		return super.getRuleResult(page);
 	}
 }
