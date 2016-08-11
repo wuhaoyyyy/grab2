@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.purang.grab.request.PagerRequest;
+import com.purang.grab.util.StringUtils;
 
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Spider;
@@ -47,7 +48,17 @@ public class CommonTask extends Task{
 				//初始化request列表中PagerRequest的第一页
 				if(request instanceof PagerRequest){
 					PagerRequest pagerRequest=(PagerRequest)request;
-					pagerRequest.init();
+					
+					String firstUrl=pagerRequest.getFirstUrl();
+					if(StringUtils.isNotBlank(firstUrl)){
+						Request firstRequest=new Request();
+						firstRequest.setUrl(firstUrl);
+						firstRequest.putExtra("level",0);
+						firstRequest.putExtra("defaultValue", pagerRequest.getDefaultValue());
+						spider.addRequest(firstRequest);
+					}
+					
+					pagerRequest.resetStart();
 					spider.addRequest(pagerRequest.getNextPager());
 				}
 			}			

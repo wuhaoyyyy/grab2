@@ -3,6 +3,7 @@ package com.purang.grab.task;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.purang.grab.processor.AbstractProcessor;
 import com.purang.grab.processor.Processor;
 
 import us.codecraft.webmagic.Page;
@@ -37,7 +38,7 @@ public class CommonPageProcessor implements PageProcessor{
 	public void process(Page page) {
 		int level=(int) page.getRequest().getExtra("level");
 		Processor processor=processorList.get(level);//这里限定根据level选取对应processor处理 processor里无须判断，但processor里需要加上level传给pipline处理
-		processor.setLevel(level);
+		((AbstractProcessor)processor).setLevel(level);
 		page.putField("level",level);//交给pipeline处理
 		processor.process(page);
 	}

@@ -31,26 +31,19 @@ public class DateFieldRule extends FieldRule {
 	}
 
 	@Override
-	public Object getRuleResult(Page page) {
-		Object date=super.getRuleResult(page);
+	public List<String> getRuleResult(Page page) {
+		List<String> date=super.getRuleResult(page);
 
 		return getFormatDate(date);
 	}
 	
-	private Object getFormatDate(Object date){
-		if(date instanceof String){
-			String datestr=DateUtils.getString(date.toString(), fromDateFormat,toDateFormat);
-			return datestr;
+	private List<String> getFormatDate(List<String> date){
+		List<String> dateList=new ArrayList<>();
+		for(String s:(ArrayList<String>)date){
+			String datestr=DateUtils.getString(s, fromDateFormat,toDateFormat);
+			dateList.add(datestr);
 		}
-		else if(date instanceof List){
-			List<String> dateList=new ArrayList<>();
-			for(String s:(ArrayList<String>)date){
-				String datestr=DateUtils.getString(s, fromDateFormat,toDateFormat);
-				dateList.add(datestr);
-			}
-			return dateList;
-		}
-		return null;
+		return dateList;	
 	}
 	
 }

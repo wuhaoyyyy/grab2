@@ -1,6 +1,10 @@
 package com.purang.grab.pipeline;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.purang.grab.save.Save;
+import com.purang.grab.util.CommonUtils;
 
 import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
@@ -8,8 +12,26 @@ import us.codecraft.webmagic.pipeline.Pipeline;
 
 public abstract class AbstractPipeline implements Pipeline {
 
+	protected int level;
+	Map<String,String> defaultValue=new HashMap<String, String>();
+	protected Map<String, Object> result=new HashMap<String, Object>();
 	protected Save save;
-	
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	public Map<String, String> getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(Map<String, String> defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
 	public Save getSave() {
 		return save;
 	}
@@ -20,6 +42,14 @@ public abstract class AbstractPipeline implements Pipeline {
 
 	@Override
 	public void process(ResultItems resultItems, Task task) {
-
+		if(!resultItems.get("level").toString().equals(String.valueOf(this.level))) return;
+		this.result=resultItems.get("result");
+		if(this.defaultValue!=null){
+			result.putAll(this.defaultValue);
+		}	
+		CommonUtils.mapValueToList(result);
+		gotoProcess(resultItems, task);
 	}
+	
+	public abstract void gotoProcess(ResultItems resultItems, Task task);
 }

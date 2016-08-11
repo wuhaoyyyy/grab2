@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+	<!--  -->
+	<bean id="scheduler" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+		<list>
+			<ref bean="simpleTrigger" />
+		</list>
+		</property>
+	</bean>
+	<bean id="job" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="task"></property>
+		<property name="targetMethod" value="doTask" />
+		<property name="concurrent" value="false" /><!-- 作业不并发调度 -->
+	</bean>
+	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="job" />
+		<property name="startDelay" value="0" />
+		<property name="repeatCount" value="0" /><!-- 只执行一次 -->
+		<property name="repeatInterval" value="1" />
+	</bean>
+	<bean id="task" scope="singleton" class="com.purang.grab.task.CommonTask">
+		<!-- 交易流通要素公告和历史数据-->
+		<property name="taskName" value="债券公告-上海清算所(不分20页)-全部"></property>
+		<property name="taskDesc" value="债券公告-上海清算所(不分20页)-全部"></property>
+
+		<!-- 所有分类的翻页  包含第一页firstUrl-->
+		<property name="requestList">
+        	<list>				
+				<ref bean="mtn_542_1"/>
+<!-- 				<ref bean="cp_543_1"/> -->
+<!-- 				<ref bean="scp_544_1"/> -->
+<!-- 				<ref bean="qscp_545_1"/> -->
+<!-- 				<ref bean="ppn_546_1"/> -->
+<!-- 				<ref bean="jrz_547_1"/> -->
+<!-- 				<ref bean="abs_548_1"/> -->
+<!-- 				<ref bean="abn_549_1"/> -->
+<!-- 				<ref bean="smecnii_550_1"/> -->
+<!-- 				<ref bean="crmw_551_1"/> -->
+<!-- 				<ref bean="ncd_1"/> -->
+<!-- 				<ref bean="GN_3_1"/>	 -->
+<!-- 				<ref bean="PRN_3_1"/> -->
+<!-- 				<ref bean="crmw_2"/> -->
+<!-- 				<ref bean="scp_2"/> -->
+<!-- 				<ref bean="ppn_2"/> -->
+<!-- 				<ref bean="cp_2"/> -->
+<!-- 				<ref bean="qscp_2"/> -->
+<!-- 				<ref bean="smecnii_2"/> -->
+<!-- 				<ref bean="abn_2"/> -->
+<!-- 				<ref bean="abs_2"/> -->
+<!-- 				<ref bean="jrz_2"/> -->
+<!-- 				<ref bean="xypjgzpl_2"/> -->
+<!-- 				<ref bean="cwbg_201103_3"/> -->
+<!-- 				<ref bean="cwbg_201102_3"/> -->
+<!-- 				<ref bean="cwbg_201101_3"/> -->
+<!-- 				<ref bean="cwbg_2012_3"/> -->
+<!-- 				<ref bean="cwbg_2013_3"/> -->
+<!-- 				<ref bean="crmw_580_4"/> -->
+<!-- 				<ref bean="scp_573_4"/> -->
+<!-- 				<ref bean="cp_572_4"/> -->
+<!-- 				<ref bean="ppn_575_4"/> -->
+<!-- 				<ref bean="smecnii_579_4"/> -->
+<!-- 				<ref bean="qscp_4"/> -->
+        	</list>
+		</property>
+		<property name="threadCount" value="10"></property>
+		<property name="processor" ref="processor"></property>
+		<property name="pipelineList">
+        	<list>
+        		<ref bean="pipeline1" /><!-- 自定义 -->
+        	</list>
+		</property>
+	</bean>
+	<bean id="processor" scope="singleton" class="com.purang.grab.task.CommonPageProcessor">
+		<property name="site" ref="site"></property>
+		<property name="processorList">
+        	<list>
+        		<ref bean="commonprocessor" />
+        		<ref bean="shClearingDownloadProcessor" />
+        	</list>
+		</property>
+	</bean>
+	<bean id="site" class="com.purang.grab.site.CommonSite">
+		<property name="charset" value="UTF-8"></property>
+		<property name="sleepTime" value="2000"></property>
+		<property name="timeOut" value="60000"></property>
+		<property name="useGzip" value="false"></property>
+		<property name="headers">
+			<map>
+				<entry key="Accept-Encoding" value="deflate"/>   
+			</map>
+		</property>
+		<property name="acceptStatCode">
+			<set>
+				<value>200</value>
+				<value>404</value><!-- 添加404 翻页找不到时不处理不报错 -->
+			</set>
+		</property>
+	</bean>
+	
+	
+	
+	<bean id="commonprocessor" class="com.purang.grab.processor.GoToLinkProcessor">
+		<property name="fieldRuleList">
+			<list>
+				<ref bean="titlefieldrule"/>
+				<ref bean="pubdatefieldrule"/>
+				<ref bean="linkurlfieldrule"/>
+			</list>
+		</property>
+		<property name="gotoLink" ref="gotolink"></property>
+	</bean>
+	
+	<bean id="shClearingDownloadProcessor" class="com.purang.grab.processor.ShClearingDownloadProcessor">
+	</bean>
+	
+	<bean id="titlefieldrule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="标题1"></property> 
+		<property name="field" value="title1"></property> 
+		<property name="ruleExpression" value="*/ul[@class='list']/li/a/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+	<bean id="pubdatefieldrule" class="com.purang.grab.rule.DateFieldRule">
+		<property name="title" value="日期"></property> 
+		<property name="field" value="pubdate"></property> 
+		<property name="fromDateFormat" value="yyyy-MM-dd"></property>
+		<property name="toDateFormat" value="yyyyMMdd"></property>
+		<property name="ruleExpression" value="*/ul[@class='list']/li/span/script/html()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="2"></property> 
+		<property name="cutPrefix" value="crtime= '"></property> 
+		<property name="cutPostfix" value="';"></property> 
+	</bean>
+
+	<bean id="linkurlfieldrule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="链接1"></property> 
+		<property name="field" value="linkurl1"></property> 
+		<property name="ruleExpression" value="*/ul[@class='list']/li/a"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="4"></property> 
+	</bean>
+
+	<bean id="gotolink" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="打开链接"></property> 
+		<property name="field" value="gotolink"></property> 
+		<property name="ruleExpression" value="*/ul[@class='list']/li/a"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="4"></property> 
+	</bean>
+
+	
+	<bean id="pipeline1" class="com.purang.grab.pipeline.ShClearingPipeline">
+		<property name="level" value="1"></property>
+		<property name="save" ref="insertsave"></property>
+	</bean>
+	
+	<bean id="insertsave" class="com.purang.grab.save.InsertSave">
+		<property name="defaultValue">
+			<map>
+				<entry key="fsPublishStatus" value="2"/>   
+				<entry key="fnUpdateName" value="grab"/>  
+				<entry key="announceType2" value=""/>   
+				<entry key="bondType2" value=""/>    
+			</map>
+		</property>
+		<property name="selectExpression" value="select count(1) from  P12005  p where p.f3=[pubdate] and p.f4=[announceSource] and p.f5=[announceType1] and p.f7=[bondType1] and p.f9=[title1] and p.f10=[linkurl1] and p.f11=[title2]"></property>
+		<property name="insertExpression" value="INSERT INTO P12005 (fv, ft, f3, f4, f5, f7, f6, f8, f9, f10, f11, f12, f15, fs, fp, fu) VALUES([(auto)id],[(auto)id],[pubdate],[announceSource],[announceType1],[bondType1],[announceType2],[bondType2],[title1],[linkurl1],[title2],[linkurl2],[ftp],[fsPublishStatus],[(auto)date],[(auto)date])"></property>
+	</bean>
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- 303交易流通要素公告 -->
+	<bean id="mtn_542_1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/jyltysgg/mtn_542/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/mtn_542/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="303"/>
+				<entry key="bondType1" value="301"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="cp_543_1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/jyltysgg/cp_543/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/cp_543/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="303"/>
+				<entry key="bondType1" value="302"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="scp_544_1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/jyltysgg/scp_544/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/scp_544/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="303"/>
+				<entry key="bondType1" value="303"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="qscp_545_1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/jyltysgg/qscp_545/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/qscp_545/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="303"/>
+				<entry key="bondType1" value="304"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="ppn_546_1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/jyltysgg/ppn_546/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/ppn_546/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="303"/>
+				<entry key="bondType1" value="305"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="jrz_547_1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/jyltysgg/jrz_547/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/jrz_547/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="303"/>
+				<entry key="bondType1" value="306"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="abs_548_1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/jyltysgg/abs_548/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/abs_548/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="303"/>
+				<entry key="bondType1" value="307"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="abn_549_1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/jyltysgg/abn_549/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/abn_549/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="303"/>
+				<entry key="bondType1" value="308"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="smecnii_550_1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/jyltysgg/smecnii_550/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/smecnii_550/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="303"/>
+				<entry key="bondType1" value="309"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="crmw_551_1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/jyltysgg/crmw_551/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/crmw_551/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="303"/>
+				<entry key="bondType1" value="310"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="ncd_1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/jyltysgg/ncd/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/ncd/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="303"/>
+				<entry key="bondType1" value="311"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="GN_3_1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/jyltysgg/GN_3/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/GN_3/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="303"/>
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="PRN_3_1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/jyltysgg/PRN_3/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/PRN_3/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="303"/>
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	
+	
+	<!-- 历史数据  发行创设公告30801 -->
+	<bean id="crmw_2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/crmw/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/crmw/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="308"/>
+				<entry key="announceType2" value="30801"/> 
+				<entry key="bondType1" value="310"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="scp_2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/scp/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/scp/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="308"/>
+				<entry key="announceType2" value="30801"/> 
+				<entry key="bondType1" value="303"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="ppn_2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/ppn/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/ppn/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="308"/>
+				<entry key="announceType2" value="30801"/> 
+				<entry key="bondType1" value="305"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="cp_2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/cp/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/cp/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="308"/>
+				<entry key="announceType2" value="30801"/> 
+				<entry key="bondType1" value="302"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="qscp_2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/qscp/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/qscp/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="308"/>
+				<entry key="announceType2" value="30801"/> 
+				<entry key="bondType1" value="304"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="smecnii_2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/smecnii/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/smecnii/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="308"/>
+				<entry key="announceType2" value="30801"/> 
+				<entry key="bondType1" value="309"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="abn_2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/abn/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/abn/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="308"/>
+				<entry key="announceType2" value="30801"/> 
+				<entry key="bondType1" value="308"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="abs_2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/abs/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/abs/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="308"/>
+				<entry key="announceType2" value="30801"/> 
+				<entry key="bondType1" value="307"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="jrz_2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/jrz/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/fxpl/jrz/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="308"/>
+				<entry key="announceType2" value="30801"/> 
+				<entry key="bondType1" value="306"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 历史数据 信用评级跟踪披露 30802 -->
+	<bean id="xypjgzpl_2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/xypjgzpl/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/xypjgzpl/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="308"/>
+				<entry key="announceType2" value="30802"/> 
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	<!-- 历史数据 财务报告和重大事项公告 30803 -->
+	<bean id="cwbg_201103_3" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/cwbg/201103/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/cwbg/201103//index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="305"/>
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="cwbg_201102_3" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/cwbg/201102/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/cwbg/201102/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="305"/>
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="cwbg_201101_3" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/cwbg/201101/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/cwbg/201101/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="305"/>
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="cwbg_2012_3" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/cwbg/2012/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/cwbg/2012/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="305"/>
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="cwbg_2013_3" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/cwbg/2013/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/cwbg/2013/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="305"/>
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	<!-- 历史数据 付息兑付及注销 30804 -->
+	<bean id="crmw_580_4" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/fxdfjzx/crmw_580/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/fxdfjzx/crmw_580/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="308"/>
+				<entry key="announceType2" value="30804"/> 
+				<entry key="bondType1" value="310"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="scp_573_4" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/fxdfjzx/scp_573/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/fxdfjzx/scp_573/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="308"/>
+				<entry key="announceType2" value="30804"/> 
+				<entry key="bondType1" value="303"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="cp_572_4" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/fxdfjzx/cp_572/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/fxdfjzx/cp_572/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="308"/>
+				<entry key="announceType2" value="30804"/> 
+				<entry key="bondType1" value="302"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="ppn_575_4" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/fxdfjzx/ppn_575/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/fxdfjzx/ppn_575/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="308"/>
+				<entry key="announceType2" value="30804"/> 
+				<entry key="bondType1" value="305"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="smecnii_579_4" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/fxdfjzx/smecnii_579/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/fxdfjzx/smecnii_579/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="308"/>
+				<entry key="announceType2" value="30804"/> 
+				<entry key="bondType1" value="309"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="qscp_4" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/lssj/fxdfjzx/qscp/"></property>
+		<property name="startUrl" value="http://www.shclearing.com/xxpl/lssj/fxdfjzx/qscp/index_[*].html"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="308"/>
+				<entry key="announceType2" value="30804"/> 
+				<entry key="bondType1" value="304"/> 
+			</map>
+		</property>
+	</bean>
+	
+	
+</beans>

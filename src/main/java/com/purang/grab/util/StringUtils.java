@@ -478,4 +478,18 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		value=value.toString().replaceAll(":", "：");
 		return value;
     }
+    
+    public static String getCutString(String text,String cutPrefix,String cutPostfix){
+		if(StringUtils.isNotBlank(cutPrefix)&&!StringUtils.isNotBlank(cutPostfix)){
+			return text.substring(text.indexOf(cutPrefix)+cutPrefix.length());
+		}
+		else if(!StringUtils.isNotBlank(cutPrefix)&&StringUtils.isNotBlank(cutPostfix)){
+			return text.substring(0, text.indexOf(cutPostfix));
+		}
+		else if(StringUtils.isNotBlank(cutPrefix)&&StringUtils.isNotBlank(cutPostfix)){
+			int preIndex=text.indexOf(cutPrefix)+cutPrefix.length();
+			return text.substring(preIndex, text.indexOf(cutPostfix,preIndex));
+		}
+		return text;
+    }
 }

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,8 +13,12 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 
 import com.purang.grab.util.CommonUtils;
 import com.purang.grab.util.FtpUtils;
@@ -22,41 +28,57 @@ import us.codecraft.webmagic.Task;
 
 public class ShClearingPipeline extends AbstractPipeline {
 
+	private static ExecutorService es=Executors.newFixedThreadPool(10);
 	private static Log taskLog = LogFactory.getLog("grabtask");
 	@Override
-	public void process(ResultItems resultItems, Task task) {
-		
-		HashMap<String, Object> result=resultItems.get("result");
-		if(result==null) return;
-		if(!resultItems.get("level").toString().equals("1")) return;
-		List<String> downloadfileurlList=(List<String>) result.get("downloadfileurlList");
+	public void gotoProcess(ResultItems resultItems, Task task) {
+		final List<String> downloadfileurlList=(List<String>) result.get("downloadfileurlList");
+		if(downloadfileurlList==null){
+			result.put("title2", "");
+			result.put("linkurl2", "");
+			result.put("ftp", "");
+			save.save(result);
+			return;
+		}
 		List<String> filedescList=(List<String>) result.get("filedescList");
 		String pubdate=result.get("pubdate").toString();
 		for(int i=0;i<downloadfileurlList.size();i++){
+			final int j=i;
 			result.put("title2", filedescList.get(i));
 			result.put("linkurl2", downloadfileurlList.get(i));
-			//System.out.println(result.get("pubdate"));//与上面打印结果不一致。。。
-		    String ftpSaveDir="/bondannounce/"+pubdate;
-			String ftpSaveName=CommonUtils.getAutoValue("[(auto)id]")+".pdf";
+			//System.out.println(result.get("pubdate"));//与上面打印结果不一致？？？
+		    final String ftpSaveDir="/bondannounce/"+pubdate;
+			final String ftpSaveName=CommonUtils.getAutoValue("[(auto)id]")+".pdf";
 			result.put("ftp", "ftp://"+FtpUtils.ftpserver+ftpSaveDir+"/"+ftpSaveName);
-			
-			
+//			final HashMap<String, Object> r=result; 
+//			es.execute(new Runnable() {
+//				@Override
+//				public void run() {
+//					downloadFileToFtpGet(downloadfileurlList.get(j),ftpSaveDir,ftpSaveName);
+//					save.save(r);
+//				}
+//			});
 			downloadFileToFtpGet(downloadfileurlList.get(i),ftpSaveDir,ftpSaveName);
-			//taskLog.info(Thread.currentThread().getName()+"文件下载..."+(downloadCount++)+":"+durl);
-			//taskLog.info(Thread.currentThread().getName()+"数据保存..."+insertCount++);
 			save.save(result);
 		}
 	}
+	
+	
+	
+	
+	
+	
+	
 
 	public void downloadFileToFtpGet(String url, String fileDir ,String fielName){
 		try {
-			HttpClient client = new DefaultHttpClient();  
+			CloseableHttpClient client = HttpClients.createDefault();
 			HttpGet httpget = new HttpGet(url);  
 			HttpResponse response = client.execute(httpget);  
 			HttpEntity entity = response.getEntity();  
 			InputStream is = entity.getContent();
-			
-			FtpUtils.upload(is, fileDir, fielName);
+			FtpUtils.upload(entity.getContentLength(),url,is, fileDir, fielName);
+			client.close();
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IllegalStateException e) {

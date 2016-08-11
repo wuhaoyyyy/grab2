@@ -26,64 +26,7 @@
 	<bean id="task" scope="singleton" class="com.purang.grab.task.CommonTask">
 		<property name="taskName" value="债券公告-上海清算所-前20页全部"></property>
 		<property name="taskDesc" value="债券公告-上海清算所-前20页全部"></property>
-		<property name="urlList">
-        	<list>
-				        		
-				<value>http://www.shclearing.com/xxpl/fxpl/mtn</value>
-<!-- 				<value>http://www.shclearing.com/xxpl/fxpl/cp</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxpl/scp</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxpl/qscp</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxpl/ppn</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxpl/jrz</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxpl/abs</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxpl/abn</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxpl/smecnii</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxpl/crmw</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxpl/tycd1</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxpl/GN_1</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxpl/PRN_1</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxqkbg/mtn01</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxqkbg/cp01</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxqkbg/scp01</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxqkbg/qscp01</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxqkbg/ppn01</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxqkbg/jrz01</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxqkbg/abs01</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxqkbg/abn01</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxqkbg/smecnii01</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxqkbg/crmw01</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxqkbg/tycd2</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxpl/GN_2</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/fxpl/PRN_2</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/jyltysgg/mtn_542</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/jyltysgg/cp_543</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/jyltysgg/scp_544</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/jyltysgg/qscp_545</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/jyltysgg/ppn_546</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/jyltysgg/jrz_547</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/jyltysgg/abs_548</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/jyltysgg/abn_549</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/jyltysgg/smecnii_550</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/jyltysgg/crmw_551</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/jyltysgg/ncd</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/jyltysgg/GN_3</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/jyltysgg/PRN_3</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/xypj/plzt</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/xypj/zxpl/mtn_554</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/xypj/zxpl/cp_555</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/xypj/zxpl/scp_556</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/xypj/zxpl/qscp_557</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/xypj/zxpl/ppn_558</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/xypj/zxpl/jrz_559</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/xypj/zxpl/abs_560</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/xypj/zxpl/abn_561</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/xypj/zxpl/smecnii_562</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/xypj/zxpl/crmw_563</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/xypj/zxpl/tycd3</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/xypj/zxpl/GN_4</value> -->
-<!-- 				<value>http://www.shclearing.com/xxpl/xypj/zxpl/PRN_4</value> -->
-        	</list>
-		</property>
+
 		<property name="requestList">
         	<list>
 <!--         		<ref bean="mtn"/> -->
@@ -112,12 +55,12 @@
 <!-- 				<ref bean="tycd2"/> -->
 <!-- 				<ref bean="GN_2"/> -->
 <!-- 				<ref bean="PRN_2"/> -->
-<!-- 				<ref bean="mtn_542"/> -->
-<!-- 				<ref bean="cp_543"/> -->
+				<ref bean="mtn_542"/>
+				<ref bean="cp_543"/>
 <!-- 				<ref bean="scp_544"/> -->
 <!-- 				<ref bean="qscp_545"/> -->
 <!-- 				<ref bean="ppn_546"/> -->
-<!-- 				<ref bean="jrz_547"/> -->
+				<ref bean="jrz_547"/>
 <!-- 				<ref bean="abs_548"/> -->
 <!-- 				<ref bean="abn_549"/> -->
 <!-- 				<ref bean="smecnii_550"/> -->
@@ -184,11 +127,12 @@
 			<list>
 				<ref bean="titlefieldrule"/>
 				<ref bean="pubdatefieldrule"/>
+				<ref bean="pubdatefieldrule_1"/>
 				<ref bean="linkurlfieldrule"/>
 			</list>
 		</property>
 		<property name="gotoLinkList" ref="gotolink"></property>
-		<property name="exitRule" ref="dateexitrule"></property>
+<!-- 		<property name="exitRule" ref="dateexitrule"></property> -->
 	</bean>
 	
 	<bean id="shClearingDownloadProcessor" class="com.purang.grab.processor.ShClearingDownloadProcessor">
@@ -210,12 +154,22 @@
 		<property name="ruleType" value="xpath"></property> 
 		<property name="ruleResultType" value="2"></property> 
 	</bean>
+	
+	<!-- 交易流通要素 日期特殊处理 -->
+	<bean id="pubdatefieldrule_1" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="日期"></property> 
+		<property name="field" value="pubdate_1"></property> 
+		<property name="ruleExpression" value="*/ul[@class='list']/li/span/script/html()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+	
 	<bean id="linkurlfieldrule" class="com.purang.grab.rule.FieldRule">
 		<property name="title" value="链接1"></property> 
 		<property name="field" value="linkurl1"></property> 
-		<property name="ruleExpression" value="*/ul[@class='list']/li/a/@href"></property> 
+		<property name="ruleExpression" value="*/ul[@class='list']/li/a"></property> 
 		<property name="ruleType" value="xpath"></property> 
-		<property name="ruleResultType" value="2"></property> 
+		<property name="ruleResultType" value="4"></property> 
 	</bean>
 	
 	<bean id="dateexitrule" class="com.purang.grab.rule.DateExitRule">
@@ -232,9 +186,9 @@
 	<bean id="gotolink" class="com.purang.grab.rule.FieldRule">
 		<property name="title" value="打开链接"></property> 
 		<property name="field" value="gotolink"></property> 
-		<property name="ruleExpression" value="*/ul[@class='list']/li/a/@href"></property> 
+		<property name="ruleExpression" value="*/ul[@class='list']/li/a"></property> 
 		<property name="ruleType" value="xpath"></property> 
-		<property name="ruleResultType" value="2"></property> 
+		<property name="ruleResultType" value="4"></property> 
 	</bean>
 	
 	<bean id="pipeline1" class="com.purang.grab.pipeline.ShClearingPipeline">
@@ -268,6 +222,7 @@
 	
 	<!-- 301	发行披露 -->
 	<bean id="mtn" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxpl/mtn/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxpl/mtn/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -279,6 +234,7 @@
 		</property>
 	</bean>
 	<bean id="cp" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxpl/cp/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxpl/cp/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -290,6 +246,7 @@
 		</property>
 	</bean>
 	<bean id="scp" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxpl/scp/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxpl/scp/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -301,6 +258,7 @@
 		</property>
 	</bean>
 	<bean id="qscp" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxpl/qscp/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxpl/qscp/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -312,6 +270,7 @@
 		</property>
 	</bean>
 	<bean id="ppn" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxpl/ppn/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxpl/ppn/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -323,6 +282,7 @@
 		</property>
 	</bean>
 	<bean id="jrz" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxpl/jrz/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxpl/jrz/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -334,6 +294,7 @@
 		</property>
 	</bean>
 	<bean id="abs" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxpl/abs/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxpl/abs/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -345,6 +306,7 @@
 		</property>
 	</bean>
 	<bean id="abn" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxpl/abn/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxpl/abn/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -356,6 +318,7 @@
 		</property>
 	</bean>
 	<bean id="smecnii" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxpl/smecnii/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxpl/smecnii/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -367,6 +330,7 @@
 		</property>
 	</bean>
 	<bean id="crmw" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxpl/crmw/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxpl/crmw/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -378,6 +342,7 @@
 		</property>
 	</bean>
 	<bean id="tycd1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxpl/tycd1/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxpl/tycd1/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -390,6 +355,7 @@
 	</bean>
 	
 	<bean id="GN_1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxpl/GN_1/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxpl/GN_1/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -401,6 +367,7 @@
 		</property>
 	</bean>
 	<bean id="PRN_1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxpl/PRN_1/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxpl/PRN_1/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -418,6 +385,7 @@
 	
 	<!-- 302发行情况报告 -->
 	<bean id="mtn01" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxqkbg/mtn01/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxqkbg/mtn01/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -429,6 +397,7 @@
 		</property>
 	</bean>
 	<bean id="cp01" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxqkbg/cp01/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxqkbg/cp01/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -440,6 +409,7 @@
 		</property>
 	</bean>
 	<bean id="scp01" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxqkbg/scp01/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxqkbg/scp01/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -451,6 +421,7 @@
 		</property>
 	</bean>
 	<bean id="qscp01" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxqkbg/qscp01/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxqkbg/qscp01/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -462,6 +433,7 @@
 		</property>
 	</bean>
 	<bean id="ppn01" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxqkbg/ppn01/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxqkbg/ppn01/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -473,6 +445,7 @@
 		</property>
 	</bean>
 	<bean id="jrz01" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxqkbg/jrz01/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxqkbg/jrz01/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -484,6 +457,7 @@
 		</property>
 	</bean>
 	<bean id="abs01" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxqkbg/abs01/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxqkbg/abs01/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -495,6 +469,7 @@
 		</property>
 	</bean>
 	<bean id="abn01" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxqkbg/abn01/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxqkbg/abn01/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -506,6 +481,7 @@
 		</property>
 	</bean>
 	<bean id="smecnii01" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxqkbg/smecnii01/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxqkbg/smecnii01/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -517,6 +493,7 @@
 		</property>
 	</bean>
 	<bean id="crmw01" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxqkbg/crmw01/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxqkbg/crmw01/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -528,6 +505,7 @@
 		</property>
 	</bean>
 	<bean id="tycd2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxqkbg/tycd2/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxqkbg/tycd2/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -540,6 +518,7 @@
 	</bean>
 	
 	<bean id="GN_2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxqkbg/GN_2/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxpl/GN_2/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -551,6 +530,7 @@
 		</property>
 	</bean>
 	<bean id="PRN_2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/fxqkbg/PRN_2/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/fxpl/PRN_2/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -562,156 +542,13 @@
 		</property>
 	</bean>
 	
-	<!-- 303交易流通要素公告 -->
-	<bean id="mtn_542" scope="singleton" class="com.purang.grab.request.PagerRequest">
-		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/mtn_542/index_[*].html"></property>
-		<property name="start" value="1"></property>
-		<property name="defaultValue">
-			<map>
-				<entry key="announceSource" value="3"/>
-				<entry key="announceType1" value="303"/>
-				<entry key="bondType1" value="301"/> 
-			</map>
-		</property>
-	</bean>
-	<bean id="cp_543" scope="singleton" class="com.purang.grab.request.PagerRequest">
-		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/cp_543/index_[*].html"></property>
-		<property name="start" value="1"></property>
-		<property name="defaultValue">
-			<map>
-				<entry key="announceSource" value="3"/>
-				<entry key="announceType1" value="303"/>
-				<entry key="bondType1" value="302"/> 
-			</map>
-		</property>
-	</bean>
-	<bean id="scp_544" scope="singleton" class="com.purang.grab.request.PagerRequest">
-		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/scp_544/index_[*].html"></property>
-		<property name="start" value="1"></property>
-		<property name="defaultValue">
-			<map>
-				<entry key="announceSource" value="3"/>
-				<entry key="announceType1" value="303"/>
-				<entry key="bondType1" value="303"/> 
-			</map>
-		</property>
-	</bean>
-	<bean id="qscp_545" scope="singleton" class="com.purang.grab.request.PagerRequest">
-		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/qscp_545/index_[*].html"></property>
-		<property name="start" value="1"></property>
-		<property name="defaultValue">
-			<map>
-				<entry key="announceSource" value="3"/>
-				<entry key="announceType1" value="303"/>
-				<entry key="bondType1" value="304"/> 
-			</map>
-		</property>
-	</bean>
-	<bean id="ppn_546" scope="singleton" class="com.purang.grab.request.PagerRequest">
-		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/ppn_546/index_[*].html"></property>
-		<property name="start" value="1"></property>
-		<property name="defaultValue">
-			<map>
-				<entry key="announceSource" value="3"/>
-				<entry key="announceType1" value="303"/>
-				<entry key="bondType1" value="305"/> 
-			</map>
-		</property>
-	</bean>
-	<bean id="jrz_547" scope="singleton" class="com.purang.grab.request.PagerRequest">
-		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/jrz_547/index_[*].html"></property>
-		<property name="start" value="1"></property>
-		<property name="defaultValue">
-			<map>
-				<entry key="announceSource" value="3"/>
-				<entry key="announceType1" value="303"/>
-				<entry key="bondType1" value="306"/> 
-			</map>
-		</property>
-	</bean>
-	<bean id="abs_548" scope="singleton" class="com.purang.grab.request.PagerRequest">
-		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/abs_548/index_[*].html"></property>
-		<property name="start" value="1"></property>
-		<property name="defaultValue">
-			<map>
-				<entry key="announceSource" value="3"/>
-				<entry key="announceType1" value="303"/>
-				<entry key="bondType1" value="307"/> 
-			</map>
-		</property>
-	</bean>
-	<bean id="abn_549" scope="singleton" class="com.purang.grab.request.PagerRequest">
-		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/abn_549/index_[*].html"></property>
-		<property name="start" value="1"></property>
-		<property name="defaultValue">
-			<map>
-				<entry key="announceSource" value="3"/>
-				<entry key="announceType1" value="303"/>
-				<entry key="bondType1" value="308"/> 
-			</map>
-		</property>
-	</bean>
-	<bean id="smecnii_550" scope="singleton" class="com.purang.grab.request.PagerRequest">
-		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/smecnii_550/index_[*].html"></property>
-		<property name="start" value="1"></property>
-		<property name="defaultValue">
-			<map>
-				<entry key="announceSource" value="3"/>
-				<entry key="announceType1" value="303"/>
-				<entry key="bondType1" value="309"/> 
-			</map>
-		</property>
-	</bean>
-	<bean id="crmw_551" scope="singleton" class="com.purang.grab.request.PagerRequest">
-		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/crmw_551/index_[*].html"></property>
-		<property name="start" value="1"></property>
-		<property name="defaultValue">
-			<map>
-				<entry key="announceSource" value="3"/>
-				<entry key="announceType1" value="303"/>
-				<entry key="bondType1" value="310"/> 
-			</map>
-		</property>
-	</bean>
-	<bean id="ncd" scope="singleton" class="com.purang.grab.request.PagerRequest">
-		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/ncd/index_[*].html"></property>
-		<property name="start" value="1"></property>
-		<property name="defaultValue">
-			<map>
-				<entry key="announceSource" value="3"/>
-				<entry key="announceType1" value="303"/>
-				<entry key="bondType1" value="311"/> 
-			</map>
-		</property>
-	</bean>
 	
-	<bean id="GN_3" scope="singleton" class="com.purang.grab.request.PagerRequest">
-		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/GN_3/index_[*].html"></property>
-		<property name="start" value="1"></property>
-		<property name="defaultValue">
-			<map>
-				<entry key="announceSource" value="3"/>
-				<entry key="announceType1" value="303"/>
-				<entry key="bondType1" value="399"/> 
-			</map>
-		</property>
-	</bean>
-	<bean id="PRN_3" scope="singleton" class="com.purang.grab.request.PagerRequest">
-		<property name="startUrl" value="http://www.shclearing.com/xxpl/jyltysgg/PRN_3/index_[*].html"></property>
-		<property name="start" value="1"></property>
-		<property name="defaultValue">
-			<map>
-				<entry key="announceSource" value="3"/>
-				<entry key="announceType1" value="303"/>
-				<entry key="bondType1" value="399"/> 
-			</map>
-		</property>
-	</bean>
 	
 	
 	<!-- 304信用评级 -->
 	<!-- 304信用评级 披露主体 -->
 	<bean id="plzt" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/xypj/plzt/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/xypj/plzt/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -727,6 +564,7 @@
 	
 	<!-- 304信用评级 债项披露 -->
 	<bean id="mtn_554" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/mtn_554/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/mtn_554/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -739,6 +577,7 @@
 		</property>
 	</bean>
 	<bean id="cp_555" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/cp_555/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/cp_555/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -751,6 +590,7 @@
 		</property>
 	</bean>
 	<bean id="scp_556" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/scp_556/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/scp_556/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -763,6 +603,7 @@
 		</property>
 	</bean>
 	<bean id="qscp_557" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/qscp_557/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/qscp_557/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -775,6 +616,7 @@
 		</property>
 	</bean>
 	<bean id="ppn_558" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/ppn_558/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/ppn_558/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -787,6 +629,7 @@
 		</property>
 	</bean>
 	<bean id="jrz_559" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/jrz_559/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/jrz_559/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -799,6 +642,7 @@
 		</property>
 	</bean>
 	<bean id="abs_560" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/abs_560/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/abs_560/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -811,6 +655,7 @@
 		</property>
 	</bean>
 	<bean id="abn_561" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/abn_561/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/abn_561/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -823,6 +668,7 @@
 		</property>
 	</bean>
 	<bean id="smecnii_562" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/smecnii_562/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/smecnii_562/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -835,6 +681,7 @@
 		</property>
 	</bean>
 	<bean id="crmw_563" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/crmw_563/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/crmw_563/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -847,6 +694,7 @@
 		</property>
 	</bean>
 	<bean id="tycd3" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/tycd3/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/tycd3/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -859,6 +707,7 @@
 		</property>
 	</bean>
 	<bean id="GN_4" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/GN_4/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/GN_4/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">
@@ -871,6 +720,7 @@
 		</property>
 	</bean>
 	<bean id="PRN_4" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="firstUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/PRN_4/"></property>
 		<property name="startUrl" value="http://www.shclearing.com/xxpl/xypj/zxpl/PRN_4/index_[*].html"></property>
 		<property name="start" value="1"></property>
 		<property name="defaultValue">

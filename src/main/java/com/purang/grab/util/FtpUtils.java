@@ -10,6 +10,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,7 +21,8 @@ import org.apache.commons.net.ftp.FTPReply;
 public class FtpUtils {
 
 	private static Log taskLog = LogFactory.getLog("grabtask");
-	private static int downloadCount=0;
+	private static AtomicInteger downloadCount=new AtomicInteger(0);
+	private static AtomicInteger completeCount=new AtomicInteger(0);
     private static String encode="GBK";
     private static FTPClient ftpClient;
     public static String ftpserver;
@@ -58,12 +60,13 @@ public class FtpUtils {
     public static FTPClient getConnection(){
     	FTPClient ftpClient=new FTPClient();
     	try {
+    		ftpClient.setDataTimeout(10000);
+    		ftpClient.setDefaultTimeout(10000);
 			ftpClient.connect(ftpserver, Integer.valueOf(ftpport));
 			ftpClient.login(ftpuser, ftppsw);
 			ftpClient.setSendBufferSize(1024);
 			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
 			ftpClient.setControlEncoding(encode);
-			
 //			ftpClient.enterRemotePassiveMode();
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
@@ -97,25 +100,31 @@ public class FtpUtils {
     }
     
 
-    public static void upload(InputStream is, String fileDir ,String fielName) {
+    public static void upload(long l,String url,InputStream is, String fileDir ,String fielName) {
     	FTPClient ftpClient=getConnection();
     	Mkdirs(ftpClient, fileDir);
-    	taskLog.info("文件下载中..."+downloadCount++);
+    	taskLog.info("文件下载..."+l/1024+"M,下载地址:"+url+"..."+downloadCount.getAndIncrement());
+    	if(downloadCount.get()>1000000) {
+    		downloadCount.set(0);
+        	completeCount.set(0);
+    	}
     	try {
     		if(!ftpClient.storeFile(fielName, is)){
     			//ftpClient.getReplyString()
+    			taskLog.info("f");
     			System.out.println(ftpClient.getReplyString());
     		}
     		else{
-    			taskLog.info("文件下载完成..."+downloadCount--);
+    			taskLog.info("文件下载完成..."+completeCount.getAndIncrement());
+    	    	try {
+    	    		is.close();
+    				ftpClient.disconnect();
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
+    	    	//if(completeCount.get()>1000000) completeCount.set(0);
     		}
 		} catch (Exception e) {
-			e.printStackTrace();
-		}
-    	try {
-    		is.close();
-			ftpClient.disconnect();
-		} catch (IOException e) {
 			e.printStackTrace();
 		}
     }

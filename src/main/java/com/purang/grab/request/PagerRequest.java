@@ -4,6 +4,7 @@ package com.purang.grab.request;
 public class PagerRequest extends CommonPager {
 
 	private static final long serialVersionUID = 1L;
+	private String firstUrl;
 	private String startUrl;
 	private int tolerance=1;
 	private int start;
@@ -15,6 +16,14 @@ public class PagerRequest extends CommonPager {
 
 	public void setStartUrl(String startUrl) {
 		this.startUrl = startUrl;
+	}
+
+	public String getFirstUrl() {
+		return firstUrl;
+	}
+
+	public void setFirstUrl(String firstUrl) {
+		this.firstUrl = firstUrl;
 	}
 
 	public int getTolerance() {
@@ -36,7 +45,6 @@ public class PagerRequest extends CommonPager {
 
 	public PagerRequest getNextPager(){
 		PagerRequest pagerRequest=new PagerRequest();
-		start=start+tolerance;
 		pagerRequest.setStartUrl(startUrl);
 		pagerRequest.setStart(start);
 		pagerRequest.setTolerance(tolerance);
@@ -44,11 +52,13 @@ public class PagerRequest extends CommonPager {
 		pagerRequest.setDefaultValue(defaultValue);
 		pagerRequest.putExtra("level",0);
 		pagerRequest.putExtra("defaultValue", this.getDefaultValue());
+
+		start=start+tolerance;
 		return pagerRequest;
 	}
 	
 	public String getNextUrl(){
-		String url=startUrl.replace("[*]", String.valueOf(start-tolerance));
+		String url=startUrl.replace("[*]", String.valueOf(start));
 		return url;
 	}
 	
@@ -57,6 +67,8 @@ public class PagerRequest extends CommonPager {
 	 */
 	public void init(){
 		this.init=this.start;
+	}
+	public void resetStart(){
 		this.start=this.init;
 	}
 }

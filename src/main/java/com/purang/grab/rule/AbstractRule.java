@@ -16,7 +16,6 @@ public abstract class AbstractRule implements Rule {
 	protected String fieldtype=null;//无用
 	
 	
-	
 	public String getTitle() {
 		return title;
 	}

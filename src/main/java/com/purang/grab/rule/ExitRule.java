@@ -1,11 +1,13 @@
 package com.purang.grab.rule;
 
+import java.util.List;
+
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.selector.Html;
 
-public class ExitRule extends AbstractRule {
+public class ExitRule extends FieldRule {
 
-	public Object getRuleResult(Page page) {
+	public List<String> getRuleResult(Page page) {
 		return super.getRuleResult(page);
 	}
 	

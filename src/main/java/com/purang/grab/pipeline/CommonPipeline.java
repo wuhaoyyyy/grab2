@@ -20,8 +20,7 @@ import us.codecraft.webmagic.Task;
 public class CommonPipeline extends AbstractPipeline {
 
 	@Override
-	public void process(ResultItems resultItems, Task task) {
-		
+	public void gotoProcess(ResultItems resultItems, Task task) {
 		HashMap<String, Object> result=resultItems.get("result");
 		if(result==null) return;
 		save.save(result);

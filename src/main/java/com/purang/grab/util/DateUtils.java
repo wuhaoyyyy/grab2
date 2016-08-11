@@ -15,6 +15,7 @@ public class DateUtils {
 	 */
 	public static String getString(String datestr,String fromfmt, String tofmt) {	
 		try {
+			if(!StringUtils.isNotBlank(datestr)) return "";
 			if(fromfmt.equals("chinese")) return getStringFromChStr(datestr,tofmt);
 			Date date=new SimpleDateFormat(fromfmt).parse(datestr);
 			return (new SimpleDateFormat(tofmt)).format(date);
