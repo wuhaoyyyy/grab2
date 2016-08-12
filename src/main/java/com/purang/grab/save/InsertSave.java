@@ -57,12 +57,13 @@ public class InsertSave implements Save{
 				result.put(key, defaultValue.get(key));
 			}
 		}
+		SqlSessionFactory ssf =(SqlSessionFactory) ApplicationContextUtils.getInstance().getBean("sqlSessionFactory");
+		SqlSession session = ssf.openSession(); 
+		
+		Map mmm=new HashMap<String, Object>();
+		mmm.putAll(result);
 		
 		CommonUtils.mapValueToList(result);
-		
-		SqlSessionFactory ssf =(SqlSessionFactory) ApplicationContextUtils.getInstance().getBean("sqlSessionFactory");
-		SqlSession session = ssf.openSession();  
-		
 		List list=(List)result.get(result.keySet().iterator().next());
 		int listsize=list.size();
 		for(int i=0;i<listsize;i++){
@@ -70,17 +71,27 @@ public class InsertSave implements Save{
 				String select=CommonUtils.getSingleSql(selectExpression,result,mapValue,i);
 				HashMap<String, String> selectMap=new HashMap<String, String>();
 				selectMap.put("select", select);
-				int selectcount=session.selectOne("com.purang.grab.dao.CommonDao.select", selectMap);
-				if(selectcount>0) {
-					session.close();
-					return;
+				try {
+					int selectcount=session.selectOne("com.purang.grab.dao.CommonDao.select", selectMap);
+					if(selectcount>0) {
+						session.close();
+						return;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.out.println(mmm);
+					System.out.println(result);
 				}
 			}
-
 			String insert=CommonUtils.getSingleSql(insertExpression,result,mapValue,i);
 			HashMap<String, String> insertMap=new HashMap<String, String>();
 			insertMap.put("insert", insert);
-			session.insert("com.purang.grab.dao.CommonDao.insert", insertMap);
+			try {
+				session.insert("com.purang.grab.dao.CommonDao.insert", insertMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println(result);
+			}
 		}
 		session.close();
 	}

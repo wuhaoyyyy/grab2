@@ -18,7 +18,7 @@
 	
 	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">  
         <property name="jobDetail" ref="job"/>  
-        <property name="cronExpression" value="0 0/10 * * * ?"></property>  
+        <property name="cronExpression" value="0 0/30 * * * ?"></property>  
     </bean>  
 	<bean id="task" scope="singleton" class="com.purang.grab.task.CommonTask">
 		<!-- 交易流通要素公告和历史数据-->

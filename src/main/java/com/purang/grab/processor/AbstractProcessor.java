@@ -25,7 +25,6 @@ public abstract class AbstractProcessor implements Processor {
 	protected Map<String, String> defaultValue;
 	protected List<FieldRule> fieldRuleList;
 	protected ExitRule exitRule;
-	protected Map<String, Object> result=new HashMap<String, Object>();
 	protected int exitPos;
 	public int getLevel() {
 		return level;
@@ -63,7 +62,9 @@ public abstract class AbstractProcessor implements Processor {
 	 * 处理page的result以及defaultValue，然后加入该process的defaultValue，再加入该process的field处理。 生成新的result
 	 */
 	@SuppressWarnings("unchecked")
+	@Override
 	public void process(Page page){
+		Map<String, Object> result=new HashMap<String, Object>();
 		if(page.getStatusCode()==404) {
 			taskLog.info("exit-404:"+page.getRequest().getUrl());
 			return;
@@ -78,20 +79,22 @@ public abstract class AbstractProcessor implements Processor {
 			result.putAll(this.defaultValue);
 		}	
 		if(fieldRuleList!=null){
+			boolean allempty=true;
 			for(FieldRule fieldRule:fieldRuleList){
-				result.put(fieldRule.getField(),fieldRule.getRuleResult(page));
+				Object value=fieldRule.getRuleResult(page);
+				result.put(fieldRule.getField(),value);
+				if(value instanceof List &&((List) value).size()>0) allempty=false;
+				
 			}
-		}		
-//		synchronized (result) {
-			int count=CommonUtils.mapValueToList(result);
-			if(count<=0) {
+			if(allempty) {
 				taskLog.info("exit-nodata:"+page.getRequest().getUrl());
 				return;
 			}
-//		}
-		gotoProcess(page);
+		}		
+		gotoProcess(page,result);
+
 	}
 	
-	public abstract void gotoProcess(Page page);
+	public abstract void gotoProcess(Page page,Map<String, Object> result);
 
 }

@@ -30,42 +30,42 @@
 		<property name="requestList">
         	<list>				
 				<ref bean="mtn_542_1"/>
-<!-- 				<ref bean="cp_543_1"/> -->
-<!-- 				<ref bean="scp_544_1"/> -->
-<!-- 				<ref bean="qscp_545_1"/> -->
-<!-- 				<ref bean="ppn_546_1"/> -->
-<!-- 				<ref bean="jrz_547_1"/> -->
-<!-- 				<ref bean="abs_548_1"/> -->
-<!-- 				<ref bean="abn_549_1"/> -->
-<!-- 				<ref bean="smecnii_550_1"/> -->
-<!-- 				<ref bean="crmw_551_1"/> -->
-<!-- 				<ref bean="ncd_1"/> -->
-<!-- 				<ref bean="GN_3_1"/>	 -->
-<!-- 				<ref bean="PRN_3_1"/> -->
-<!-- 				<ref bean="crmw_2"/> -->
-<!-- 				<ref bean="scp_2"/> -->
-<!-- 				<ref bean="ppn_2"/> -->
-<!-- 				<ref bean="cp_2"/> -->
-<!-- 				<ref bean="qscp_2"/> -->
-<!-- 				<ref bean="smecnii_2"/> -->
-<!-- 				<ref bean="abn_2"/> -->
-<!-- 				<ref bean="abs_2"/> -->
-<!-- 				<ref bean="jrz_2"/> -->
-<!-- 				<ref bean="xypjgzpl_2"/> -->
-<!-- 				<ref bean="cwbg_201103_3"/> -->
-<!-- 				<ref bean="cwbg_201102_3"/> -->
-<!-- 				<ref bean="cwbg_201101_3"/> -->
-<!-- 				<ref bean="cwbg_2012_3"/> -->
-<!-- 				<ref bean="cwbg_2013_3"/> -->
-<!-- 				<ref bean="crmw_580_4"/> -->
-<!-- 				<ref bean="scp_573_4"/> -->
-<!-- 				<ref bean="cp_572_4"/> -->
-<!-- 				<ref bean="ppn_575_4"/> -->
-<!-- 				<ref bean="smecnii_579_4"/> -->
-<!-- 				<ref bean="qscp_4"/> -->
+				<ref bean="cp_543_1"/>
+				<ref bean="scp_544_1"/>
+				<ref bean="qscp_545_1"/>
+				<ref bean="ppn_546_1"/>
+				<ref bean="jrz_547_1"/>
+				<ref bean="abs_548_1"/>
+				<ref bean="abn_549_1"/>
+				<ref bean="smecnii_550_1"/>
+				<ref bean="crmw_551_1"/>
+				<ref bean="ncd_1"/>
+				<ref bean="GN_3_1"/>	
+				<ref bean="PRN_3_1"/>
+				<ref bean="crmw_2"/>
+				<ref bean="scp_2"/>
+				<ref bean="ppn_2"/>
+				<ref bean="cp_2"/>
+				<ref bean="qscp_2"/>
+				<ref bean="smecnii_2"/>
+				<ref bean="abn_2"/>
+				<ref bean="abs_2"/>
+				<ref bean="jrz_2"/>
+				<ref bean="xypjgzpl_2"/>
+				<ref bean="cwbg_201103_3"/>
+				<ref bean="cwbg_201102_3"/>
+				<ref bean="cwbg_201101_3"/>
+				<ref bean="cwbg_2012_3"/>
+				<ref bean="cwbg_2013_3"/>
+				<ref bean="crmw_580_4"/>
+				<ref bean="scp_573_4"/>
+				<ref bean="cp_572_4"/>
+				<ref bean="ppn_575_4"/>
+				<ref bean="smecnii_579_4"/>
+				<ref bean="qscp_4"/>
         	</list>
 		</property>
-		<property name="threadCount" value="10"></property>
+		<property name="threadCount" value="20"></property>
 		<property name="processor" ref="processor"></property>
 		<property name="pipelineList">
         	<list>
@@ -111,6 +111,7 @@
 			</list>
 		</property>
 		<property name="gotoLink" ref="gotolink"></property>
+<!-- 		<property name="exitRule" ref="dateexitrule"></property> -->
 	</bean>
 	
 	<bean id="shClearingDownloadProcessor" class="com.purang.grab.processor.ShClearingDownloadProcessor">
@@ -150,7 +151,18 @@
 		<property name="ruleType" value="xpath"></property> 
 		<property name="ruleResultType" value="4"></property> 
 	</bean>
-
+	
+	<bean id="dateexitrule" class="com.purang.grab.rule.DateExitRule">
+		<property name="title" value="日期"></property> 
+		<property name="field" value="pubdate"></property> 
+		<property name="fromDateFormat" value="yyyy-MM-dd"></property>
+		<property name="toDateFormat" value="yyyyMMdd"></property>
+		<property name="ruleExpression" value="*/ul[@class='list']/li/span/script/html()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="2"></property> 
+		<property name="cutPrefix" value="crtime= '"></property> 
+		<property name="cutPostfix" value="';"></property> 
+	</bean>
 	
 	<bean id="pipeline1" class="com.purang.grab.pipeline.ShClearingPipeline">
 		<property name="level" value="1"></property>
@@ -170,8 +182,11 @@
 		<property name="insertExpression" value="INSERT INTO P12005 (fv, ft, f3, f4, f5, f7, f6, f8, f9, f10, f11, f12, f15, fs, fp, fu) VALUES([(auto)id],[(auto)id],[pubdate],[announceSource],[announceType1],[bondType1],[announceType2],[bondType2],[title1],[linkurl1],[title2],[linkurl2],[ftp],[fsPublishStatus],[(auto)date],[(auto)date])"></property>
 	</bean>
 	
+	<!-- 还要和insert对应。。 -->
+	<bean id="download" class="">
+		<property name="location" value="/bondannounce/[pubdate]"></property>
 	
-	
+	</bean>
 	
 	
 	

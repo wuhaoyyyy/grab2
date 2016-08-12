@@ -2,8 +2,10 @@ package com.purang.grab.pipeline;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -30,9 +32,13 @@ public class ShClearingPipeline extends AbstractPipeline {
 
 	private static ExecutorService es=Executors.newFixedThreadPool(10);
 	private static Log taskLog = LogFactory.getLog("grabtask");
+	@SuppressWarnings("rawtypes")
 	@Override
-	public void gotoProcess(ResultItems resultItems, Task task) {
+	public void gotoProcess(ResultItems resultItems, Task task, Map<String, Object> result) {
 		final List<String> downloadfileurlList=(List<String>) result.get("downloadfileurlList");
+		List<String> filedescList=(List<String>) result.get("filedescList");
+		result.remove("downloadfileurlList");
+		result.remove("filedescList");
 		if(downloadfileurlList==null){
 			result.put("title2", "");
 			result.put("linkurl2", "");
@@ -40,26 +46,28 @@ public class ShClearingPipeline extends AbstractPipeline {
 			save.save(result);
 			return;
 		}
-		List<String> filedescList=(List<String>) result.get("filedescList");
-		String pubdate=result.get("pubdate").toString();
+		String pubdate=(String) result.get("pubdate");
 		for(int i=0;i<downloadfileurlList.size();i++){
 			final int j=i;
-			result.put("title2", filedescList.get(i));
-			result.put("linkurl2", downloadfileurlList.get(i));
+			List descList=new ArrayList<String>();
+			descList.add(filedescList.get(i));
+			List linkList=new ArrayList<String>();
+			linkList.add(downloadfileurlList.get(i));
+			result.put("title2", descList);
+			result.put("linkurl2", linkList);
 			//System.out.println(result.get("pubdate"));//与上面打印结果不一致？？？
 		    final String ftpSaveDir="/bondannounce/"+pubdate;
 			final String ftpSaveName=CommonUtils.getAutoValue("[(auto)id]")+".pdf";
 			result.put("ftp", "ftp://"+FtpUtils.ftpserver+ftpSaveDir+"/"+ftpSaveName);
-//			final HashMap<String, Object> r=result; 
-//			es.execute(new Runnable() {
-//				@Override
-//				public void run() {
-//					downloadFileToFtpGet(downloadfileurlList.get(j),ftpSaveDir,ftpSaveName);
-//					save.save(r);
-//				}
-//			});
+			
 			downloadFileToFtpGet(downloadfileurlList.get(i),ftpSaveDir,ftpSaveName);
-			save.save(result);
+			try{
+				save.save(result);
+			}
+			catch(Exception e){
+				System.out.println(result);
+				e.printStackTrace();
+			}
 		}
 	}
 	

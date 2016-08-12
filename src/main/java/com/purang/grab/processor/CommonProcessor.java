@@ -19,7 +19,7 @@ public class CommonProcessor extends AbstractProcessor{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void gotoProcess(Page page) {
+	public void gotoProcess(Page page,Map<String, Object> result) {
 		if(exitRule!=null) {
 			int exit=exitRule.getExit(page);
 			if(exit>-1) {

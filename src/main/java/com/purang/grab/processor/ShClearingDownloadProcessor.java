@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,7 +19,7 @@ public class ShClearingDownloadProcessor extends AbstractProcessor {
 
 	private static Log taskLog = LogFactory.getLog("grabtask");
 	@Override
-	public void gotoProcess(Page page) {
+	public void gotoProcess(Page page,Map<String, Object> result) {
 
 		//获取list
         String pageTxt=page.getRawText();

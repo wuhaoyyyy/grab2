@@ -32,8 +32,7 @@ public class CommonUtils {
 		}
 		return null;
 	}
-	public static List<String> getSelectorResult(Page page,String rule,String type){
-		List<String> result=null;
+	public static String getSelectorResult(Page page,String rule,String type){
 		String text=null;
 		switch(type){
 			case "css":
@@ -46,11 +45,7 @@ public class CommonUtils {
 				text=page.getJson().jsonPath(rule).get().trim();
 				break;
 		}
-		if(StringUtils.isNotBlank(text)){
-			result=new ArrayList<String>();
-			result.add(text);
-		}
-		return result;
+		return text;
 		
 	}
 	
@@ -72,8 +67,7 @@ public class CommonUtils {
 	}
 	
 
-	public static List<String> getSelectorResult(Page page,String rule,String type,String cutPrefix,String cutPostfix){
-		List<String> resultList=null;
+	public static String getSelectorResult(Page page,String rule,String type,String cutPrefix,String cutPostfix){
 		String text=null;
 		switch(type){
 			case "css":
@@ -86,11 +80,7 @@ public class CommonUtils {
 				text=page.getJson().jsonPath(rule).get().trim();
 				break;
 		}
-		if(StringUtils.isNotBlank(text)){
-			resultList=new ArrayList<String>();
-			resultList.add(StringUtils.getCutString(text, cutPrefix, cutPostfix));
-		}
-		return resultList;
+		return text;
 		
 	}
 	
@@ -115,8 +105,7 @@ public class CommonUtils {
 
 	}
 	
-	public static List<String> getSelectorLinkResult(Page page,String rule,String type){
-		List<String> resultList=new ArrayList<String>();
+	public static String getSelectorLinkResult(Page page,String rule,String type){
 		String text=null;
 		switch(type){
 			case "css":
@@ -140,8 +129,7 @@ public class CommonUtils {
 				text=page.getJson().jsonPath(rule).links().toString().trim();
 				break;
 		}
-		resultList.add(text);
-		return resultList;
+		return text;
 		
 	}
 	public static List<String> getSelectorLinkListResult(Page page,String rule,String type){
@@ -195,39 +183,31 @@ public class CommonUtils {
 				if(((List)value).size()>listsize) listsize=((List)value).size();
 			}
 		}
-		if(isList){
-			for(String key:map.keySet()){
-				Object value=map.get(key);
-				Map<String,List<String>> mapNew=new HashMap<String, List<String>>();
-				if(value==null){
-					List<String> l=new ArrayList<String>();
-					for(int i=0;i<listsize;i++){
-						l.add("");
-					}
-					mapNew.put(key, l);
-				}
-				if(value instanceof String){
-					List<String> l=new ArrayList<String>();
-					if(listsize==0) listsize=1;
-					for(int i=0;i<listsize;i++){
-						l.add(((String) value));
-					}
-					mapNew.put(key, l);
-				}
-				map.putAll(mapNew);
-			}
-		}
-		else{
-			Map<String,List<String>> mapNew=new HashMap<String, List<String>>();
-			for(String key:map.keySet()){
-				Object value=map.get(key);
+		
+		Map<String,List<String>> mapNew=new HashMap<String, List<String>>();
+		for(String key:map.keySet()){
+			Object value=map.get(key);
+			if(value==null){
 				List<String> l=new ArrayList<String>();
-				l.add(((String) value));
+				for(int i=0;i<listsize;i++){
+					l.add("");
+				}
 				mapNew.put(key, l);
-				listsize=1;
 			}
-			map.putAll(mapNew);
+			if(value instanceof String){
+				List<String> l=new ArrayList<String>();
+				if(listsize==0) listsize=1;
+				for(int i=0;i<listsize;i++){
+					l.add(((String) value));
+				}
+				mapNew.put(key, l);
+			}
+			else if(value instanceof List){
+				mapNew.put(key, (List<String>) value);
+			}
 		}
+		map.putAll(mapNew);
+		
 		return listsize;
 	}
 	/*
@@ -237,8 +217,24 @@ public class CommonUtils {
 	public static Map getSingleMap(Map<String, Object> map,int i){
 		Map<String,String> singleMap=new HashMap<String, String>();
 		for(String key:map.keySet()){
-			List<String> v=(List<String>)map.get(key);
-			singleMap.put(key, v.get(i));
+			if(map.get(key) instanceof List){
+				List<String> v=(List<String>)map.get(key);
+//				try{
+					if(v.size()<1){
+						singleMap.put(key, "");
+					}
+					else{
+						singleMap.put(key, v.get(i));
+					}
+//				}
+//				catch (Exception e) {
+//					e.printStackTrace();
+//					System.out.println(map);
+//				}
+			}
+			else if(map.get(key) instanceof String){
+				singleMap.put(key, map.get(key).toString());
+			}
 		}
 		return singleMap;
 	}
@@ -247,13 +243,23 @@ public class CommonUtils {
 	public static String getSingleSql(String sql,Map<String, Object> map,Map<String, String> mapValue,int index){
 		for(String key:map.keySet()){
 			String mapkey="[(map)"+key+"]";
-			String currentvalue=((List)map.get(key)).get(index).toString();
+			String currentvalue=null;
+			Object value=map.get(key);
+			if(value instanceof List){
+				currentvalue=((List)map.get(key)).get(index).toString();
+				if(((List)map.get(key)).get(index)==null) currentvalue="";
+			}
+			else if(value instanceof String){
+				currentvalue=(String) value;
+			}
+			
 			if(sql.indexOf("["+key+"]")>0){
 				if(StringUtils.isNotBlank(currentvalue)){
 					sql=sql.replace("["+key+"]", "'"+currentvalue+"'");
 				}
 				else{
-					sql=sql.replace("["+key+"]", "null");
+					sql=sql.replace("=["+key+"]", " is null");
+					sql=sql.replace("["+key+"]", "null");//select则直接替换=key is null  限定select语句=key无空格  insert则直接替换为null
 				}
 			}
 			else if(sql.indexOf(mapkey)>0){

@@ -57,7 +57,6 @@ public class CommonTask extends Task{
 						firstRequest.putExtra("defaultValue", pagerRequest.getDefaultValue());
 						spider.addRequest(firstRequest);
 					}
-					
 					pagerRequest.resetStart();
 					spider.addRequest(pagerRequest.getNextPager());
 				}

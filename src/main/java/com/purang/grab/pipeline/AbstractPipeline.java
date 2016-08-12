@@ -14,7 +14,6 @@ public abstract class AbstractPipeline implements Pipeline {
 
 	protected int level;
 	Map<String,String> defaultValue=new HashMap<String, String>();
-	protected Map<String, Object> result=new HashMap<String, Object>();
 	protected Save save;
 	public int getLevel() {
 		return level;
@@ -42,14 +41,14 @@ public abstract class AbstractPipeline implements Pipeline {
 
 	@Override
 	public void process(ResultItems resultItems, Task task) {
+		Map<String, Object> result=new HashMap<String, Object>();
 		if(!resultItems.get("level").toString().equals(String.valueOf(this.level))) return;
-		this.result=resultItems.get("result");
+		result=resultItems.get("result");
 		if(this.defaultValue!=null){
 			result.putAll(this.defaultValue);
 		}	
-		CommonUtils.mapValueToList(result);
-		gotoProcess(resultItems, task);
+		gotoProcess(resultItems, task, result);
 	}
 	
-	public abstract void gotoProcess(ResultItems resultItems, Task task);
+	public abstract void gotoProcess(ResultItems resultItems, Task task, Map<String, Object> result);
 }

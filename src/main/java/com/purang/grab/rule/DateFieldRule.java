@@ -31,13 +31,13 @@ public class DateFieldRule extends FieldRule {
 	}
 
 	@Override
-	public List<String> getRuleResult(Page page) {
-		List<String> date=super.getRuleResult(page);
+	public Object getRuleResult(Page page) {
+		Object date=super.getRuleResult(page);
 
 		return getFormatDate(date);
 	}
 	
-	private List<String> getFormatDate(List<String> date){
+	private Object getFormatDate(Object date){
 		List<String> dateList=new ArrayList<>();
 		for(String s:(ArrayList<String>)date){
 			String datestr=DateUtils.getString(s, fromDateFormat,toDateFormat);

@@ -7,7 +7,7 @@ import us.codecraft.webmagic.selector.Html;
 
 public class ExitRule extends FieldRule {
 
-	public List<String> getRuleResult(Page page) {
+	public Object getRuleResult(Page page) {
 		return super.getRuleResult(page);
 	}
 	

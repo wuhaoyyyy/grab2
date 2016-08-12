@@ -9,7 +9,7 @@ public class PagerRequest extends CommonPager {
 	private int tolerance=1;
 	private int start;
 	private int init;
-	
+
 	public String getStartUrl() {
 		return startUrl;
 	}
@@ -44,17 +44,20 @@ public class PagerRequest extends CommonPager {
 	}
 
 	public PagerRequest getNextPager(){
-		PagerRequest pagerRequest=new PagerRequest();
-		pagerRequest.setStartUrl(startUrl);
-		pagerRequest.setStart(start);
-		pagerRequest.setTolerance(tolerance);
-		pagerRequest.setUrl(getNextUrl());
-		pagerRequest.setDefaultValue(defaultValue);
-		pagerRequest.putExtra("level",0);
-		pagerRequest.putExtra("defaultValue", this.getDefaultValue());
-
+//		PagerRequest pagerRequest=new PagerRequest();
+//		pagerRequest.setStartUrl(startUrl);
+//		pagerRequest.setStart(start);
+//		pagerRequest.setTolerance(tolerance);
+//		pagerRequest.setUrl(getNextUrl());
+		this.setUrl(getNextUrl());
+		this.putExtra("level",0);
+		this.putExtra("defaultValue", this.getDefaultValue());//已经加过,为什么要再加一次
+		this.putExtra("result", null);
+//		pagerRequest.setDefaultValue(defaultValue);
+//		pagerRequest.putExtra("level",0);
+//		pagerRequest.putExtra("defaultValue", this.getDefaultValue());
 		start=start+tolerance;
-		return pagerRequest;
+		return this;
 	}
 	
 	public String getNextUrl(){

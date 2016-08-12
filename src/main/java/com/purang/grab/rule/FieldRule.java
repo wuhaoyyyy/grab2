@@ -28,7 +28,7 @@ public class FieldRule extends AbstractRule{
 	}
 
 	@Override
-	public List<String> getRuleResult(Page page) {
+	public Object getRuleResult(Page page) {
 		switch(ruleResultType){
 			case "1":
 				return CommonUtils.getSelectorResult(page, this.ruleExpression, this.ruleType,this.cutPrefix,this.cutPostfix);

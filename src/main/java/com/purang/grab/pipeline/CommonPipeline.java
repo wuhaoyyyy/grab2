@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.executor.ReuseExecutor;
 import org.apache.ibatis.session.SqlSession;
@@ -20,8 +21,7 @@ import us.codecraft.webmagic.Task;
 public class CommonPipeline extends AbstractPipeline {
 
 	@Override
-	public void gotoProcess(ResultItems resultItems, Task task) {
-		HashMap<String, Object> result=resultItems.get("result");
+	public void gotoProcess(ResultItems resultItems, Task task, Map<String, Object> result) {
 		if(result==null) return;
 		save.save(result);
 	}
