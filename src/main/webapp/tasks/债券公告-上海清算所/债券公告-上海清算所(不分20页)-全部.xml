@@ -183,10 +183,10 @@
 	</bean>
 	
 	<!-- 还要和insert对应。。 -->
-	<bean id="download" class="">
-		<property name="location" value="/bondannounce/[pubdate]"></property>
+<!-- 	<bean id="download" class=""> -->
+<!-- 		<property name="location" value="/bondannounce/[pubdate]"></property> -->
 	
-	</bean>
+<!-- 	</bean> -->
 	
 	
 	

@@ -44,6 +44,7 @@ public abstract class AbstractPipeline implements Pipeline {
 		Map<String, Object> result=new HashMap<String, Object>();
 		if(!resultItems.get("level").toString().equals(String.valueOf(this.level))) return;
 		result=resultItems.get("result");
+		if(result==null) return;
 		if(this.defaultValue!=null){
 			result.putAll(this.defaultValue);
 		}	

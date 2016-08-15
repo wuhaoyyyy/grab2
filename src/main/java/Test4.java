@@ -33,9 +33,8 @@ public class Test4 {
 		CloseableHttpClient httpclient = HttpClients.createDefault();  
         try {  
             // 创建httpget.    
-            HttpGet httpget = new HttpGet("http://localhost:8080/grab/index.html");  
+            HttpGet httpget = new HttpGet("http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?start=0&limit=10&useState=3&organType=A&branchType=H");  
             System.out.println("executing request " + httpget.getURI());  
-            // 执行get请求.    hj
             CloseableHttpResponse response = httpclient.execute(httpget);  
             try {  
                 // 获取响应实体    

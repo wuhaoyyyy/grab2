@@ -83,7 +83,7 @@ public abstract class AbstractProcessor implements Processor {
 			for(FieldRule fieldRule:fieldRuleList){
 				Object value=fieldRule.getRuleResult(page);
 				result.put(fieldRule.getField(),value);
-				if(value instanceof List &&((List) value).size()>0) allempty=false;
+				if(value instanceof List &&((List) value).size()>0 && !value.toString().equals("")) allempty=false;
 				
 			}
 			if(allempty) {

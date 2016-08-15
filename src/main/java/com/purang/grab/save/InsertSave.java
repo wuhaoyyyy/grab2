@@ -60,9 +60,6 @@ public class InsertSave implements Save{
 		SqlSessionFactory ssf =(SqlSessionFactory) ApplicationContextUtils.getInstance().getBean("sqlSessionFactory");
 		SqlSession session = ssf.openSession(); 
 		
-		Map mmm=new HashMap<String, Object>();
-		mmm.putAll(result);
-		
 		CommonUtils.mapValueToList(result);
 		List list=(List)result.get(result.keySet().iterator().next());
 		int listsize=list.size();
@@ -79,7 +76,6 @@ public class InsertSave implements Save{
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					System.out.println(mmm);
 					System.out.println(result);
 				}
 			}

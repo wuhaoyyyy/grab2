@@ -11,6 +11,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.selector.Html;
 
@@ -99,7 +106,9 @@ public class CommonUtils {
 		}
 		List<String> cutResult=new ArrayList<String>();
 		for(String text:result){
-			cutResult.add(StringUtils.getCutString(text, cutPrefix, cutPostfix));
+			if(StringUtils.isNotBlank(text)){
+				cutResult.add(StringUtils.getCutString(text, cutPrefix, cutPostfix));
+			}
 		}
 		return cutResult;
 
@@ -140,6 +149,8 @@ public class CommonUtils {
 				Html html=new Html(page.getRawText());
 				List<String> hrefList=html.xpath(rule+"/@href").all();
 				List<String> resultList=new ArrayList<String>();
+				if(hrefList.size()>0&&!(hrefList.get(0).substring(0, 2).equals("./")))
+					return page.getHtml().xpath(rule).links().all();
 				for(String href:hrefList){
 					if(href.substring(0, 2).equals("./")){
 						String url=page.getRequest().getUrl();
@@ -272,6 +283,28 @@ public class CommonUtils {
 			}
 		}
 		return sql;
+	}
+	
+	/*
+	 * HttpGet下载文件
+	 */
+
+	public static void fileDownloadHttpGet(String url, String fileDir ,String fielName){
+		try {
+			CloseableHttpClient client = HttpClients.createDefault();
+			HttpGet httpget = new HttpGet(url);  
+			HttpResponse response = client.execute(httpget);  
+			HttpEntity entity = response.getEntity();  
+			InputStream is = entity.getContent();
+			FtpUtils.upload(entity.getContentLength(),url,is, fileDir, fielName);
+			client.close();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

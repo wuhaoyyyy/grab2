@@ -102,7 +102,7 @@ public class FtpClientPool implements ObjectPool {
     }  
       
     /** 
-     * 获取空闲链接数(这里暂不实现) 
+     * 获取空闲链接数
      */  
     @Override  
     public int getNumIdle() {  

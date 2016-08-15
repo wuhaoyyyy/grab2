@@ -48,51 +48,25 @@ public class ShClearingPipeline extends AbstractPipeline {
 		}
 		String pubdate=(String) result.get("pubdate");
 		for(int i=0;i<downloadfileurlList.size();i++){
-			final int j=i;
+			int j=i;
 			List descList=new ArrayList<String>();
 			descList.add(filedescList.get(i));
 			List linkList=new ArrayList<String>();
 			linkList.add(downloadfileurlList.get(i));
 			result.put("title2", descList);
 			result.put("linkurl2", linkList);
-			//System.out.println(result.get("pubdate"));//与上面打印结果不一致？？？
-		    final String ftpSaveDir="/bondannounce/"+pubdate;
-			final String ftpSaveName=CommonUtils.getAutoValue("[(auto)id]")+".pdf";
+		    String ftpSaveDir="/bondannounce/"+pubdate;
+			String ftpSaveName=CommonUtils.getAutoValue("[(auto)id]")+".pdf";
 			result.put("ftp", "ftp://"+FtpUtils.ftpserver+ftpSaveDir+"/"+ftpSaveName);
-			
-			downloadFileToFtpGet(downloadfileurlList.get(i),ftpSaveDir,ftpSaveName);
+			CommonUtils.fileDownloadHttpGet(downloadfileurlList.get(i),ftpSaveDir,ftpSaveName);
 			try{
 				save.save(result);
 			}
 			catch(Exception e){
-				System.out.println(result);
+				taskLog.error(result);
 				e.printStackTrace();
 			}
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
 
-	public void downloadFileToFtpGet(String url, String fileDir ,String fielName){
-		try {
-			CloseableHttpClient client = HttpClients.createDefault();
-			HttpGet httpget = new HttpGet(url);  
-			HttpResponse response = client.execute(httpget);  
-			HttpEntity entity = response.getEntity();  
-			InputStream is = entity.getContent();
-			FtpUtils.upload(entity.getContentLength(),url,is, fileDir, fielName);
-			client.close();
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 }
