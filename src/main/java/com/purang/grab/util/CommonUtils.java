@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -69,7 +70,7 @@ public class CommonUtils {
 				result=page.getJson().jsonPath(rule).all();
 				break;
 		}
-		return result;
+		return cutEmpty(result);
 
 	}
 	
@@ -100,17 +101,15 @@ public class CommonUtils {
 			case "xpath":
 				result=page.getHtml().xpath(rule).all();
 				break;
+			case "xpath2":
+				Html html=new Html(page.getRawText());//有些href为js函数用webmagic转换无效
+				result=html.xpath(rule).all();;
+				break;
 			case "xjson":
 				result=page.getJson().jsonPath(rule).all();
 				break;
 		}
-		List<String> cutResult=new ArrayList<String>();
-		for(String text:result){
-			if(StringUtils.isNotBlank(text)){
-				cutResult.add(StringUtils.getCutString(text, cutPrefix, cutPostfix));
-			}
-		}
-		return cutResult;
+		return cutEmpty(result);
 
 	}
 	
@@ -161,7 +160,7 @@ public class CommonUtils {
 						resultList.add(prefix+href.substring(1));
 					}
 				}
-				return resultList;
+				return cutEmpty(resultList);
 			case "xjson":
 				return page.getJson().jsonPath(rule).links().all();
 		}
@@ -214,7 +213,14 @@ public class CommonUtils {
 				mapNew.put(key, l);
 			}
 			else if(value instanceof List){
-				mapNew.put(key, (List<String>) value);
+				List<String> l=(List<String>) value;//list少于最大数 补全
+				if(l.size()<listsize){
+					int differ=listsize-l.size();
+					for(int i=0;i<differ;i++){
+						l.add("");
+					}
+				}
+				mapNew.put(key, l);
 			}
 		}
 		map.putAll(mapNew);
@@ -230,18 +236,18 @@ public class CommonUtils {
 		for(String key:map.keySet()){
 			if(map.get(key) instanceof List){
 				List<String> v=(List<String>)map.get(key);
-//				try{
+				try{
 					if(v.size()<1){
 						singleMap.put(key, "");
 					}
 					else{
 						singleMap.put(key, v.get(i));
 					}
-//				}
-//				catch (Exception e) {
-//					e.printStackTrace();
-//					System.out.println(map);
-//				}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+					System.out.println(map);
+				}
 			}
 			else if(map.get(key) instanceof String){
 				singleMap.put(key, map.get(key).toString());
@@ -251,7 +257,7 @@ public class CommonUtils {
 	}
 	
 	
-	public static String getSingleSql(String sql,Map<String, Object> map,Map<String, String> mapValue,int index){
+	public static String getSingleSql(String sql,Map<String, Object> map,Map<String, String> mapValue,int index,String id){
 		for(String key:map.keySet()){
 			String mapkey="[(map)"+key+"]";
 			String currentvalue=null;
@@ -277,6 +283,11 @@ public class CommonUtils {
 				sql=sql.replace(mapkey, "'"+mapValue.get(currentvalue)+"'");
 			}
 		}
+		if(StringUtils.isNotBlank(id)){
+			if(sql.indexOf("[(auto)id]")>0){
+				sql=sql.replace("[(auto)id]", "'"+id+"'");
+			}
+		}
 		for(String autoField:CommonUtils.AUTOFIELD){
 			if(sql.indexOf(autoField)>0){
 				sql=sql.replace(autoField, CommonUtils.getAutoValue(autoField));
@@ -289,15 +300,31 @@ public class CommonUtils {
 	 * HttpGet下载文件
 	 */
 
-	public static void fileDownloadHttpGet(String url, String fileDir ,String fielName){
+	public static String fileDownloadHttpGet(String url, String fileDir ,String fielName){
 		try {
 			CloseableHttpClient client = HttpClients.createDefault();
 			HttpGet httpget = new HttpGet(url);  
 			HttpResponse response = client.execute(httpget);  
+			Header[] headers = response.getAllHeaders();
+			String fileType=".pdf";
+        	for(int i=0;i<headers.length;i++) {
+        		if(headers[i].getName().equals("Content-Type")){
+        			String contentType=headers[i].getValue();
+        			if(!contentType.equals("application/x-msdownload")){
+        				return null;
+        			}
+        		}
+        		if(headers[i].getName().equals("Content-Disposition")){
+        			String contentDisposition=headers[i].getValue();
+        			fileType=contentDisposition.substring(contentDisposition.lastIndexOf("."), contentDisposition.length());
+        		}
+        	}
+			
 			HttpEntity entity = response.getEntity();  
 			InputStream is = entity.getContent();
-			FtpUtils.upload(entity.getContentLength(),url,is, fileDir, fielName);
+			FtpClientUtils.upload(entity.getContentLength(),url,is, fileDir, fielName+fileType);
 			client.close();
+			return "ftp://"+FtpUtils.ftpserver+fileDir+fielName+fileType;
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IllegalStateException e) {
@@ -305,6 +332,32 @@ public class CommonUtils {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return null;
+	}
+	
+	public static List<String> cutEmpty(List<String> list){	
+		int beginIndex=-1;
+		for(int i=0;i<list.size();i++){
+			String str=list.get(i);
+			if(StringUtils.isBlankCustom(str)){
+				boolean allempty=true;
+				for(int j=i;j<list.size();j++){
+					if(!StringUtils.isBlankCustom(list.get(j))){
+						allempty=false;
+					}
+				}
+				if(allempty) {
+					beginIndex=i;
+					break;
+				}
+			}
+		}
+		if(beginIndex>0){
+			ArrayList<String> l=new ArrayList<>();
+			l.addAll(list.subList(0, beginIndex));
+			return l;
+		}
+		return list;
 	}
 
 }

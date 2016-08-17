@@ -1,4 +1,4 @@
-package com.purang.grab.processor;
+package com.purang.grab.processor.custom;
 
 import java.util.HashMap;
 import java.util.List;
@@ -7,30 +7,24 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.purang.grab.request.PagerRequest;
-import com.purang.grab.rule.FieldRule;
-import com.purang.grab.util.CommonUtils;
-
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
+import us.codecraft.webmagic.selector.Html;
+import us.codecraft.webmagic.utils.UrlUtils;
+
+import com.purang.grab.processor.AbstractProcessor;
+import com.purang.grab.processor.GoToLinkProcessor;
+import com.purang.grab.request.PagerRequest;
+import com.purang.grab.util.CommonUtils;
+import com.purang.grab.util.StringUtils;
 /*
- * 有链接处理类
+ * 中国货币网 获取下一页时判断是否大于总页数
  */
-public class GoToLinkProcessor extends AbstractProcessor {
+public class ChinaMoneyA1Processor extends GoToLinkProcessor {
 
 	private static Log taskLog = LogFactory.getLog("grabtask");
-	protected FieldRule gotoLink;
-	
-	public FieldRule getGotoLink() {
-		return gotoLink;
-	}
-
-	public void setGotoLink(FieldRule gotoLink) {
-		this.gotoLink = gotoLink;
-	}
-
 	@Override
-	public void gotoProcess(Page page,Map<String, Object> result) {
+	public void gotoProcess(Page page, Map<String, Object> result) {
 		if(gotoLink!=null){		
 			HashMap<String, Object> linkresult=new HashMap<String, Object>();
 			linkresult.put(gotoLink.getField(),gotoLink.getRuleResult(page));
@@ -60,10 +54,12 @@ public class GoToLinkProcessor extends AbstractProcessor {
 			}
 		}
 		
+		
 		//判断是否有退出
 		if(exitRule!=null) {
 			int exit=exitRule.getExit(page);
 			if(exit>-1) {
+				CommonUtils.mapValueToList(result);
 				for(String key:result.keySet()){
 					List list=(List) result.get(key);
 					list=list.subList(0, exit);
@@ -80,10 +76,16 @@ public class GoToLinkProcessor extends AbstractProcessor {
 		Request request=page.getRequest();
 		if(request instanceof PagerRequest){
 			PagerRequest pagerRequest=(PagerRequest)request;
+			String text=page.getHtml().xpath("/html/body/table/tbody/tr[18]/td/table/tbody/tr/td/text()").toString();
+			if(!StringUtils.isBlankCustom(text)){
+				String pageLastNum=text.substring(text.indexOf("/")+1, text.indexOf("页"));//获取总页码，大于则结束
+				if(pagerRequest.getStart()-pagerRequest.getTolerance()>Integer.valueOf(pageLastNum)) {
+					taskLog.info("exit-lastpage:"+page.getRequest().getUrl());
+					return;
+				}
+			}
+		
 			page.addTargetRequest(pagerRequest.getNextPager());
 		}		
-		
-
 	}
-
 }

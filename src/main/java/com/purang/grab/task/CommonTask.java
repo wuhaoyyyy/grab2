@@ -26,13 +26,10 @@ public class CommonTask extends Task{
 	@Override
 	public void start(){
 		taskLog.info(this.getTaskName()+"-"+(++i)+"start...");
-
-//		if(spider!=null){
-//			spider.start();
-//			return;
-//		}
-
-		spider = Spider.create(processor).thread(threadCount).setExitWhenComplete(true);
+		spider = Spider.create(pageProcessor).thread(threadCount).setExitWhenComplete(true);
+		if(downloader!=null){
+			spider.setDownloader(downloader);
+		}
 		//初始化url列表
 		if(urlList!=null){
 			for(String url:urlList){

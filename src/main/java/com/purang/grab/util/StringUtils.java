@@ -492,4 +492,9 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		}
 		return text;
     }
+    
+    public static boolean isBlankCustom(String cs) {
+        return StringUtils.isBlank(cs)||cs.equals(" ");
+    }
+    
 }

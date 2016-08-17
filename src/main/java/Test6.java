@@ -63,8 +63,38 @@ public class Test6 {
 //			e.printStackTrace();
 //		}
 		
+//		ApplicationContext ac = ApplicationContextUtils.getInstance() ;
+//		Resource rs = new FileSystemResource(System.getProperty("user.dir")+"\\src\\main\\webapp\\tasks\\债券公告-中国债券信息网\\债券公告-中国债券信息网-国债-全部.xml");
+//		BeanFactory taskBeanFactory = new XmlBeanFactory(rs);
+//		Scheduler scheduler = (Scheduler) taskBeanFactory.getBean("scheduler"); 
+//		try {
+//			scheduler.start();
+//		} catch (SchedulerException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		ApplicationContext ac = ApplicationContextUtils.getInstance() ;
+//		Resource rs = new FileSystemResource(System.getProperty("user.dir")+"\\src\\main\\webapp\\tasks\\债券公告-中国货币网\\债券公告-中国货币网-债券发行-全部.xml");
+//		BeanFactory taskBeanFactory = new XmlBeanFactory(rs);
+//		Scheduler scheduler = (Scheduler) taskBeanFactory.getBean("scheduler"); 
+//		try {
+//			scheduler.start();
+//		} catch (SchedulerException e) {
+//			e.printStackTrace();
+//		}
+
+//		ApplicationContext ac = ApplicationContextUtils.getInstance() ;
+//		Resource rs = new FileSystemResource(System.getProperty("user.dir")+"\\src\\main\\webapp\\tasks\\债券公告-中国货币网-每日\\债券公告-中国货币网-每日-流通上市、付息兑付、评级公告.xml");
+//		BeanFactory taskBeanFactory = new XmlBeanFactory(rs);
+//		Scheduler scheduler = (Scheduler) taskBeanFactory.getBean("scheduler"); 
+//		try {
+//			scheduler.start();
+//		} catch (SchedulerException e) {
+//			e.printStackTrace();
+//		}
+		
 		ApplicationContext ac = ApplicationContextUtils.getInstance() ;
-		Resource rs = new FileSystemResource(System.getProperty("user.dir")+"\\src\\main\\webapp\\tasks\\债券公告-中国债券信息网\\债券公告-中国债券信息网-国债-全部.xml");
+		Resource rs = new FileSystemResource(System.getProperty("user.dir")+"\\src\\main\\webapp\\tasks\\债券公告-中国货币网-每日\\债券公告-中国货币网-每日-债券发行.xml");
 		BeanFactory taskBeanFactory = new XmlBeanFactory(rs);
 		Scheduler scheduler = (Scheduler) taskBeanFactory.getBean("scheduler"); 
 		try {

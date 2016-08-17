@@ -3,8 +3,12 @@ package com.purang.grab.task;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.purang.grab.downloader.HeaderAddHttpClientDownloader;
+
 import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.downloader.Downloader;
+import us.codecraft.webmagic.downloader.HttpClientDownloader;
 import us.codecraft.webmagic.pipeline.Pipeline;
 
 public abstract class Task {
@@ -15,10 +19,11 @@ public abstract class Task {
 	protected List<Request> requestList=null;//抓取自定义页面
 	protected int timeout=0;
 	protected int threadCount=1;
-	protected CommonPageProcessor processor=null;
+	protected CommonPageProcessor pageProcessor=null;
 	protected List<Pipeline> pipelineList=new ArrayList<Pipeline>();	
 	protected Boolean autostart=false;
 	protected String status;
+	protected Downloader downloader;
 	
 	
 	public String getStatus() {
@@ -72,17 +77,24 @@ public abstract class Task {
 	public void setThreadCount(int threadCount) {
 		this.threadCount = threadCount;
 	}
-	public CommonPageProcessor getProcessor() {
-		return processor;
+	public CommonPageProcessor getPageProcessor() {
+		return pageProcessor;
 	}
-	public void setProcessor(CommonPageProcessor processor) {
-		this.processor = processor;
+	public void setPageProcessor(CommonPageProcessor pageProcessor) {
+		this.pageProcessor = pageProcessor;
 	}
 	public List<Pipeline> getPipelineList() {
 		return pipelineList;
 	}
 	public void setPipelineList(List<Pipeline> pipelineList) {
 		this.pipelineList = pipelineList;
+	}
+	
+	public Downloader getDownloader() {
+		return downloader;
+	}
+	public void setDownloader(Downloader downloader) {
+		this.downloader = downloader;
 	}
 	public abstract void doTask();
 	public abstract void start();

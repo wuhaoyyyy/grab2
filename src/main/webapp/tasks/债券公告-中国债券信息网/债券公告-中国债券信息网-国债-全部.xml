@@ -22,6 +22,8 @@
 		<property name="repeatInterval" value="1" />
 	</bean>
 	<bean id="task" scope="singleton" class="com.purang.grab.task.CommonTask">
+		<property name="downloader" ref="httpClientDownloader"></property>
+	
 		<!-- 交易流通要素公告和历史数据-->
 		<property name="taskName" value="债券公告-中国债券信息网-国债-全部"></property>
 		<property name="taskDesc" value="债券公告-中国债券信息网-国债-全部"></property>
@@ -81,7 +83,7 @@
 <!-- 				<ref bean="1-101-10105-199"/> -->
         	</list>
 		</property>
-		<property name="threadCount" value="20"></property>
+		<property name="threadCount" value="10"></property>
 		<property name="processor" ref="processor"></property>
 		<property name="pipelineList">
         	<list>
@@ -89,12 +91,14 @@
         	</list>
 		</property>
 	</bean>
+	<bean id="httpClientDownloader" class="com.purang.grab.downloader.HeaderAddHttpClientDownloader">
+	</bean>
 	<bean id="processor" scope="singleton" class="com.purang.grab.task.CommonPageProcessor">
 		<property name="site" ref="site"></property>
 		<property name="processorList">
         	<list>
         		<ref bean="commonprocessor" />
-        		<ref bean="shClearingDownloadProcessor" />
+        		<ref bean="chinaBondinfoProcessor" />
         	</list>
 		</property>
 	</bean>
@@ -127,11 +131,11 @@
 		</property>
 		<property name="gotoLink" ref="gotolink"></property>
 	</bean>
-	<bean id="shClearingDownloadProcessor" class="com.purang.grab.processor.ShClearingDownloadProcessor">
+	<bean id="chinaBondinfoProcessor" class="com.purang.grab.processor.custom.ChinaBondinfoProcessor">
 	</bean>
 	
 	<bean id="pipeline1" class="com.purang.grab.pipeline.CommonPipeline">
-		<property name="level" value="0"></property>
+		<property name="level" value="1"></property>
 		<property name="save" ref="insertsave"></property>
 	</bean>
 	

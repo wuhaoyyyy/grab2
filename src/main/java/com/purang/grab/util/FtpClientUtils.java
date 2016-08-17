@@ -22,6 +22,7 @@ public class FtpClientUtils {
     public static String ftpuser;
     public static String ftppsw;
     public static String ftppoolsize;
+    public static String ftppassiveMode="false";
     public static String ftpencode="GBK";;
 
     static{
@@ -37,6 +38,8 @@ public class FtpClientUtils {
     	ftpClientConfig.setUsername(ftpuser);
     	ftpClientConfig.setPassword(ftppsw);
     	ftpClientConfig.setEncoding(ftpencode);
+    	ftpClientConfig.setPassiveMode(ftppassiveMode);
+    	ftpClientConfig.setTransferFileType(FTPClient.BINARY_FILE_TYPE);
     	ftpClientFactory=new FtpClientFactory(ftpClientConfig);
     	try {
 			ftpClientPool=new FtpClientPool(Integer.valueOf(ftppoolsize), ftpClientFactory);
@@ -65,6 +68,11 @@ public class FtpClientUtils {
      */
     public static void upload(long l,String url,InputStream is, String fileDir ,String fielName) {
     	FTPClient ftpClient=getConnection();
+    	try {
+			ftpClient.changeWorkingDirectory("/");
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
     	Mkdirs(ftpClient, fileDir);
     	try {
     		if(!ftpClient.storeFile(fielName, is)){
@@ -74,7 +82,7 @@ public class FtpClientUtils {
     		else{
     	    	try {
     	    		is.close();
-    				ftpClient.disconnect();
+    		    	ftpClientPool.returnObject(ftpClient);
     			} catch (IOException e) {
     				e.printStackTrace();
     			}

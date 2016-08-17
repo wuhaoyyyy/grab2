@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+	<bean id="scheduler" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="simpleTrigger" />
+			</list>
+		</property>
+	</bean>
+	<bean id="job" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="task"></property>
+		<property name="targetMethod" value="doTask" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="job" />
+		<property name="startDelay" value="0" />
+		<property name="repeatCount" value="0" /><!-- 只执行一次 -->
+		<property name="repeatInterval" value="1" /><!-- 只执行一次 -->
+	</bean>
+	
+	<bean id="task" scope="singleton" class="com.purang.grab.task.CommonTask">
+<!-- 		<property name="autostart" value="true"></property> -->
+		<property name="downloader" ref="headerAddHttpClientDownloader"></property>
+		<property name="taskName" value="债券公告-中国货币网-全部-债券发行"></property>
+		<property name="requestList">
+        	<list>		
+        		<ref bean="2-201-201"/>	
+        		<ref bean="2-201-202"/>	
+        		<ref bean="2-201-203"/>	
+        		<ref bean="2-201-204"/>	
+        		<ref bean="2-201-205"/>	
+        		<ref bean="2-201-206"/>	
+        		<ref bean="2-201-207"/>	
+        		<ref bean="2-201-208"/>	
+        		<ref bean="2-201-209"/>	
+        		<ref bean="2-201-210"/>	
+        		<ref bean="2-201-211"/>	
+        		<ref bean="2-201-212"/>	
+        		<ref bean="2-201-213"/>	
+        		<ref bean="2-201-214"/>	
+        		<ref bean="2-201-215"/>	
+        		<ref bean="2-201-216"/>	
+        		<ref bean="2-201-217"/>	
+        		<ref bean="2-201-218"/>	
+        		<ref bean="2-201-219"/>	
+        		<ref bean="2-201-220"/>	
+        		<ref bean="2-201-221"/>	
+        		<ref bean="2-201-222"/>	
+        		<ref bean="2-201-223"/>	
+        		<ref bean="2-201-299-1"/>	
+        		<ref bean="2-201-299-2"/>	
+        	</list>
+		</property>
+		<property name="threadCount" value="10"></property>
+		<property name="pageProcessor" ref="pageProcessor"></property>
+		<property name="pipelineList">
+        	<list>
+        		<ref bean="pipeline1" />
+        	</list>
+		</property>
+	</bean>
+	<bean id="headerAddHttpClientDownloader" class="com.purang.grab.downloader.HeaderAddHttpClientDownloader">
+	</bean>
+	<bean id="pageProcessor" scope="singleton" class="com.purang.grab.task.CommonPageProcessor">
+		<property name="site" ref="site"></property>
+		<property name="processorList">
+        	<list>
+        		<ref bean="b1Processor" />
+        		<ref bean="b2Processor" />
+        	</list>
+		</property>
+	</bean>
+	<bean id="site" class="com.purang.grab.site.CommonSite">
+		<property name="charset" value="UTF-8"></property>
+		<property name="sleepTime" value="1000"></property>
+		<property name="timeOut" value="60000"></property>
+		<property name="useGzip" value="false"></property>
+		<property name="headers">
+			<map>
+				<entry key="Accept-Encoding" value="deflate"/>   
+			</map>
+		</property>
+		<property name="acceptStatCode">
+			<set>
+				<value>200</value>
+				<value>404</value><!-- 添加404 翻页找不到时不处理不报错 -->
+			</set>
+		</property>
+	</bean>
+	<bean id="b1Processor" class="com.purang.grab.processor.custom.ChinaMoneyB1Processor">
+		<property name="fieldRuleList">
+			<list>
+				<ref bean="titlefieldrule"/>
+				<ref bean="pubdatefieldrule"/>
+				<ref bean="url1rule"/>
+			</list>
+		</property>
+<!-- 		<property name="exitRule" ref="dateexitrule"></property> -->
+	</bean>
+	<bean id="b2Processor" class="com.purang.grab.processor.custom.ChinaMoneyB2Processor">
+	</bean>
+	
+	<bean id="titlefieldrule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="标题1"></property> 
+		<property name="field" value="title1"></property> 
+		<property name="ruleExpression" value="/html/body/table/tbody/tr/td/a/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+	<bean id="pubdatefieldrule" class="com.purang.grab.rule.DateFieldRule">
+		<property name="title" value="日期"></property> 
+		<property name="field" value="pubdate"></property> 
+		<property name="fromDateFormat" value="yyyy-MM-dd"></property>
+		<property name="toDateFormat" value="yyyyMMdd"></property>
+		<property name="ruleExpression" value="/html/body/table/tbody/tr/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+	
+	<bean id="url1rule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="url"></property> 
+		<property name="field" value="linkurl1"></property> 
+		<property name="ruleExpression" value="/html/body/table/tbody/tr/td/a/@href"></property> 
+		<property name="ruleType" value="xpath2"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+	
+	<bean id="dateexitrule" class="com.purang.grab.rule.DateExitRule">
+		<property name="title" value="日期"></property> 
+		<property name="field" value="pubdate"></property> 
+		<property name="fromDateFormat" value="yyyy-MM-dd"></property>
+		<property name="toDateFormat" value="yyyyMMdd"></property>
+		<property name="ruleExpression" value="/html/body/table/tbody/tr/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+	
+
+	<bean id="pipeline1" class="com.purang.grab.pipeline.CommonPipeline">
+		<property name="level" value="1"></property>
+		<property name="save" ref="insertsave"></property>
+	</bean>
+	
+	<bean id="insertsave" class="com.purang.grab.save.InsertSave">
+		<property name="defaultValue">
+			<map>
+				<entry key="fsPublishStatus" value="2"/>   
+				<entry key="fnUpdateName" value="grab"/> 
+				<entry key="announceType2" value=""/>   
+				<entry key="bondType2" value=""/>    
+				<entry key="title2" value=""/>   
+				<entry key="linkurl2" value=""/>   
+				<entry key="ftp" value=""/>      
+			</map>
+		</property>
+		<property name="selectExpression" value="select count(1) from  P12005  p where p.f3=[pubdate] and p.f4=[announceSource] and p.f5=[announceType1] and p.f7=[bondType1] and p.f9=[title1] and p.f10=[linkurl1] and p.f11=[title2]"></property>
+		<property name="insertExpression" value="INSERT INTO P12005 (fv, ft, f3, f4, f5, f7, f6, f8, f9, f10, f11, f12, f15, fs, fp, fu) VALUES([(auto)id],[(auto)id],[pubdate],[announceSource],[announceType1],[bondType1],[announceType2],[bondType2],[title1],[linkurl1],[title2],[linkurl2],[ftp],[fsPublishStatus],[(auto)date],[(auto)date])"></property>
+		<property name="filedownload" value="linkurl2"></property>
+		<property name="filedownloadpath" value="/bondannounce/[pubdate]/"></property>
+	</bean>
+	
+	
+	<!--   债券发行_同业存单    -->
+	<bean id="2-201-201" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100041&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="201"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_国债    -->
+	<bean id="2-201-202" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100001&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="202"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_地方政府债   -->
+	<bean id="2-201-203" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100011&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="203"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_央行票据   -->
+	<bean id="2-201-204" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100002&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="204"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_政策性金融债   -->
+	<bean id="2-201-205" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100003&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="205"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_二级资本工具   -->
+	<bean id="2-201-206" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100054&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="206"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_混合资本债   -->
+	<bean id="2-201-207" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100009&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="207"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_普通金融债   -->
+	<bean id="2-201-208" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100007&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="208"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_证券公司短期融资券   -->
+	<bean id="2-201-209" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100024&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="209"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_国际开发机构债   -->
+	<bean id="2-201-210" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100008&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="210"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_资产支持证券   -->
+	<bean id="2-201-211" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=999999&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="211"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_次级债   -->
+	<bean id="2-201-212" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100005&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="212"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_政府支持机构债券   -->
+	<bean id="2-201-213" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100027&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="213"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_短期融资券   -->
+	<bean id="2-201-214" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100006&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="214"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_中期票据   -->
+	<bean id="2-201-215" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100010&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="215"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_集合票据   -->
+	<bean id="2-201-216" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100025&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="216"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_超短期融资券   -->
+	<bean id="2-201-217" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100029&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="217"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_企业债   -->
+	<bean id="2-201-218" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100004&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="218"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_保险公司资本补充债   -->
+	<bean id="2-201-219" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100056&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="219"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_外国主权政府人民币债券   -->
+	<bean id="2-201-220" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100061&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="220"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_项目收益债券   -->
+	<bean id="2-201-221" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100057&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="221"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_项目收益票据   -->
+	<bean id="2-201-222" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100055&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="222"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_外国地方政府人民币债券   -->
+	<bean id="2-201-223" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100062&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="223"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_资产支持票据   -->
+	<bean id="2-201-299-1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100062&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="299"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--   债券发行_绿色债务融资工具   -->
+	<bean id="2-201-299-2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.chinamoney.com.cn/fe/jsp/CN/chinamoney/notice/beDraftByTremList.jsp?searchTypeCode=100062&amp;pagingPage_il_=[*]"></property>
+		<property name="start" value="1"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="2"/>
+				<entry key="announceType1" value="201"/> 
+				<entry key="bondType1" value="299"/>
+			</map>
+		</property>
+	</bean>
+</beans>

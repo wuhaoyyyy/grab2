@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,25 +15,28 @@ public class Test2 {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
-		List<String> result=new ArrayList<String>();
-		result.add("a");
-		result.add("b");
-		for(String text:result){
-			text="c";
-		}
-		System.out.println(result);
+//		List<String> result=new ArrayList<String>();
+//		result.add("a");
+//		result.add("b");
+//		for(String text:result){
+//			text="c";
+//		}
+//		System.out.println(result);
+//		
+//		Map map=new HashMap<String, Object>();
+//		map.put("a", "aa");
+//		map.put("b", new ArrayList<>());
+//		List l=new ArrayList<>();
+//		l.add("qq");
+//		l.add("ww");
+//		map.put("l", l);
+//		CommonUtils.mapValueToList(map);
+//		System.out.println(map);
 		
-		Map map=new HashMap<String, Object>();
-		map.put("a", "aa");
-		map.put("b", new ArrayList<>());
-		List l=new ArrayList<>();
-		l.add("qq");
-		l.add("ww");
-		map.put("l", l);
-		CommonUtils.mapValueToList(map);
-		System.out.println(map);
+		File file=new File("F://grabfiles//bondannounce");
+		delete(file);
 		
-//		InputStream in = null;     
+//		InputStream in = null; 
 //        OutputStream out = null;  
 //
 //        try {  
@@ -54,5 +58,13 @@ public class Test2 {
 //            try { in.close(); out.close(); } catch (Exception e) {}  
 //        }  
     }  
+	public static void delete(File file){
+		File[] files=file.listFiles();
+		if(files==null) return;
+		for(File f:files){
+			delete(f);
+			f.delete();
+		}
+	}
 
 }
