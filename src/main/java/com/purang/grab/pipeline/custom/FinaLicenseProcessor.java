@@ -58,7 +58,7 @@ public class FinaLicenseProcessor extends AbstractPipeline {
 							"'1',"+
 							"'"+singleMap.get("f17")+"'"+
 							")";
-					DbUtils.select(insertsql);
+					DbUtils.insert(insertsql);
 				}
 			}
 		}
