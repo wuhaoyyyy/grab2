@@ -1,0 +1,1241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<bean id="scheduler" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+		<list>
+			<ref bean="simpleTrigger" />
+		</list>
+		</property>
+	</bean>
+	<bean id="job" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="task"></property>
+		<property name="targetMethod" value="doTask" />
+		<property name="concurrent" value="false" />
+	</bean>
+	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="job" />
+		<property name="startDelay" value="0" />
+		<property name="repeatCount" value="0" />
+		<property name="repeatInterval" value="1" />
+	</bean> 
+	
+	<bean id="site" class="com.purang.grab.site.CommonSite">
+		<property name="charset" value="GBK"></property>
+		<property name="sleepTime" value="2000"></property>
+		<property name="timeOut" value="60000"></property>
+		<property name="useGzip" value="false"></property>
+		<property name="headers">
+			<map>
+				<entry key="Accept-Encoding" value="deflate"/>   
+			</map>
+		</property>
+		<property name="acceptStatCode">
+			<set>
+				<value>200</value>
+				<value>404</value>
+			</set>
+		</property>
+	</bean>
+	
+	<bean id="task" scope="singleton" class="com.purang.grab.task.CommonTask">
+		<property name="taskName" value="金融许可证-全部"></property>
+		<property name="taskDesc" value="金融许可证-全部"></property>
+		<property name="requestList">
+        	<list>
+	        	<ref bean="11-1101"/>
+	        	<ref bean="11-1102"/>
+	        	<ref bean="11-1103"/>
+<!-- 	        	<ref bean="11-1104"/> -->
+<!-- 	        	<ref bean="11-1105"/> -->
+<!-- 	        	<ref bean="11-1106"/> -->
+<!-- 	        	<ref bean="11-1107"/> -->
+<!-- 	        	<ref bean="11-1108"/> -->
+	        	
+<!-- 	        	<ref bean="12-1209"/> -->
+<!-- 	        	<ref bean="12-1210"/> -->
+<!-- 	        	<ref bean="12-1211"/> -->
+<!-- 	        	<ref bean="12-1212"/> -->
+<!-- 	        	<ref bean="12-1213"/> -->
+<!-- 	        	<ref bean="12-1214"/> -->
+<!-- 	        	<ref bean="12-1215"/> -->
+<!-- 	        	<ref bean="12-1216"/> -->
+<!-- 	        	<ref bean="12-1217"/> -->
+<!-- 	        	<ref bean="12-1218"/> -->
+<!-- 	        	<ref bean="12-1219"/> -->
+<!-- 	        	<ref bean="12-1220"/> -->
+	        	
+<!-- 	        	<ref bean="13-1321"/> -->
+<!-- 	        	<ref bean="13-1322"/> -->
+<!-- 	        	<ref bean="13-1323"/> -->
+<!-- 	        	<ref bean="13-1324"/> -->
+<!-- 	        	<ref bean="13-1325"/> -->
+	        	
+<!-- 	        	<ref bean="14-1426"/> -->
+<!-- 	        	<ref bean="14-1427"/> -->
+<!-- 	        	<ref bean="14-1428"/> -->
+	        	
+<!-- 	        	<ref bean="15-1529"/> -->
+<!-- 	        	<ref bean="15-1530"/> -->
+<!-- 	        	<ref bean="15-1531"/> -->
+<!-- 	        	<ref bean="15-1532"/> -->
+<!-- 	        	<ref bean="15-1533"/> -->
+<!-- 	        	<ref bean="15-1534"/> -->
+<!-- 	        	<ref bean="15-1535"/> -->
+	        	
+<!-- 	        	<ref bean="16-1636"/> -->
+	        	
+<!-- 	        	<ref bean="17-1737"/> -->
+	        	
+<!-- 	        	<ref bean="18-1838"/> -->
+<!-- 	        	<ref bean="18-1839"/> -->
+<!-- 	        	<ref bean="18-1840"/> -->
+	        	
+<!-- 	        	<ref bean="19-1941"/> -->
+<!-- 	        	<ref bean="19-1942"/> -->
+	        	
+<!-- 	        	<ref bean="20-2043"/> -->
+<!-- 	        	<ref bean="20-2044"/> -->
+<!-- 	        	<ref bean="20-2045"/> -->
+	        	
+<!-- 	        	<ref bean="21-2146"/> -->
+<!-- 	        	<ref bean="21-2147"/> -->
+<!-- 	        	<ref bean="21-2148"/> -->
+	        	
+<!-- 	        	<ref bean="22-2249"/> -->
+	        	
+<!-- 	        	<ref bean="23-2350"/> -->
+<!-- 	        	<ref bean="23-2351"/> -->
+<!-- 	        	<ref bean="23-2352"/> -->
+	        	
+<!-- 	        	<ref bean="24-2453"/> -->
+	        	
+<!-- 	        	<ref bean="25-2554"/> -->
+<!-- 	        	<ref bean="25-2555"/> -->
+<!-- 	        	<ref bean="25-2556"/> -->
+<!-- 	        	<ref bean="25-2557"/> -->
+<!-- 	        	<ref bean="25-2558"/> -->
+	        	
+<!-- 	        	<ref bean="26-2659"/> -->
+<!-- 	        	<ref bean="26-2660"/> -->
+	        	
+<!-- 	        	<ref bean="27-2761"/> -->
+<!-- 	        	<ref bean="27-2762"/> -->
+<!-- 	        	<ref bean="27-2763"/> -->
+        	</list>
+		</property>
+		<property name="threadCount" value="10"></property>
+		<property name="pageProcessor" ref="processor"></property>
+		<property name="pipelineList">
+        	<list>
+        		<ref bean="pipeline1" />
+        	</list>
+		</property>
+	</bean>
+	
+	<bean id="processor" scope="singleton" class="com.purang.grab.task.CommonPageProcessor">
+		<property name="site" ref="site"></property>
+		<property name="processorList">
+        	<list>
+        		<ref bean="combineGotoLinkProcessor" />
+        		<ref bean="commonProcessor" />
+        	</list>
+		</property>
+	</bean>
+	
+	<bean id="combineGotoLinkProcessor" class="com.purang.grab.processor.CombineGotoLinkProcessor">
+		<property name="prefix" value="http://xukezheng.cbrc.gov.cn/ilicence/showLicenceInfo.do"></property>
+		<property name="fieldRuleList">
+			<list>
+				<ref bean="searchidrule"/>
+			</list>
+		</property>
+		<property name="combineUrlValue">
+			<map>
+				<entry key="state" value="3"/>
+				<entry key="id" value="[searchid]"/>
+			</map>
+		</property>
+<!-- 		<property name="exitRule" ref="dateexitrule"></property> -->
+	</bean>
+	
+	<bean id="commonProcessor" class="com.purang.grab.processor.CommonProcessor">
+		<property name="fieldRuleList">
+			<list>
+				<ref bean="f1rule"/>
+				<ref bean="f2rule"/>
+				<ref bean="f3rule"/>
+				<ref bean="f4rule"/>
+				<ref bean="f8rule"/>
+				<ref bean="f9rule"/>
+				<ref bean="f10rule"/>
+				<ref bean="f11rule"/>
+				<ref bean="f12rule"/>
+				<ref bean="f13rule"/>
+				<ref bean="f14rule"/>
+				<ref bean="f15rule"/>
+				<ref bean="f17rule"/>
+				<ref bean="f1ruleold"/>
+				<ref bean="f2ruleold"/>
+				<ref bean="f3ruleold"/>
+				<ref bean="f8ruleold"/>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="pipeline1" class="com.purang.grab.pipeline.custom.FinaLicenseProcessor">
+		<property name="level" value="1"></property>
+	</bean>
+	
+	<bean id="searchidrule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="查询id"></property> 
+		<property name="field" value="searchid"></property> 
+		<property name="ruleExpression" value="$.root[*].flowNo"></property> 
+		<property name="ruleType" value="xjson"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+	
+	<bean id="f1rule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="流水号"></property> 
+		<property name="field" value="f1"></property> 
+		<property name="ruleExpression" value="/html/body/div[3]/table/tbody/tr[13]/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	
+	<bean id="f1ruleold" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="流水号old"></property> 
+		<property name="field" value="f1old"></property> 
+		<property name="ruleExpression" value="//*[@id='td0']/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	<bean id="f2ruleold" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="机构编码old"></property> 
+		<property name="field" value="f2old"></property> 
+		<property name="ruleExpression" value="//*[@id='td1']/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	<bean id="f3ruleold" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="机构名称old"></property> 
+		<property name="field" value="f3old"></property> 
+		<property name="ruleExpression" value="//*[@id='td2']/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	<bean id="f8ruleold" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="机构地址old"></property> 
+		<property name="field" value="f8old"></property> 
+		<property name="ruleExpression" value="//*[@id='td3']/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	
+	<bean id="f2rule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="机构编码"></property> 
+		<property name="field" value="f2"></property> 
+		<property name="ruleExpression" value="/html/body/div[3]/table/tbody/tr[2]/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	
+	<bean id="f3rule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="机构名称"></property> 
+		<property name="field" value="f3"></property> 
+		<property name="ruleExpression" value="/html/body/div[3]/table/tbody/tr[3]/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	
+	<bean id="f4rule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="机构简称"></property> 
+		<property name="field" value="f4"></property> 
+		<property name="ruleExpression" value="/html/body/div[3]/table/tbody/tr[4]/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	
+	<bean id="f9rule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="经度"></property> 
+		<property name="field" value="f9"></property> 
+		<property name="ruleExpression" value="/html/body/div[3]/table/tbody/tr[6]/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	
+	<bean id="f10rule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="纬度"></property> 
+		<property name="field" value="f10"></property> 
+		<property name="ruleExpression" value="/html/body/div[3]/table/tbody/tr[7]/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	
+	<bean id="f8rule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="机构地址"></property> 
+		<property name="field" value="f8"></property> 
+		<property name="ruleExpression" value="/html/body/div[3]/table/tbody/tr[5]/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	
+	<bean id="f11rule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="机构所在地"></property> 
+		<property name="field" value="f11"></property> 
+		<property name="ruleExpression" value="/html/body/div[3]/table/tbody/tr[8]/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	
+	<bean id="f12rule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="邮政编码"></property> 
+		<property name="field" value="f12"></property> 
+		<property name="ruleExpression" value="/html/body/div[3]/table/tbody/tr[9]/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	
+	<bean id="f13rule" class="com.purang.grab.rule.DateFieldRule">
+		<property name="title" value="发证日期"></property> 
+		<property name="field" value="f13"></property> 
+		<property name="fromDateFormat" value="yyyy-MM-dd"></property>
+		<property name="toDateFormat" value="yyyyMMdd"></property>
+		<property name="ruleExpression" value="/html/body/div[3]/table/tbody/tr[10]/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	
+	<bean id="f14rule" class="com.purang.grab.rule.DateFieldRule">
+		<property name="title" value="批准成立日期"></property> 
+		<property name="field" value="f14"></property> 
+		<property name="fromDateFormat" value="yyyy-MM-dd"></property>
+		<property name="toDateFormat" value="yyyyMMdd"></property>
+		<property name="ruleExpression" value="/html/body/div[3]/table/tbody/tr[11]/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	
+	<bean id="f15rule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="发证机关"></property> 
+		<property name="field" value="f15"></property> 
+		<property name="ruleExpression" value="/html/body/div[3]/table/tbody/tr[12]/td[2]/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	
+	<bean id="f17rule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="备注"></property> 
+		<property name="field" value="f17"></property> 
+		<property name="ruleExpression" value="//*[@id='bottom1']/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	
+	<!-- 退出规则 -->
+	<bean id="dateexitrule" class="com.purang.grab.rule.DateExitRule">
+		<property name="title" value="日期"></property> 
+		<property name="field" value="pubdate"></property> 
+		<property name="fromDateFormat" value="yyyy-MM-dd"></property>
+		<property name="toDateFormat" value="yyyyMMdd"></property>
+		<property name="ruleExpression" value="$.root[*].printDateStr"></property> 
+		<property name="ruleType" value="xjson"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+	<!-- 页数最大规则 -->
+	<bean id="maxpagerule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="最大页"></property> 
+		<property name="field" value=""></property> 
+		<property name="ruleExpression" value="$.totalProperty"></property> 
+		<property name="ruleType" value="xjson"></property> 
+		<property name="ruleResultType" value="1"></property> 
+	</bean>
+	
+	<!-- 政策性银行_总行 -->
+	<bean id="11-1101" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=A&amp;branchType=H&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="11"></entry>
+				<entry key="orgType2" value="1101"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 政策性银行_总行营业部 -->
+	<bean id="11-1102" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=A&amp;branchType=G&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="11"></entry>
+				<entry key="orgType2" value="1102"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 政策性银行_一级分行 -->
+	<bean id="11-1103" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=A&amp;branchType=B&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="11"></entry>
+				<entry key="orgType2" value="1103"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 政策性银行_一级分行营业部 -->
+	<bean id="11-1104" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=A&amp;branchType=K&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="11"></entry>
+				<entry key="orgType2" value="1104"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 政策性银行_二级分行 -->
+	<bean id="11-1105" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=A&amp;branchType=L&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="11"></entry>
+				<entry key="orgType2" value="1105"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 政策性银行_二级分行营业部 -->
+	<bean id="11-1106" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=A&amp;branchType=N&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="11"></entry>
+				<entry key="orgType2" value="1106"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 政策性银行_支行 -->
+	<bean id="11-1107" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=A&amp;branchType=S&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="11"></entry>
+				<entry key="orgType2" value="1107"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 政策性银行_其他分支机构 -->
+	<bean id="11-1108" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=A&amp;branchType=X&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="11"></entry>
+				<entry key="orgType2" value="1108"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 商业银行_总行 -->
+	<bean id="12-1209" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=B&amp;branchType=H&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="12"></entry>
+				<entry key="orgType2" value="1209"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 商业银行_总行营业部、专营机构 -->
+	<bean id="12-1210" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=B&amp;branchType=G&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="12"></entry>
+				<entry key="orgType2" value="1210"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 商业银行_一级分行 -->
+	<bean id="12-1211" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=B&amp;branchType=B&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="12"></entry>
+				<entry key="orgType2" value="1211"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 商业银行_一级分行营业部 -->
+	<bean id="12-1212" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=B&amp;branchType=K&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="12"></entry>
+				<entry key="orgType2" value="1212"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 商业银行_二级分行 -->
+	<bean id="12-1213" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=B&amp;branchType=L&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="12"></entry>
+				<entry key="orgType2" value="1213"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 商业银行_一级分行直属支行 -->
+	<bean id="12-1214" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=B&amp;branchType=M&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="12"></entry>
+				<entry key="orgType2" value="1214"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 商业银行_二级分行营业部-->
+	<bean id="12-1215" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=B&amp;branchType=N&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="12"></entry>
+				<entry key="orgType2" value="1215"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 商业银行_支行 -->
+	<bean id="12-1216" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=B&amp;branchType=S&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="12"></entry>
+				<entry key="orgType2" value="1216"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 商业银行_分理处、办事处、营业所 -->
+	<bean id="12-1217" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=B&amp;branchType=U&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="12"></entry>
+				<entry key="orgType2" value="1217"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 商业银行_储蓄所 -->
+	<bean id="12-1218" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=B&amp;branchType=V&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="12"></entry>
+				<entry key="orgType2" value="1218"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 商业银行_其他分支机构 -->
+	<bean id="12-1219" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=B&amp;branchType=X&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="12"></entry>
+				<entry key="orgType2" value="1219"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 商业银行_邮储代理营业所 -->
+	<bean id="12-1220" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=B&amp;branchType=A&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="12"></entry>
+				<entry key="orgType2" value="1220"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 农村合作银行_总行 -->
+	<bean id="13-1321" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=C&amp;branchType=H&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="13"></entry>
+				<entry key="orgType2" value="1321"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 农村合作银行_支行 -->
+	<bean id="13-1322" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=C&amp;branchType=S&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="13"></entry>
+				<entry key="orgType2" value="1322"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 农村合作银行_分理处 -->
+	<bean id="13-1323" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=C&amp;branchType=U&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="13"></entry>
+				<entry key="orgType2" value="1323"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 农村合作银行_储蓄所 -->
+	<bean id="13-1324" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=C&amp;branchType=V&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="13"></entry>
+				<entry key="orgType2" value="1324"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 农村合作银行_其他分支机构 -->
+	<bean id="13-1325" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=C&amp;branchType=X&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="13"></entry>
+				<entry key="orgType2" value="1325"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 城市信用社_法人 -->
+	<bean id="14-1426" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=D&amp;branchType=H&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="14"></entry>
+				<entry key="orgType2" value="1426"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 城市信用社_分社、营业部 -->
+	<bean id="14-1427" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=D&amp;branchType=S&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="14"></entry>
+				<entry key="orgType2" value="1427"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 城市信用社_其他分支机构 -->
+	<bean id="14-1428" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=D&amp;branchType=X&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="14"></entry>
+				<entry key="orgType2" value="1428"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 农村信用社_省级联合社 -->
+	<bean id="15-1529" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=E&amp;branchType=H&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="15"></entry>
+				<entry key="orgType2" value="1529"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 农村信用社_地级联合社、联社 -->
+	<bean id="15-1530" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=E&amp;branchType=B&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="15"></entry>
+				<entry key="orgType2" value="1530"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 农村信用社_县级联合社、联社 -->
+	<bean id="15-1531" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=E&amp;branchType=S&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="15"></entry>
+				<entry key="orgType2" value="1531"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 农村信用社_信用合作社 -->
+	<bean id="15-1532" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=E&amp;branchType=T&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="15"></entry>
+				<entry key="orgType2" value="1532"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 农村信用社_信用社、分社 -->
+	<bean id="15-1533" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=E&amp;branchType=U&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="15"></entry>
+				<entry key="orgType2" value="1533"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 农村信用社_储蓄所 -->
+	<bean id="15-1534" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=E&amp;branchType=V&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="15"></entry>
+				<entry key="orgType2" value="1534"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 农村信用社_其他分支机构 -->
+	<bean id="15-1535" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=E&amp;branchType=X&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="15"></entry>
+				<entry key="orgType2" value="1535"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 资金互助社_法人 -->
+	<bean id="16-1636" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=F&amp;branchType=H&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="16"></entry>
+				<entry key="orgType2" value="1636"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 邮政储蓄网点_储蓄网点 -->
+	<bean id="17-1737" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=I&amp;branchType=X&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="17"></entry>
+				<entry key="orgType2" value="1737"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 金融资产管理公司_总公司 -->
+	<bean id="18-1838" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=J&amp;branchType=H&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="18"></entry>
+				<entry key="orgType2" value="1838"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 金融资产管理公司_分公司 -->
+	<bean id="18-1839" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=J&amp;branchType=B&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="18"></entry>
+				<entry key="orgType2" value="1839"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 金融资产管理公司_其他分支机构 -->
+	<bean id="18-1840" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=H&amp;branchType=X&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="18"></entry>
+				<entry key="orgType2" value="1840"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 信托公司_总公司 -->
+	<bean id="19-1941" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=K&amp;branchType=H&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="19"></entry>
+				<entry key="orgType2" value="1941"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 信托公司_其他分支机构 -->
+	<bean id="19-1942" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=K&amp;branchType=X&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="19"></entry>
+				<entry key="orgType2" value="1942"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 财务公司_总公司 -->
+	<bean id="20-2043" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=L&amp;branchType=H&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="20"></entry>
+				<entry key="orgType2" value="2043"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 财务公司_分公司 -->
+	<bean id="20-2044" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=L&amp;branchType=B&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="20"></entry>
+				<entry key="orgType2" value="2044"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 财务公司_其他分支机构 -->
+	<bean id="20-2045" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=L&amp;branchType=X&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="20"></entry>
+				<entry key="orgType2" value="2045"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 金融租赁公司_总公司 -->
+	<bean id="21-2146" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=M&amp;branchType=H&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="21"></entry>
+				<entry key="orgType2" value="2146"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 金融租赁公司_分公司 -->
+	<bean id="21-2147" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=M&amp;branchTypeB&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="21"></entry>
+				<entry key="orgType2" value="2147"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 金融租赁公司_其他分支机构 -->
+	<bean id="21-2148" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=M&amp;branchType=X&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="21"></entry>
+				<entry key="orgType2" value="2148"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	
+	
+	
+	<!-- 汽车租赁公司_总公司 -->
+	<bean id="22-2249" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=N&amp;branchType=H&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="22"></entry>
+				<entry key="orgType2" value="2249"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 货币经济公司_总公司 -->
+	<bean id="23-2350" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=P&amp;branchType=H&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="2350"></entry>
+				<entry key="orgType2" value="2350"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 货币经济公司_分公司 -->
+	<bean id="23-2351" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=P&amp;branchTypeB&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="23"></entry>
+				<entry key="orgType2" value="2351"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 货币经济公司_其他分支机构 -->
+	<bean id="23-2352" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=P&amp;branchType=X&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="23"></entry>
+				<entry key="orgType2" value="2352"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 贷款公司_总公司 -->
+	<bean id="24-2453" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=Q&amp;branchType=H&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="24"></entry>
+				<entry key="orgType2" value="2453"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 村镇银行_总行 -->
+	<bean id="25-2554" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=S&amp;branchType=H&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="25"></entry>
+				<entry key="orgType2" value="2554"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 村镇银行_分理处 -->
+	<bean id="25-2555" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=S&amp;branchType=U&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="25"></entry>
+				<entry key="orgType2" value="2555"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 村镇银行_储蓄所 -->
+	<bean id="25-2556" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=S&amp;branchType=V&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="25"></entry>
+				<entry key="orgType2" value="2556"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 村镇银行_其他分支机构 -->
+	<bean id="25-2557" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=S&amp;branchType=X&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="25"></entry>
+				<entry key="orgType2" value="2557"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 村镇银行_支行 -->
+	<bean id="25-2558" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=S&amp;branchType=S&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="25"></entry>
+				<entry key="orgType2" value="2558"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 消费金融公司_总公司 -->
+	<bean id="26-2659" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=X&amp;branchType=H&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="26"></entry>
+				<entry key="orgType2" value="2659"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 消费金融公司_分公司 -->
+	<bean id="26-2660" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=X&amp;branchType=B&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="26"></entry>
+				<entry key="orgType2" value="2660"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 其他金融机构_总公司 -->
+	<bean id="27-2761" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=Z&amp;branchType=H&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="27"></entry>
+				<entry key="orgType2" value="2761"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 其他金融机构_总公司 -->
+	<bean id="27-2762" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=Z&amp;branchType=B&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="27"></entry>
+				<entry key="orgType2" value="2762"></entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 其他金融机构_其他分支机构 -->
+	<bean id="27-2763" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?organType=Z&amp;branchType=X&amp;start=[*]&amp;limit=10&amp;useState=3&amp;organNo=&amp;fatherOrganNo=&amp;province=&amp;orgAddress=&amp;fullName=&amp;address=&amp;flowNo="></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="10"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="orgType1" value="27"></entry>
+				<entry key="orgType2" value="2763"></entry>
+			</map>
+		</property>
+	</bean>
+	
+</beans>

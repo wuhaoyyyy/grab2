@@ -79,16 +79,17 @@ public class CommonUtils {
 		String text=null;
 		switch(type){
 			case "css":
-				text=page.getHtml().css(rule).toString().trim();
+				text=page.getHtml().css(rule).get();
 				break;
 			case "xpath":
-				text=page.getHtml().xpath(rule).toString().trim();
+				text=page.getHtml().xpath(rule).get();
 				break;
 			case "xjson":
-				text=page.getJson().jsonPath(rule).get().trim();
+				text=page.getJson().jsonPath(rule).get();
 				break;
 		}
-		return text;
+		if(text==null) return null;
+		return StringUtils.getCutString(text.trim(), cutPrefix, cutPostfix);
 		
 	}
 	
@@ -103,13 +104,21 @@ public class CommonUtils {
 				break;
 			case "xpath2":
 				Html html=new Html(page.getRawText());//有些href为js函数用webmagic转换无效
-				result=html.xpath(rule).all();;
+				result=html.xpath(rule).all();
 				break;
 			case "xjson":
 				result=page.getJson().jsonPath(rule).all();
 				break;
 		}
-		return cutEmpty(result);
+		result=cutEmpty(result);
+		if(result!=null&&result.size()>0){
+			List<String> resultNew=new ArrayList<String>();
+			for(String t:result){
+				resultNew.add(StringUtils.getCutString(t, cutPrefix, cutPostfix));
+			}
+			return resultNew;
+		}
+		return null;
 
 	}
 	
@@ -306,17 +315,17 @@ public class CommonUtils {
 			HttpGet httpget = new HttpGet(url);  
 			HttpResponse response = client.execute(httpget);  
 			Header[] headers = response.getAllHeaders();
-			String fileType=".pdf";
+			String fileType="";
         	for(int i=0;i<headers.length;i++) {
-        		if(headers[i].getName().equals("Content-Type")){
-        			String contentType=headers[i].getValue();
-        			if(!contentType.equals("application/x-msdownload")){
-        				return null;
-        			}
-        		}
+        		//Content-Disposition==attachment; filename="fielname"  或者 Content-Disposition==attachment; filename=fielname
         		if(headers[i].getName().equals("Content-Disposition")){
         			String contentDisposition=headers[i].getValue();
-        			fileType=contentDisposition.substring(contentDisposition.lastIndexOf("."), contentDisposition.length());
+        			String desc="filename=";
+        			String fileName=contentDisposition.substring(contentDisposition.indexOf(desc)+desc.length(), contentDisposition.length());
+        			if(fileName.startsWith("\"")&&fileName.endsWith("\"")){
+        				fileName=fileName.substring(1,fileName.length()-1);
+        			}
+        			fileType=fileName.substring(fileName.lastIndexOf("."), fileName.length());
         		}
         	}
 			
@@ -356,6 +365,9 @@ public class CommonUtils {
 			ArrayList<String> l=new ArrayList<>();
 			l.addAll(list.subList(0, beginIndex));
 			return l;
+		}
+		else if(beginIndex==0){
+			return null;
 		}
 		return list;
 	}

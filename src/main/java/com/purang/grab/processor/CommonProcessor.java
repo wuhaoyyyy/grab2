@@ -20,27 +20,7 @@ public class CommonProcessor extends AbstractProcessor{
 	@SuppressWarnings("unchecked")
 	@Override
 	public void gotoProcess(Page page,Map<String, Object> result) {
-		if(exitRule!=null) {
-			int exit=exitRule.getExit(page);
-			if(exit>-1) {
-				for(String key:result.keySet()){
-					List list=(List) result.get(key);
-					list=list.subList(0, exit);
-					result.put(key, list);
-				}
-				taskLog.info("exit-exitrule:"+page.getRequest().getUrl());
-				page.putField("result",result);			
-				return;
-			}
-		}
-		page.putField("result",result);
-		
-		Request request=page.getRequest();
-		if(request instanceof PagerRequest){
-			PagerRequest pagerRequest=(PagerRequest)request;
-			page.addTargetRequest(pagerRequest.getNextPager());
-		}		
-		
+		return;
 	}
 	
 	

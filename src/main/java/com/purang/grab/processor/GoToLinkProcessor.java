@@ -64,6 +64,7 @@ public class GoToLinkProcessor extends AbstractProcessor {
 		if(exitRule!=null) {
 			int exit=exitRule.getExit(page);
 			if(exit>-1) {
+				CommonUtils.mapValueToList(result);
 				for(String key:result.keySet()){
 					List list=(List) result.get(key);
 					list=list.subList(0, exit);

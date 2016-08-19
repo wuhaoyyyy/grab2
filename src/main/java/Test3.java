@@ -19,17 +19,17 @@ public class Test3 {
 	public static void main(String[] args) {
 		CloseableHttpClient httpclient = HttpClients.createDefault();  
         try {    
-            HttpGet httpget = new HttpGet("http://www.chinamoney.com.cn/fe/CMS5_G20306002Resource?info=20148387;res=14615987673451992362710;download=");
-            httpget.setHeader("Accept-Encoding", "deflate");  
-            System.out.println("executing request " + httpget.getURI());  
+//            HttpGet httpget = new HttpGet("http://www.chinamoney.com.cn/fe/CMS5_G20306002Resource?info=20148387;res=14615987673451992362710;download=");
+        	HttpGet httpget = new HttpGet("http://xukezheng.cbrc.gov.cn/ilicence/getLicence.do?start=0&limit=10&useState=3&organNo=&fatherOrganNo=&province=&orgAddress=&organType=A&branchType=H&fullName=&address=&flowNo=");
+        	System.out.println("executing request " + httpget.getURI());  
             CloseableHttpResponse response = httpclient.execute(httpget);  
             try {  
             	Header[] headers = response.getAllHeaders();
             	for(int i=0;i<headers.length;i++) {
-//            		System.out.println(headers[i].getName() +"=="+ new String(headers[i].getValue().getBytes(), "GBK"));
+            		System.out.println(headers[i].getName() +"=="+ headers[i].getValue());
 //            		System.out.println(headers[i].getName() +"=="+ new String(headers[i].getValue().getBytes("ISO-8859-1"),"UTF-8"));
 
-            		System.out.println(headers[i].getName() +"=="+ new String(headers[i].getValue().getBytes("ISO-8859-1"), "GBK"));
+//            		System.out.println(headers[i].getName() +"=="+ new String(headers[i].getValue().getBytes("ISO-8859-1"), "GBK"));
             	}
             	response.removeHeaders("Content-Length");
                 HttpEntity entity = response.getEntity();  
@@ -37,7 +37,7 @@ public class Test3 {
                 System.out.println(response.getStatusLine());  
                 if (entity != null) {  
 //                    System.out.println("Response content  length: " + entity.getContentLength()); 
-//                    System.out.println("Response content: " + EntityUtils.toString(entity));  
+                    System.out.println("Response content: " + EntityUtils.toString(entity));  
                 }  
                 System.out.println("------------------------------------");  
             } finally {  

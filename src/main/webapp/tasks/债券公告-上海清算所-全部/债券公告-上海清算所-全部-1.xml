@@ -1,0 +1,1000 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<bean id="scheduler" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+		<list>
+			<ref bean="simpleTrigger" />
+		</list>
+		</property>
+	</bean>
+	<bean id="job" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="task"></property>
+		<property name="targetMethod" value="doTask" />
+		<property name="concurrent" value="false" /><!-- 作业不并发调度 -->
+	</bean>
+	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="job" />
+		<property name="startDelay" value="0" />
+		<property name="repeatCount" value="0" />
+		<property name="repeatInterval" value="1" /><!--  -->
+	</bean>
+	
+	
+	<bean id="task" scope="singleton" class="com.purang.grab.task.CommonTask">
+		<property name="taskName" value="债券公告-上海清算所-全部-1"></property>
+		<property name="taskDesc" value="发行披露  发行情况报告  信用评级  财务报告  重大事项及其他 兑付注销"></property>
+
+		<property name="requestList">
+        	<list>
+        	<ref bean="3-301-301"/>
+        	<ref bean="3-301-302"/>
+        	<ref bean="3-301-303"/>
+        	<ref bean="3-301-304"/>
+        	<ref bean="3-301-305"/>
+        	<ref bean="3-301-306"/>
+        	<ref bean="3-301-307"/>
+        	<ref bean="3-301-308"/>
+        	<ref bean="3-301-309"/>
+        	<ref bean="3-301-310"/>
+        	<ref bean="3-301-311"/>
+        	<ref bean="3-301-399-1"/>
+        	<ref bean="3-301-399-2"/>
+        	
+        	<ref bean="3-302-301"/>
+        	<ref bean="3-302-302"/>
+        	<ref bean="3-302-303"/>
+        	<ref bean="3-302-304"/>
+        	<ref bean="3-302-305"/>
+        	<ref bean="3-302-306"/>
+        	<ref bean="3-302-307"/>
+        	<ref bean="3-302-308"/>
+        	<ref bean="3-302-309"/>
+        	<ref bean="3-302-310"/>
+        	<ref bean="3-302-311"/>
+        	<ref bean="3-302-399-1"/>
+        	<ref bean="3-302-399-2"/>
+        	
+        	<ref bean="3-304-30401-399"/>
+        	
+        	<ref bean="3-304-30402-301"/>
+        	<ref bean="3-304-30402-302"/>
+        	<ref bean="3-304-30402-303"/>
+        	<ref bean="3-304-30402-304"/>
+        	<ref bean="3-304-30402-305"/>
+        	<ref bean="3-304-30402-306"/>
+        	<ref bean="3-304-30402-307"/>
+        	<ref bean="3-304-30402-308"/>
+        	<ref bean="3-304-30402-309"/>
+        	<ref bean="3-304-30402-310"/>
+        	<ref bean="3-304-30402-311"/>
+        	<ref bean="3-304-30402-399-1"/>
+        	<ref bean="3-304-30402-399-2"/>
+        	
+        	<ref bean="3-305-399-1"/>
+        	<ref bean="3-305-399-2"/>
+        	<ref bean="3-305-399-3"/>
+        	<ref bean="3-305-399-4"/>
+        	
+        	<ref bean="3-307-301"/>
+        	<ref bean="3-307-302"/>
+        	<ref bean="3-307-303"/>
+        	<ref bean="3-307-304"/>
+        	<ref bean="3-307-305"/>
+        	<ref bean="3-307-306"/>
+        	<ref bean="3-307-307"/>
+        	<ref bean="3-307-308"/>
+        	<ref bean="3-307-309"/>
+        	<ref bean="3-307-310"/>
+        	<ref bean="3-307-311"/>
+        	<ref bean="3-307-399-1"/>
+        	<ref bean="3-307-399-2"/>
+        	</list>
+		</property>
+		<property name="threadCount" value="15"></property>
+		<property name="pageProcessor" ref="processor"></property>
+		<property name="pipelineList">
+        	<list>
+        		<ref bean="pipeline1" />
+        	</list>
+		</property>
+	</bean>
+	
+	<bean id="processor" scope="singleton" class="com.purang.grab.task.CommonPageProcessor">
+		<property name="site" ref="site"></property>
+		<property name="processorList">
+        	<list>
+        		<ref bean="commonprocessor" />
+        		<ref bean="shClearing2Processor" />
+        	</list>
+		</property>
+	</bean>
+	<bean id="site" class="com.purang.grab.site.CommonSite">
+		<property name="charset" value="UTF-8"></property>
+		<property name="sleepTime" value="2000"></property>
+		<property name="timeOut" value="60000"></property>
+		<property name="useGzip" value="false"></property>
+		<property name="headers">
+			<map>
+				<entry key="Accept-Encoding" value="deflate"/>   
+			</map>
+		</property>
+		<property name="acceptStatCode">
+			<set>
+				<value>200</value>
+				<value>404</value><!-- 添加404 翻页找不到时不处理不报错 -->
+			</set>
+		</property>
+	</bean>
+	
+	
+	
+	<bean id="commonprocessor" class="com.purang.grab.processor.GoToLinkProcessor">
+		<property name="fieldRuleList">
+			<list>
+				<ref bean="titlefieldrule"/>
+				<ref bean="pubdatefieldrule"/>
+				<ref bean="linkurlfieldrule"/>
+			</list>
+		</property>
+		<property name="gotoLink" ref="gotolink"></property>
+<!-- 		<property name="exitRule" ref="dateexitrule"></property> -->
+	</bean>
+	
+	<bean id="shClearing2Processor" class="com.purang.grab.processor.custom.ShClearing2Processor">
+	</bean>
+	
+	<bean id="titlefieldrule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="标题1"></property> 
+		<property name="field" value="title1"></property> 
+		<property name="ruleExpression" value="$.datas[*].title"></property> 
+		<property name="ruleType" value="xjson"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+	<bean id="pubdatefieldrule" class="com.purang.grab.rule.DateFieldRule">
+		<property name="title" value="日期"></property> 
+		<property name="field" value="pubdate"></property> 
+		<property name="fromDateFormat" value="chinese"></property>
+		<property name="toDateFormat" value="yyyyMMdd"></property>
+		<property name="ruleExpression" value="$.datas[*].pubdate"></property> 
+		<property name="ruleType" value="xjson"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+	
+	<bean id="linkurlfieldrule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="链接1"></property> 
+		<property name="field" value="linkurl1"></property> 
+		<property name="ruleExpression" value="$.datas[*].linkurl"></property> 
+		<property name="ruleType" value="xjson"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+	
+	<bean id="dateexitrule" class="com.purang.grab.rule.DateExitRule">
+		<property name="title" value="日期"></property> 
+		<property name="field" value="pubdate"></property> 
+		<property name="fromDateFormat" value="chinese"></property>
+		<property name="toDateFormat" value="yyyyMMdd"></property>
+		<property name="ruleExpression" value="$.datas[*].pubdate"></property> 
+		<property name="ruleType" value="xjson"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+
+	<bean id="gotolink" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="打开链接"></property> 
+		<property name="field" value="gotolink"></property> 
+		<property name="ruleExpression" value="$.datas[*].linkurl"></property> 
+		<property name="ruleType" value="xjson"></property> 
+		<property name="ruleResultType" value="2"></property> 
+	</bean>
+	
+	<bean id="pipeline1" class="com.purang.grab.pipeline.CommonPipeline">
+		<property name="level" value="1"></property>
+		<property name="save" ref="insertsave"></property>
+	</bean>
+	
+	<bean id="insertsave" class="com.purang.grab.save.InsertSave">
+		<property name="defaultValue">
+			<map>
+				<entry key="fsPublishStatus" value="2"/>   
+				<entry key="fnUpdateName" value="grab"/> 
+				<entry key="announceType2" value=""/>   
+				<entry key="bondType2" value=""/>    
+				<entry key="title2" value=""/>   
+				<entry key="linkurl2" value=""/>   
+				<entry key="ftp" value=""/>     
+			</map>
+		</property>
+		<property name="selectExpression" value="select count(1) from  P12005  p where p.f3=[pubdate] and p.f4=[announceSource] and p.f5=[announceType1] and p.f7=[bondType1] and p.f9=[title1] and p.f10=[linkurl1] and p.f11=[title2]"></property>
+		<property name="insertExpression" value="INSERT INTO P12005 (fv, ft, f3, f4, f5, f7, f6, f8, f9, f10, f11, f12, f15, fs, fp, fu) VALUES([(auto)id],[(auto)id],[pubdate],[announceSource],[announceType1],[bondType1],[announceType2],[bondType2],[title1],[linkurl1],[title2],[linkurl2],[ftp],[fsPublishStatus],[(auto)date],[(auto)date])"></property>
+		<property name="filedownload" value="linkurl2"></property>
+		<property name="filedownloadpath" value="/bondannounce/[pubdate]/"></property>
+	</bean>
+	
+	
+	
+	
+	<!--  发行披露_中期票据 -->
+	<bean id="3-301-301" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=145&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="301"/> 
+				<entry key="bondType1" value="301"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--  发行披露_短期融资券 -->
+	<bean id="3-301-302" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=146&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="301"/> 
+				<entry key="bondType1" value="302"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!--  发行披露_超短期融资券 -->
+	<bean id="3-301-303" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=147&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="301"/> 
+				<entry key="bondType1" value="303"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!--  发行披露_金融企业短期融资券 -->
+	<bean id="3-301-304" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=148&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="301"/>
+				<entry key="bondType1" value="304"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!--  发行披露_非公开定向债务融资工具 -->
+	<bean id="3-301-305" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=149&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="301"/> 
+				<entry key="bondType1" value="305"/>
+			</map>
+		</property>
+	</bean>
+	<!--  发行披露_金融债  -->
+	<bean id="3-301-306" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=150&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="301"/> 
+				<entry key="bondType1" value="306"/> 
+			</map>
+		</property>
+	</bean>
+	<!--  发行披露_信贷资产支持证券 -->
+	<bean id="3-301-307" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=151&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="301"/> 
+				<entry key="bondType1" value="307"/> 
+			</map>
+		</property>
+	</bean>
+	<!--  发行披露_非金融企业资产支持票据 -->
+	<bean id="3-301-308" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=152&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="301"/>
+				<entry key="bondType1" value="308"/> 
+			</map>
+		</property>
+	</bean>
+	<!--  发行披露_区域集优中小企业集合票据 -->
+	<bean id="3-301-309" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=153&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="301"/> 
+				<entry key="bondType1" value="309"/> 
+			</map>
+		</property>
+	</bean>
+	<!--  发行披露_信用风险缓释凭证 -->
+	<bean id="3-301-310" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=154&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="301"/> 
+				<entry key="bondType1" value="310"/> 
+			</map>
+		</property>
+	</bean>
+	<!--  发行披露_同业存单 -->
+	<bean id="3-301-311" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=449&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="301"/> 
+				<entry key="bondType1" value="311"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!--  发行披露_绿色债务融资工具 -->
+	<bean id="3-301-399-1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=981&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="301"/> 
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!--  发行披露_项目收益票据 -->
+	<bean id="3-301-399-2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=982&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="301"/> 
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	
+	
+	<!--  发行情况报告_中期票据 -->
+	<bean id="3-302-301" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=156&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="302"/> 
+				<entry key="bondType1" value="301"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--  发行情况报告_短期融资券 -->
+	<bean id="3-302-302" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=157&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="302"/> 
+				<entry key="bondType1" value="302"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!--  发行情况报告_超短期融资券 -->
+	<bean id="3-302-303" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=158&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="302"/> 
+				<entry key="bondType1" value="303"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!--  发行情况报告_金融企业短期融资券 -->
+	<bean id="3-302-304" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=159&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="302"/>
+				<entry key="bondType1" value="304"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!--  发行情况报告_非公开定向债务融资工具 -->
+	<bean id="3-302-305" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=160&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="302"/> 
+				<entry key="bondType1" value="305"/>
+			</map>
+		</property>
+	</bean>
+	<!--  发行情况报告_金融债  -->
+	<bean id="3-302-306" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=161&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="302"/> 
+				<entry key="bondType1" value="306"/> 
+			</map>
+		</property>
+	</bean>
+	<!--  发行情况报告_信贷资产支持证券 -->
+	<bean id="3-302-307" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=162&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="302"/> 
+				<entry key="bondType1" value="307"/> 
+			</map>
+		</property>
+	</bean>
+	<!--  发行情况报告_非金融企业资产支持票据 -->
+	<bean id="3-302-308" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=163&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="302"/>
+				<entry key="bondType1" value="308"/> 
+			</map>
+		</property>
+	</bean>
+	<!--  发行情况报告_区域集优中小企业集合票据 -->
+	<bean id="3-302-309" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=164&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="302"/> 
+				<entry key="bondType1" value="309"/> 
+			</map>
+		</property>
+	</bean>
+	<!--  发行情况报告_信用风险缓释凭证 -->
+	<bean id="3-302-310" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=165&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="302"/> 
+				<entry key="bondType1" value="310"/> 
+			</map>
+		</property>
+	</bean>
+	<!--  发行情况报告_同业存单 -->
+	<bean id="3-302-311" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=450&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="302"/> 
+				<entry key="bondType1" value="311"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!--  发行情况报告_绿色债务融资工具 -->
+	<bean id="3-302-399-1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=983&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="302"/> 
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!--  发行情况报告_项目收益票据 -->
+	<bean id="3-302-399-2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=984&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="302"/> 
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 信用评级 披露主体 -->
+	<bean id="3-304-30401-399" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=178&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="304"/>
+				<entry key="announceType2" value="30401"/>
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	
+	
+	<!-- 信用评级 债项披露 中期票据 -->
+	<bean id="3-304-30402-301" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=179&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="304"/>
+				<entry key="announceType2" value="30402"/>
+				<entry key="bondType1" value="301"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="3-304-30402-302" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=180&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="304"/>
+				<entry key="announceType2" value="30402"/>
+				<entry key="bondType1" value="302"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="3-304-30402-303" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=181&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="304"/>
+				<entry key="announceType2" value="30402"/>
+				<entry key="bondType1" value="303"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="3-304-30402-304" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=182&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="304"/>
+				<entry key="announceType2" value="30402"/>
+				<entry key="bondType1" value="304"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="3-304-30402-305" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=183&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="304"/>
+				<entry key="announceType2" value="30402"/>
+				<entry key="bondType1" value="305"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="3-304-30402-306" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=184&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="304"/>
+				<entry key="announceType2" value="30402"/>
+				<entry key="bondType1" value="306"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="3-304-30402-307" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=185&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="304"/>
+				<entry key="announceType2" value="30402"/>
+				<entry key="bondType1" value="307"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="3-304-30402-308" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=186&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="304"/>
+				<entry key="announceType2" value="30402"/>
+				<entry key="bondType1" value="308"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="3-304-30402-309" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=187&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="304"/>
+				<entry key="announceType2" value="30402"/>
+				<entry key="bondType1" value="309"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="3-304-30402-310" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=188&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="304"/>
+				<entry key="announceType2" value="30402"/>
+				<entry key="bondType1" value="310"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="3-304-30402-311" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=451&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="304"/>
+				<entry key="announceType2" value="30402"/>
+				<entry key="bondType1" value="311"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="3-304-30402-399-1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=987&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="304"/>
+				<entry key="announceType2" value="30402"/>
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="3-304-30402-399-2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=988&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="304"/>
+				<entry key="announceType2" value="30402"/>
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 财务报告 -->
+	<bean id="3-305-399-1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=190&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="305"/>
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="3-305-399-2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=191&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="305"/>
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="3-305-399-3" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=192&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="305"/>
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	<bean id="3-305-399-4" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=193&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="305"/>
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 重大事项及其他 -->
+	<bean id="3-306-399-1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=194&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="306"/>
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	
+	
+	<!--  兑付注销_中期票据 -->
+	<bean id="3-307-301" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=196&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="307"/> 
+				<entry key="bondType1" value="301"/>
+			</map>
+		</property>
+	</bean>
+	
+	<!--  兑付注销_短期融资券 -->
+	<bean id="3-307-302" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=197&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="307"/> 
+				<entry key="bondType1" value="302"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!--  兑付注销_超短期融资券 -->
+	<bean id="3-307-303" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=198&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="307"/> 
+				<entry key="bondType1" value="303"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!--  兑付注销_金融企业短期融资券 -->
+	<bean id="3-307-304" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=199&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="307"/>
+				<entry key="bondType1" value="304"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!--  兑付注销_非公开定向债务融资工具 -->
+	<bean id="3-307-305" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=200&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="307"/> 
+				<entry key="bondType1" value="305"/>
+			</map>
+		</property>
+	</bean>
+	<!--  兑付注销_金融债  -->
+	<bean id="3-307-306" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=201&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="307"/> 
+				<entry key="bondType1" value="306"/> 
+			</map>
+		</property>
+	</bean>
+	<!--  兑付注销_信贷资产支持证券 -->
+	<bean id="3-307-307" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=202&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="307"/> 
+				<entry key="bondType1" value="307"/> 
+			</map>
+		</property>
+	</bean>
+	<!--  兑付注销_非金融企业资产支持票据 -->
+	<bean id="3-307-308" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=203&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="307"/>
+				<entry key="bondType1" value="308"/> 
+			</map>
+		</property>
+	</bean>
+	<!--  兑付注销_区域集优中小企业集合票据 -->
+	<bean id="3-307-309" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=204&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="307"/> 
+				<entry key="bondType1" value="309"/> 
+			</map>
+		</property>
+	</bean>
+	<!--  兑付注销_信用风险缓释凭证 -->
+	<bean id="3-307-310" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=205&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="307"/> 
+				<entry key="bondType1" value="310"/> 
+			</map>
+		</property>
+	</bean>
+	<!--  兑付注销_同业存单 -->
+	<bean id="3-307-311" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=452&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="307"/> 
+				<entry key="bondType1" value="311"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!--  兑付注销_绿色债务融资工具 -->
+	<bean id="3-307-399-1" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=989&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="307"/> 
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	
+	<!--  兑付注销_项目收益票据 -->
+	<bean id="3-307-399-2" scope="singleton" class="com.purang.grab.request.PagerRequest">
+		<property name="startUrl" value="http://www.shclearing.com/shchapp/web/disclosureForTrsServer/search?channelId=990&amp;start=[*]&amp;limit=20"></property>
+		<property name="start" value="0"></property>
+		<property name="tolerance" value="20"></property>
+		<property name="defaultValue">
+			<map>
+				<entry key="announceSource" value="3"/>
+				<entry key="announceType1" value="307"/> 
+				<entry key="bondType1" value="399"/> 
+			</map>
+		</property>
+	</bean>
+	
+</beans>

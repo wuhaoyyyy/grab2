@@ -25,7 +25,7 @@ public abstract class AbstractProcessor implements Processor {
 	protected Map<String, String> defaultValue;
 	protected List<FieldRule> fieldRuleList;
 	protected ExitRule exitRule;
-	protected int exitPos;
+	protected int exitPos=-1;
 	public int getLevel() {
 		return level;
 	}
@@ -83,14 +83,53 @@ public abstract class AbstractProcessor implements Processor {
 			for(FieldRule fieldRule:fieldRuleList){
 				Object value=fieldRule.getRuleResult(page);
 				result.put(fieldRule.getField(),value);
-				if(value instanceof List &&((List) value).size()>0 && !value.toString().equals("")) allempty=false;
+				if(value!=null&&(value instanceof List &&((List) value).size()>0)) {
+					allempty=false;
+				}
+				else if(value instanceof String && !value.equals("")){
+					allempty=false;
+				}
 				
 			}
 			if(allempty) {
 				taskLog.info("exit-nodata:"+page.getRequest().getUrl());
 				return;
 			}
-		}		
+		}	
+		
+		
+		if(exitRule!=null) {
+			this.exitPos=exitRule.getExit(page);
+			if(exitPos>-1) {
+				CommonUtils.mapValueToList(result);
+				for(String key:result.keySet()){
+					List list=(List) result.get(key);
+					list=list.subList(0, exitPos);
+					result.put(key, list);
+				}
+				taskLog.info("exit-exitrule:"+page.getRequest().getUrl());		
+			}
+		}
+		else{
+			exitPos=-1;
+		}
+		
+		if(exitPos>-1){
+		}
+		else{
+			Request request=page.getRequest();
+			if(request instanceof PagerRequest){
+				PagerRequest pagerRequest=(PagerRequest)request;
+				pagerRequest=pagerRequest.getNextPager(page);
+				if(pagerRequest!=null){
+					page.addTargetRequest(pagerRequest);
+				}
+				else{
+					taskLog.info("exit-lastpage:"+page.getRequest().getUrl());
+				}
+			}	
+		}
+		page.putField("result",result);	
 		gotoProcess(page,result);
 
 	}

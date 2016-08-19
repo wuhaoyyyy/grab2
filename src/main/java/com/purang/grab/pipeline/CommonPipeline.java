@@ -22,6 +22,8 @@ public class CommonPipeline extends AbstractPipeline {
 
 	@Override
 	public void gotoProcess(ResultItems resultItems, Task task, Map<String, Object> result) {
+		System.out.println(result);
+		if(save==null) return;
 		save.save(result);
 	}
 }

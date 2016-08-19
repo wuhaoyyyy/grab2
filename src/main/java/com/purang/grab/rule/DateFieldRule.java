@@ -33,15 +33,20 @@ public class DateFieldRule extends FieldRule {
 	@Override
 	public Object getRuleResult(Page page) {
 		Object date=super.getRuleResult(page);
-
+		if(date==null) return null;
 		return getFormatDate(date);
 	}
 	
 	private Object getFormatDate(Object date){
 		List<String> dateList=new ArrayList<>();
-		for(String s:(ArrayList<String>)date){
-			String datestr=DateUtils.getString(s, fromDateFormat,toDateFormat);
-			dateList.add(datestr);
+		if(date instanceof List){
+			for(String s:(ArrayList<String>)date){
+				String datestr=DateUtils.getString(s, fromDateFormat,toDateFormat);
+				dateList.add(datestr);
+			}			
+		}
+		else{
+			return DateUtils.getString((String)date, fromDateFormat,toDateFormat);
 		}
 		return dateList;	
 	}
