@@ -22,15 +22,13 @@ import com.purang.grab.util.StringUtils;
 import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;
 
-public class FinaLicenseProcessor extends AbstractPipeline {
+public class FinaLicensePipeline extends AbstractPipeline {
 
 	@Override
 	public void gotoProcess(ResultItems resultItems, Task task, Map<String, Object> result) {
+		int listsize=CommonUtils.mapValueToList(result);
 		if(result.get("f1old")==null){
 			//判断P13009 流水号是否存在
-			SqlSessionFactory ssf =(SqlSessionFactory) ApplicationContextUtils.getInstance().getBean("sqlSessionFactory");
-			SqlSession session = ssf.openSession(); 
-			int listsize=CommonUtils.mapValueToList(result);
 			for(int i=0;i<listsize;i++){
 				Map singleMap=CommonUtils.getSingleMap(result,i);
 				String sql="select count(1) from P13009 where f1='"+singleMap.get("f1")+"'";
@@ -63,7 +61,18 @@ public class FinaLicenseProcessor extends AbstractPipeline {
 			}
 		}
 		else{
-			
+			for(int i=0;i<listsize;i++){
+				Map singleMap=CommonUtils.getSingleMap(result,i);
+				String sql="select count(1) from P13009 where f1='"+singleMap.get("f1old")+"'";
+				int count=DbUtils.select(sql);
+				if(count>0) {
+					//update
+				}
+				else{
+					
+				}
+				
+			}
 		}
 	}
 }

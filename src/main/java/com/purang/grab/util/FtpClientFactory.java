@@ -20,7 +20,6 @@ public class FtpClientFactory implements PoolableObjectFactory {
         this.config = config;  
     }  
   
-    @Override  
     public FTPClient makeObject() throws Exception {  
         FTPClient ftpClient = new FTPClient();  
         ftpClient.setConnectTimeout(config.getClientTimeout());  
@@ -31,7 +30,7 @@ public class FtpClientFactory implements PoolableObjectFactory {
                     ftpClient.disconnect();  
                     logger.warn("FTPServer refused connection");  
                     return null;  
-               }  
+               } 
                boolean result = ftpClient.login(config.getUsername(), config.getPassword());  
                if (!result) {  
                    logger.warn("ftpClient login failed... username is {}", config.getUsername());  
@@ -50,7 +49,6 @@ public class FtpClientFactory implements PoolableObjectFactory {
           return ftpClient;  
     }  
 
-	@Override
 	public void destroyObject(Object obj) throws Exception {
 		FTPClient ftpClient=(FTPClient)obj;
 		try {  
@@ -68,7 +66,6 @@ public class FtpClientFactory implements PoolableObjectFactory {
 		
 	}
 
-	@Override
 	public boolean validateObject(Object obj) {
 		FTPClient ftpClient=(FTPClient)obj;
         try {  
@@ -79,11 +76,9 @@ public class FtpClientFactory implements PoolableObjectFactory {
         return false;  
 	}
 
-	@Override
 	public void activateObject(Object obj) throws Exception {
 	}
 
-	@Override
 	public void passivateObject(Object obj) throws Exception {
 		
 	}  

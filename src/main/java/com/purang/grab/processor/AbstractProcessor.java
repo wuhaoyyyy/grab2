@@ -62,7 +62,6 @@ public abstract class AbstractProcessor implements Processor {
 	 * 处理page的result以及defaultValue，然后加入该process的defaultValue，再加入该process的field处理。 生成新的result
 	 */
 	@SuppressWarnings("unchecked")
-	@Override
 	public void process(Page page){
 		Map<String, Object> result=new HashMap<String, Object>();
 		if(page.getStatusCode()==404) {

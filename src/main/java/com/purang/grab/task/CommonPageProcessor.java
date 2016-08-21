@@ -34,9 +34,8 @@ public class CommonPageProcessor implements PageProcessor{
 		this.processorList = processorList;
 	}
 
-	@Override
 	public void process(Page page) {
-		int level=(int) page.getRequest().getExtra("level");
+		int level=(Integer) page.getRequest().getExtra("level");
 		Processor processor=processorList.get(level);//这里限定根据level选取对应processor处理 processor里无须判断，但processor里需要加上level传给pipline处理
 		((AbstractProcessor)processor).setLevel(level);
 		page.putField("level",level);//交给pipeline处理

@@ -6,7 +6,7 @@
 	<bean id="scheduler" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 		<list>
-			<ref bean="simpleTrigger" />
+			<ref bean="cronTrigger" />
 		</list>
 		</property>
 	</bean>
@@ -15,12 +15,11 @@
 		<property name="targetMethod" value="doTask" />
 		<property name="concurrent" value="false" />
 	</bean>
-	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
-		<property name="jobDetail" ref="job" />
-		<property name="startDelay" value="0" />
-		<property name="repeatCount" value="0" />
-		<property name="repeatInterval" value="1" />
-	</bean> 
+	
+	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">  
+        <property name="jobDetail" ref="job"/>  
+        <property name="cronExpression" value="0 0 23 * * ?"></property>  
+    </bean>  
 	
 	<bean id="site" class="com.purang.grab.site.CommonSite">
 		<property name="charset" value="GBK"></property>
@@ -41,8 +40,9 @@
 	</bean>
 	
 	<bean id="task" scope="singleton" class="com.purang.grab.task.CommonTask">
-		<property name="taskName" value="金融许可证-全部"></property>
-		<property name="taskDesc" value="金融许可证-全部执行一次"></property>
+		<property name="autostart" value="true"></property>
+		<property name="taskName" value="金融许可证-定时任务"></property>
+		<property name="taskDesc" value="金融许可证-定时任务每日23点执行"></property>
 		<property name="requestList">
         	<list>
 	        	<ref bean="11-1101"/>
@@ -158,7 +158,7 @@
 				<entry key="id" value="[searchid]"/>
 			</map>
 		</property>
-<!-- 		<property name="exitRule" ref="dateexitrule"></property> -->
+		<property name="exitRule" ref="dateexitrule"></property>
 	</bean>
 	
 	<bean id="commonProcessor" class="com.purang.grab.processor.CommonProcessor">

@@ -39,7 +39,6 @@ public abstract class AbstractPipeline implements Pipeline {
 		this.save = save;
 	}
 
-	@Override
 	public void process(ResultItems resultItems, Task task) {
 		Map<String, Object> result=new HashMap<String, Object>();
 		if(!resultItems.get("level").toString().equals(String.valueOf(this.level))) return;

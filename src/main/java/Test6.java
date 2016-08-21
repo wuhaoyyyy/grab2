@@ -98,7 +98,7 @@ public class Test6 {
 		BeanFactory taskBeanFactory = new XmlBeanFactory(rs);
 		Scheduler scheduler = (Scheduler) taskBeanFactory.getBean("scheduler"); 
 		try {
-			scheduler.start();
+			scheduler.start(); 
 		} catch (SchedulerException e) {
 			e.printStackTrace();
 		}

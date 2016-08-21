@@ -68,29 +68,21 @@
 <input type="hidden" name="taskname"/>
 <input type="hidden" name="operation"/>
 </form>
-      <div class="row">
-        <div class="col-xs-12">
-	<div class="box">
-            <div class="box-header">
-              <h3 class="box-title">列表</h3>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body table-responsive no-padding table-bordered">
-              <table id="tasktable" class="table table-hover" style="width:80%">
-                <tr>
-                  <th>任务</th>
-                  <th>描述</th>
-                  <th>自动启动</th>
-                  <th>状态</th>
-                  <th>操作</th>
-                </tr>
-                
-              </table>
-            </div>
-            <!-- /.box-body -->
-          </div>
-          </div>
-          </div>
+	<div class="col-xs-12">
+		<table id="tasktable" class="table table-border table-hover"
+			style="width: 100%">
+			<thead>
+				<tr>
+					<th>任务</th>
+					<th>描述</th>
+					<th>自动启动</th>
+					<th>状态</th>
+					<th>操作</th>
+				</tr>
+			<thead>
+			<tbody></tbody>
+		</table>
+	</div>
 </body>
 </html>
 

@@ -15,16 +15,16 @@
 		<property name="targetMethod" value="doTask" />
 		<property name="concurrent" value="false" />
 	</bean>
-	
-	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">  
-        <property name="jobDetail" ref="job"/>  
-        <property name="cronExpression" value="0 0/30 * * * ?"></property>  
-    </bean>  
+	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="job" />
+		<property name="startDelay" value="0" />
+		<property name="repeatCount" value="0" />
+		<property name="repeatInterval" value="1" />
+	</bean>
 	
 	
 	<bean id="task" scope="singleton" class="com.purang.grab.task.CommonTask">
-		<property name="autostart" value="true"></property>
-		<property name="taskName" value="债券公告-上海清算所-每日-1"></property>
+		<property name="taskName" value="债券公告-上海清算所-全部-类型1"></property>
 		<property name="taskDesc" value="发行披露  发行情况报告  信用评级  财务报告  重大事项及其他 兑付注销"></property>
 
 		<property name="requestList">
@@ -131,16 +131,15 @@
 	
 	
 	
-	<bean id="commonprocessor" class="com.purang.grab.processor.GoToLinkProcessor">
+	<bean id="commonprocessor" class="com.purang.grab.processor.CommonProcessor">
 		<property name="fieldRuleList">
 			<list>
 				<ref bean="titlefieldrule"/>
 				<ref bean="pubdatefieldrule"/>
 				<ref bean="linkurlfieldrule"/>
+				<ref bean="gotolink"/>
 			</list>
 		</property>
-		<property name="gotoLink" ref="gotolink"></property>
-		<property name="exitRule" ref="dateexitrule"></property>
 	</bean>
 	
 	<bean id="shClearing2Processor" class="com.purang.grab.processor.custom.ShClearing2Processor">
