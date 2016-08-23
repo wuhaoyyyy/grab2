@@ -25,6 +25,7 @@ public abstract class AbstractProcessor implements Processor {
 	protected Map<String, String> defaultValue;
 	protected List<FieldRule> fieldRuleList;
 	protected ExitRule exitRule;
+	protected FieldRule maxPagerRule;
 	protected int exitPos=-1;
 	public int getLevel() {
 		return level;
@@ -56,6 +57,14 @@ public abstract class AbstractProcessor implements Processor {
 
 	public void setExitRule(ExitRule exitRule) {
 		this.exitRule = exitRule;
+	}
+
+	public FieldRule getMaxPagerRule() {
+		return maxPagerRule;
+	}
+
+	public void setMaxPagerRule(FieldRule maxPagerRule) {
+		this.maxPagerRule = maxPagerRule;
 	}
 
 	/*
@@ -100,6 +109,7 @@ public abstract class AbstractProcessor implements Processor {
 		if(exitRule!=null) {
 			this.exitPos=exitRule.getExit(page);
 			if(exitPos>-1) {
+				if(exitPos==0) return;
 				CommonUtils.mapValueToList(result);
 				for(String key:result.keySet()){
 					List list=(List) result.get(key);
@@ -119,7 +129,20 @@ public abstract class AbstractProcessor implements Processor {
 			Request request=page.getRequest();
 			if(request instanceof PagerRequest){
 				PagerRequest pagerRequest=(PagerRequest)request;
+				//request里判断最后一页
 				pagerRequest=pagerRequest.getNextPager(page);
+				if(pagerRequest!=null){
+					//processor里判断最后一页
+					if(maxPagerRule!=null){
+						Object value=maxPagerRule.getRuleResult(page);
+						if(value==null) {
+							System.out.println(page.getRequest().getUrl());
+						}
+						if(pagerRequest.getStart()-pagerRequest.getTolerance()>Integer.valueOf(value.toString())){
+							pagerRequest=null;
+						}
+					}
+				}
 				if(pagerRequest!=null){
 					page.addTargetRequest(pagerRequest);
 				}

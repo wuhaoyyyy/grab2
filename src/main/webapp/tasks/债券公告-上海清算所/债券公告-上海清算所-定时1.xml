@@ -195,8 +195,8 @@
 	<bean id="insertsave" class="com.purang.grab.save.InsertSave">
 		<property name="defaultValue">
 			<map>
+				<entry key="valid" value="0"/>   
 				<entry key="fsPublishStatus" value="2"/>   
-				<entry key="fnUpdateName" value="grab"/> 
 				<entry key="announceType2" value=""/>   
 				<entry key="bondType2" value=""/>    
 				<entry key="title2" value=""/>   
@@ -205,7 +205,7 @@
 			</map>
 		</property>
 		<property name="selectExpression" value="select count(1) from  P12005  p where p.f3=[pubdate] and p.f4=[announceSource] and p.f5=[announceType1] and p.f7=[bondType1] and p.f9=[title1] and p.f10=[linkurl1] and p.f11=[title2]"></property>
-		<property name="insertExpression" value="INSERT INTO P12005 (fv, ft, f3, f4, f5, f7, f6, f8, f9, f10, f11, f12, f15, fs, fp, fu) VALUES([(auto)id],[(auto)id],[pubdate],[announceSource],[announceType1],[bondType1],[announceType2],[bondType2],[title1],[linkurl1],[title2],[linkurl2],[ftp],[fsPublishStatus],[(auto)date],[(auto)date])"></property>
+		<property name="insertExpression" value="INSERT INTO P12005 (fv, ft, f3, f4, f5, f7, f6, f8, f9, f10, f11, f12, f15, fs, fp, fu, fa, fn,f14) VALUES([(auto)id],[(auto)id],[pubdate],[announceSource],[announceType1],[bondType1],[announceType2],[bondType2],[title1],[linkurl1],[title2],[linkurl2],[ftp],[fsPublishStatus],[(auto)date],[(auto)date],[(auto)userid],[(auto)username],[valid])"></property>
 		<property name="filedownload" value="linkurl2"></property>
 		<property name="filedownloadpath" value="/bondannounce/[pubdate]/"></property>
 	</bean>

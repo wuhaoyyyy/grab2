@@ -17,13 +17,12 @@
 	
 	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">  
         <property name="jobDetail" ref="job"/>  
-        <property name="cronExpression" value="0 15/30 * * * ?"></property>  
+        <property name="cronExpression" value="0 */30 * * * ?"></property>  
     </bean>  
 	
 	<bean id="task" scope="singleton" class="com.purang.grab.task.CommonTask">
 		<property name="autostart" value="true"></property>
-		<property name="downloader" ref="headerAddHttpClientDownloader"></property>
-		<property name="taskName" value="债券公告-中国货币网-每日-流通上市、付息兑付、评级公告"></property>
+		<property name="taskName" value="债券公告-中国货币网-定时-流通上市、付息兑付、评级公告"></property>
 		<property name="requestList">
         	<list>		
         		<ref bean="2-202-201"/>	
@@ -115,15 +114,16 @@
 			</set>
 		</property>
 	</bean>
-	<bean id="a1Processor" class="com.purang.grab.processor.custom.ChinaMoneyA1Processor">
+	<bean id="a1Processor" class="com.purang.grab.processor.CommonProcessor">
 		<property name="fieldRuleList">
 			<list>
 				<ref bean="titlefieldrule"/>
 				<ref bean="pubdatefieldrule"/>
 				<ref bean="url1rule"/>
+				<ref bean="gotolink"/>
 			</list>
 		</property>
-		<property name="gotoLink" ref="gotolink"></property>
+		<property name="maxPagerRule" ref="maxpagerule"></property>
 		<property name="exitRule" ref="dateexitrule"></property>
 	</bean>
 	<bean id="a2Processor" class="com.purang.grab.processor.custom.ChinaMoneyA2Processor">
@@ -174,6 +174,17 @@
 		<property name="ruleResultType" value="2"></property> 
 	</bean>
 	
+	<!-- 页数最大规则 -->
+	<bean id="maxpagerule" class="com.purang.grab.rule.FieldRule">
+		<property name="title" value="最大页"></property> 
+		<property name="field" value=""></property> 
+		<property name="ruleExpression" value="/html/body/table/tbody/tr/td[@class='market-note-1']/text()"></property> 
+		<property name="ruleType" value="xpath"></property> 
+		<property name="ruleResultType" value="1"></property> 
+		<property name="cutPrefix" value="/"></property> 
+		<property name="cutPostfix" value="页"></property> 
+	</bean>
+	
 
 	<bean id="pipeline1" class="com.purang.grab.pipeline.CommonPipeline">
 		<property name="level" value="1"></property>
@@ -183,6 +194,7 @@
 	<bean id="insertsave" class="com.purang.grab.save.InsertSave">
 		<property name="defaultValue">
 			<map>
+				<entry key="valid" value="0"/>   
 				<entry key="fsPublishStatus" value="2"/>   
 				<entry key="fnUpdateName" value="grab"/> 
 				<entry key="announceType2" value=""/>   
@@ -193,7 +205,7 @@
 			</map>
 		</property>
 		<property name="selectExpression" value="select count(1) from  P12005  p where p.f3=[pubdate] and p.f4=[announceSource] and p.f5=[announceType1] and p.f7=[bondType1] and p.f9=[title1] and p.f10=[linkurl1] and p.f11=[title2]"></property>
-		<property name="insertExpression" value="INSERT INTO P12005 (fv, ft, f3, f4, f5, f7, f6, f8, f9, f10, f11, f12, f15, fs, fp, fu) VALUES([(auto)id],[(auto)id],[pubdate],[announceSource],[announceType1],[bondType1],[announceType2],[bondType2],[title1],[linkurl1],[title2],[linkurl2],[ftp],[fsPublishStatus],[(auto)date],[(auto)date])"></property>
+		<property name="insertExpression" value="INSERT INTO P12005 (fv, ft, f3, f4, f5, f7, f6, f8, f9, f10, f11, f12, f15, fs, fp, fu, fa, fn,f14) VALUES([(auto)id],[(auto)id],[pubdate],[announceSource],[announceType1],[bondType1],[announceType2],[bondType2],[title1],[linkurl1],[title2],[linkurl2],[ftp],[fsPublishStatus],[(auto)date],[(auto)date],[(auto)userid],[(auto)username],[valid])"></property>
 		<property name="filedownload" value="linkurl2"></property>
 		<property name="filedownloadpath" value="/bondannounce/[pubdate]/"></property>
 	</bean>

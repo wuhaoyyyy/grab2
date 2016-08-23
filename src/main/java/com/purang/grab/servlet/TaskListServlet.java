@@ -31,7 +31,7 @@ public class TaskListServlet extends HttpServlet {
 		String taskGroup=req.getParameter("taskgroup");
 		List<Task> taskList=TaskInfoUtils.getTaskList(taskGroup);
 		JsonConfig jsonConfig=new JsonConfig();
-		jsonConfig.setExcludes(new String[]{"processor","pipelineList"});
+		jsonConfig.setExcludes(new String[]{"pageProcessor","pipelineList","downloader","spider","urlList","requestList"});
 		JSONArray jsonArray=JSONArray.fromObject(taskList, jsonConfig);
 		PrintWriter out = resp.getWriter();  
         out.write(jsonArray.toString());  

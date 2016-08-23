@@ -66,7 +66,7 @@ public class FtpClientUtils {
     /*
      * 上传文件
      */
-    public static void upload(long l,String url,InputStream is, String fileDir ,String fielName) {
+    public static void upload(InputStream is, String fileDir ,String fielName) {
     	FTPClient ftpClient=getConnection();
     	try {
 			ftpClient.changeWorkingDirectory("/");

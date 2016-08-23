@@ -43,12 +43,14 @@
 		t=t+"<td>"+task.status+"</td>";
 		
 		if(task.status=='stoped'){
-			t=t+"<td><input value='启动' type='button' onclick=\"taskoper(\'"+task.taskName+"\',\'start\')\"/>"
-				+"<input value='停止' type='button' onclick=\"taskoper(\'"+task.taskName+"\',\'stop\')\" disabled='disabled'/></td>";
+			t=t+"<td><div class='form-inline'> <input class='btn btn-default' value='启动' type='button' onclick=\"taskoper(\'"+task.taskName+"\',\'start\')\"/>"
+				+"<input class='btn btn-default' value='停止' type='button' onclick=\"taskoper(\'"+task.taskName+"\',\'stop\')\" disabled='disabled'/>"
+			+"<input class='btn btn-default' value='编辑' type='button' onclick=\"taskedit(\'"+task.taskName+"\')\" /></div></td>";
 		}
 		else if(task.status=='started'){
-			t=t+"<td><input value='启动' type='button' onclick=\"taskoper(\'"+task.taskName+"\',\'start\')\" disabled='disabled'/>"
-			+"<input value='停止' type='button' onclick=\"taskoper(\'"+task.taskName+"\',\'stop\')\" /></td>";
+			t=t+"<td><div class='form-inline'><input class='btn btn-default' value='启动' type='button' onclick=\"taskoper(\'"+task.taskName+"\',\'start\')\" disabled='disabled'/>"
+			+"<input class='btn btn-default' value='停止' type='button' onclick=\"taskoper(\'"+task.taskName+"\',\'stop\')\" />"
+			+"<input class='btn btn-default' value='编辑' type='button' onclick=\"taskedit(\'"+task.taskName+"\')\" disabled='disabled' /></div></td>";
 		}
 // 		t=t+"<td><input value='启动' type='button' onclick=\"taskoper(\'"+task.taskName+"\',\'start\')\"/>"
 // 			+"<input value='停止' type='button' onclick=\"taskoper(\'"+task.taskName+"\',\'shutdown\')\"/></td>";
@@ -60,28 +62,38 @@
 		document.taskOperate.operation.value=operation;
 		document.taskOperate.submit();
 	}
+	function taskedit(taskname){
+		window.location.href="<%= this.getServletContext().getContextPath() %>/taskedit.jsp?taskname="+taskname;
+// 		document.taskEdit.taskname.value=taskname;
+// 		document.taskEdit.submit();
+	}
 
 </script>
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
+<body>
 <form name="taskOperate" action="<%= this.getServletContext().getContextPath() %>/taskoperate" method="post">
 <input type="hidden" name="taskname"/>
 <input type="hidden" name="operation"/>
 </form>
-	<div class="col-xs-12">
-		<table id="tasktable" class="table table-border table-hover"
-			style="width: 100%">
-			<thead>
-				<tr>
-					<th>任务</th>
-					<th>描述</th>
-					<th>自动启动</th>
-					<th>状态</th>
-					<th>操作</th>
-				</tr>
-			<thead>
-			<tbody></tbody>
-		</table>
+<form name="taskEdit" action="<%= this.getServletContext().getContextPath() %>/taskedit" method="post">
+<input type="hidden" name="taskname"/>
+</form>
+	<div class="container-fluid">
+		<div class="row">
+			<table id="tasktable" class="table table-border table-hover"
+				style="width: 100%">
+				<thead>
+					<tr>
+						<th>任务</th>
+						<th>描述</th>
+						<th>自动启动</th>
+						<th>状态</th>
+						<th>操作</th>
+					</tr>
+				<thead>
+				<tbody></tbody>
+			</table>
+		</div>
 	</div>
 </body>
 </html>

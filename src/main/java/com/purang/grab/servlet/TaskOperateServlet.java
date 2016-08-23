@@ -38,14 +38,14 @@ public class TaskOperateServlet extends HttpServlet {
 		
 		try {
 			if(operation.equals("start")){
-				BeanFactory beanFactory=TaskInfoUtils.getTaskFactoryNew(taskgroup,taskName);//每次启动重新实例化Scheduler
+				BeanFactory beanFactory=TaskInfoUtils.getTaskFactoryNew(taskName);//每次启动重新实例化Scheduler
 				Scheduler scheduler = (Scheduler) beanFactory.getBean("scheduler"); 
 				if(!scheduler.isStarted()||scheduler.isInStandbyMode()){
 					scheduler.start();
 				}
 			}
 			else if(operation.equals("stop")){
-				BeanFactory beanFactory=TaskInfoUtils.getTaskFactory(taskgroup,taskName);
+				BeanFactory beanFactory=TaskInfoUtils.getTaskFactory(taskName);
 				Scheduler scheduler = (Scheduler) beanFactory.getBean("scheduler"); 
 				Task task= (Task)beanFactory.getBean("task"); 
 				if(scheduler.isStarted()&&!scheduler.isInStandbyMode()){

@@ -480,21 +480,28 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     }
     
     public static String getCutString(String text,String cutPrefix,String cutPostfix){
+//    	if(text!=null&&cutPrefix!=null&&cutPostfix!=null){
+//	    	if(text.indexOf(cutPrefix)<0||text.indexOf(cutPostfix)<0){
+//	    		return text.replaceAll(" ", "").trim();
+//	    	}
+//    	}
 		if(StringUtils.isNotBlank(cutPrefix)&&!StringUtils.isNotBlank(cutPostfix)){
-			return text.substring(text.indexOf(cutPrefix)+cutPrefix.length());
+			return text.substring(text.indexOf(cutPrefix)+cutPrefix.length()).replaceAll(" ", "").trim();
 		}
 		else if(!StringUtils.isNotBlank(cutPrefix)&&StringUtils.isNotBlank(cutPostfix)){
-			return text.substring(0, text.indexOf(cutPostfix));
+			return text.substring(0, text.indexOf(cutPostfix)).replaceAll(" ", "").trim();
 		}
 		else if(StringUtils.isNotBlank(cutPrefix)&&StringUtils.isNotBlank(cutPostfix)){
 			int preIndex=text.indexOf(cutPrefix)+cutPrefix.length();
-			return text.substring(preIndex, text.indexOf(cutPostfix,preIndex));
+			return text.substring(preIndex, text.indexOf(cutPostfix,preIndex)).replaceAll(" ", "").trim();
 		}
-		return text;
+		return text.replaceAll(" ", "").trim();
     }
     
     public static boolean isBlankCustom(String cs) {
         return StringUtils.isBlank(cs)||cs.equals(" ");
     }
-    
+    public static String trimAllSpace(String str) {
+		return str == null ? str : str.replaceAll("^[\\s　]*|[\\s　]*$", "");
+	}
 }

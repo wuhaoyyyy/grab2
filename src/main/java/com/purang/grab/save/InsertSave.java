@@ -9,6 +9,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.purang.grab.util.ApplicationContextUtils;
 import com.purang.grab.util.CommonUtils;
+import com.purang.grab.util.DbUtils;
 import com.purang.grab.util.DistributeUniqueId;
 import com.purang.grab.util.StringUtils;
 
@@ -76,8 +77,6 @@ public class InsertSave implements Save{
 				result.put(key, defaultValue.get(key));
 			}
 		}
-		SqlSessionFactory ssf =(SqlSessionFactory) ApplicationContextUtils.getInstance().getBean("sqlSessionFactory");
-		SqlSession session = ssf.openSession(); 
 		
 		CommonUtils.mapValueToList(result);
 		List list=(List)result.get(result.keySet().iterator().next());
@@ -85,12 +84,9 @@ public class InsertSave implements Save{
 		for(int i=0;i<listsize;i++){
 			if(StringUtils.isNotBlank(selectExpression)){
 				String select=CommonUtils.getSingleSql(selectExpression,result,mapValue,i,null);
-				HashMap<String, String> selectMap=new HashMap<String, String>();
-				selectMap.put("select", select);
 				try {
-					int selectcount=session.selectOne("com.purang.grab.dao.CommonDao.select", selectMap);
+					int selectcount=DbUtils.select(select);
 					if(selectcount>0) {
-						session.close();
 						return;
 					}
 				} catch (Exception e) {
@@ -101,29 +97,34 @@ public class InsertSave implements Save{
 			String id=String.valueOf(DistributeUniqueId.getValue());
 
 			String insertsql=insertExpression;
+			Map<String,String> singleMap=CommonUtils.getSingleMap(result,i);
 			//文件 默认文件名insert的id
 			if(StringUtils.isNotBlank(filedownload)){
-				Map<String,String> singleMap=CommonUtils.getSingleMap(result,i);
 				String filedownloadurl=(String) singleMap.get(filedownload);
 				if(StringUtils.isNotBlank(filedownloadurl)){
 					String path=filedownloadpath;
 					for(String key:singleMap.keySet()){
 						path=path.replace("["+key+"]",(String) singleMap.get(key));
 					}
-					insertsql=insertsql.replace("[ftp]","'"+CommonUtils.fileDownloadHttpGet(filedownloadurl, path, id)+"'");
+					try{
+						String file=CommonUtils.fileDownloadHttpGet(filedownloadurl, path, id);
+						if(!StringUtils.isNotBlank(file)){
+							file="";
+						}
+						insertsql=insertsql.replace("[ftp]","'"+file+"'");
+					}
+					catch(Exception e){
+						e.printStackTrace();
+					}
 				}
 			}
-			
 			insertsql=CommonUtils.getSingleSql(insertsql,result,mapValue,i,id);
-			HashMap<String, String> insertMap=new HashMap<String, String>();
-			insertMap.put("insert", insertsql);
 			try {
-				session.insert("com.purang.grab.dao.CommonDao.insert", insertMap);
+				DbUtils.insert(insertsql);
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.out.println(result);
 			}
 		}
-		session.close();
 	}
 }

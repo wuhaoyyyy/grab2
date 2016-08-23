@@ -25,13 +25,6 @@ public class ChinaMoneyB1Processor extends AbstractProcessor {
 		Html html=new Html(page.getRawText());
 		List<String> jsFunctionList=(List<String>) result.get("linkurl1");
 		int i=0;
-
-		if(exitRule!=null) {
-			int exitPos=exitRule.getExit(page);
-			if(exitPos>-1) {
-				jsFunctionList=jsFunctionList.subList(0, exitPos);
-			}
-		}
 		for(String jsFunction:jsFunctionList){
 			String jsUrl="";
 			Request request = null;
@@ -58,40 +51,5 @@ public class ChinaMoneyB1Processor extends AbstractProcessor {
 			page.addTargetRequest(request);
 			i++;
 		}
-		
-		
-		
-		//判断是否有退出
-		if(exitRule!=null) {
-			int exit=exitRule.getExit(page);
-			if(exit>-1) {
-				CommonUtils.mapValueToList(result);
-				for(String key:result.keySet()){
-					List list=(List) result.get(key);
-					list=list.subList(0, exit);
-					result.put(key, list);
-				}
-				taskLog.info("exit-exitrule:"+page.getRequest().getUrl());
-				page.putField("result",result);			
-				return;
-			}
-		}
-		
-		page.putField("result",result);
-		
-		Request request=page.getRequest();
-		if(request instanceof PagerRequest){
-			PagerRequest pagerRequest=(PagerRequest)request;
-			String text=page.getHtml().xpath("/html/body/table/tbody/tr[18]/td/table/tbody/tr/td/text()").toString();
-			if(!StringUtils.isBlankCustom(text)){
-				String pageLastNum=text.substring(text.indexOf("/")+1, text.indexOf("页"));//获取总页码，大于则结束
-				if(pagerRequest.getStart()-pagerRequest.getTolerance()>Integer.valueOf(pageLastNum)) {
-					taskLog.info("exit-lastpage:"+page.getRequest().getUrl());
-					return;
-				}
-			}
-		
-			page.addTargetRequest(pagerRequest.getNextPager());
-		}		
 	}
 }

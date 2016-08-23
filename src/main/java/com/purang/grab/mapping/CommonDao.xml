@@ -11,4 +11,7 @@
   <select id="proc" statementType="CALLABLE">  
 	   ${proc}
   </select> 
+  <update id="update">
+  	   ${update}
+  </update>
 </mapper>

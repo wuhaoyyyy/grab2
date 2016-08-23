@@ -43,6 +43,9 @@
   <listener>  
     <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>  
   </listener> 
+  <listener>  
+    <listener-class>com.purang.grab.listener.TaskInfoListener</listener-class>  
+  </listener> 
  
   <!--  -->
   <!--  -->
@@ -91,5 +94,23 @@
   <servlet-mapping>
   	<servlet-name>taskoperateservlet</servlet-name>
   	<url-pattern>/taskoperate</url-pattern>
+  </servlet-mapping>
+  <!-- taskedit -->
+  <servlet>
+  	<servlet-name>taskeditservlet</servlet-name>
+    <servlet-class>com.purang.grab.servlet.TaskEditServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>taskeditservlet</servlet-name>
+  	<url-pattern>/taskedit</url-pattern>
+  </servlet-mapping>
+  <!-- taskeditsave -->
+  <servlet>
+  	<servlet-name>taskeditsaveservlet</servlet-name>
+    <servlet-class>com.purang.grab.servlet.TaskEditSaveServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>taskeditsaveservlet</servlet-name>
+  	<url-pattern>/taskeditsave</url-pattern>
   </servlet-mapping>
 </web-app>

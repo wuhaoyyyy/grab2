@@ -7,6 +7,7 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.selector.Selectable;
 
 import com.purang.grab.processor.AbstractProcessor;
+import com.purang.grab.util.StringUtils;
 
 public class ChinaMoneyB2Processor extends AbstractProcessor {
 
@@ -22,6 +23,19 @@ public class ChinaMoneyB2Processor extends AbstractProcessor {
 				List<String> listLinkUrl=page.getHtml().xpath("/html/body/table[3]/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr/td[1]/a[1]").links().all();
 				result.put("linkurl2", listLinkUrl);
 			}
+
+			//没有download的要处理
+			if(listTitle.size()!=listTargetUrl.size()){
+				for(int i=0;i<listTitle.size();i++){
+					String r=page.getHtml().xpath("/html/body/table[3]/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr["+(i+2)+"]/td[1]/a[2]").get();
+					if(!StringUtils.isNotBlank(r)){
+						listTargetUrl.add(i, page.getHtml().xpath("/html/body/table[3]/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr/td/table/tbody/tr["+(i+2)+"]/td[1]/a[1]").links().get());
+					}
+				}
+				result.put("linkurl2", listTargetUrl);
+			}
+			
+			
 		}
 		else{
 			Selectable selectable=page.getHtml().xpath("/html/body/div/div[1]/div[4]/p/a").links();

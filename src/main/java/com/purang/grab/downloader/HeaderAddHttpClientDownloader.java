@@ -96,6 +96,9 @@ public class HeaderAddHttpClientDownloader extends HttpClientDownloader {
             		headerMap.put(responseHeaders[i].getName(), new String(responseHeaders[i].getValue().getBytes("ISO-8859-1"),"UTF-8"));
             	}
             	page.putField("responseHeader", headerMap);
+            	if(headerMap.get("Content-Disposition")!=null){
+            		page.putField("responseHttpEntity", httpResponse.getEntity());
+        		}
                 return page;
             } else {
                 return null;

@@ -29,4 +29,17 @@ public class DbUtils {
 		}
 		session.close();
 	}
+
+	public static void update(String sql){
+		SqlSessionFactory ssf =(SqlSessionFactory) ApplicationContextUtils.getInstance().getBean("sqlSessionFactory");
+		SqlSession session = ssf.openSession(); 
+		HashMap<String, String> updateMap=new HashMap<String, String>();
+		updateMap.put("update", sql);
+		try {
+			session.update("com.purang.grab.dao.CommonDao.update",sql);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		session.close();
+	}
 }

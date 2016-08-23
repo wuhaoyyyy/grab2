@@ -18,12 +18,12 @@
 	
 	<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">  
         <property name="jobDetail" ref="job"/>  
-        <property name="cronExpression" value="0/30 * * * * ? *"></property>  
+        <property name="cronExpression" value="0 0 20 * * ? *"></property>  
     </bean>  
 
 	<bean id="site" class="com.purang.grab.site.CommonSite">
 		<property name="charset" value="UTF-8"></property>
-		<property name="sleepTime" value="2000"></property>
+		<property name="sleepTime" value="1000"></property>
 		<property name="timeOut" value="60000"></property>
 		<property name="useGzip" value="false"></property>
 		<property name="headers">
@@ -40,16 +40,16 @@
 	</bean>
 	<bean id="task" class="com.purang.grab.task.CommonTask">
 		<property name="taskName" value="债务融资工具注册信息-每日"></property>
-		<property name="taskDesc" value="债务融资工具注册信息-每日"></property>
+		<property name="taskDesc" value="债务融资工具注册信息-每日20点"></property>
 		<property name="urlList">
         	<list>
-<!-- 	        	<value>http://www.nafmii.org.cn/dcmfx/tzs/scp/</value> -->
-<!-- 				<value>http://www.nafmii.org.cn/dcmfx/tzs/smecn/</value> -->
-<!-- 				<value>http://www.nafmii.org.cn/dcmfx/tzs/cp/</value> -->
-<!-- 				<value>http://www.nafmii.org.cn/dcmfx/tzs/mtn/</value> -->
-<!-- 				<value>http://www.nafmii.org.cn/dcmfx/tzs/ppn/</value> -->
-<!-- 				<value>http://www.nafmii.org.cn/dcmfx/tzs/zczcpj/</value> -->
-<!-- 				<value>http://www.nafmii.org.cn/dcmfx/tzs/PRN1/</value> -->
+	        	<value>http://www.nafmii.org.cn/dcmfx/tzs/scp/</value>
+				<value>http://www.nafmii.org.cn/dcmfx/tzs/smecn/</value>
+				<value>http://www.nafmii.org.cn/dcmfx/tzs/cp/</value>
+				<value>http://www.nafmii.org.cn/dcmfx/tzs/mtn/</value>
+				<value>http://www.nafmii.org.cn/dcmfx/tzs/ppn/</value>
+				<value>http://www.nafmii.org.cn/dcmfx/tzs/zczcpj/</value>
+				<value>http://www.nafmii.org.cn/dcmfx/tzs/PRN1/</value>
 <!-- 				<value>http://www.nafmii.org.cn/dcmfx/tzs/zced/</value> -->
 				<value>http://www.nafmii.org.cn/dcmfx/tzs/dfi/</value>
 				<value>http://www.nafmii.org.cn/dcmfx/tzs/gn/</value>
@@ -57,20 +57,20 @@
 		</property>
 		<property name="requestList">
         	<list>
-<!--         		<ref bean="scp"/> -->
-<!--         		<ref bean="smecn"/> -->
-<!--         		<ref bean="cp"/> -->
-<!--         		<ref bean="mtn"/> -->
-<!--         		<ref bean="ppn"/> -->
-<!--         		<ref bean="zczcpj"/> -->
-<!--         		<ref bean="PRN1"/> -->
+        		<ref bean="scp"/>
+        		<ref bean="smecn"/>
+        		<ref bean="cp"/>
+        		<ref bean="mtn"/>
+        		<ref bean="ppn"/>
+        		<ref bean="zczcpj"/>
+        		<ref bean="PRN1"/>
 <!--         		<ref bean="zced"/> -->
         		<ref bean="dfi"/>
         		<ref bean="gn"/>
         	</list>
 		</property>
 		<property name="threadCount" value="5"></property>
-		<property name="processor" ref="processor"></property>
+		<property name="pageProcessor" ref="processor"></property>
 		<property name="pipelineList">
         	<list>
         		<ref bean="pipeline1" /><!-- 自定义 -->
@@ -125,8 +125,8 @@
 				<entry key="绿色债务融资工具（GN）" value="99"/>  
 			</map>
 		</property>
-		<property name="selectExpression" value="select count(1) from p12002_grab p where p.f1=[pubdate] and p.f3=[url]"></property>
-		<property name="insertExpression" value="INSERT INTO p12002_grab (fv, ft, f1, f3, f7, f16, fs, fp, fu) VALUES([(auto)id],[(auto)id],[pubdate],[url],[title],[(map)type],[fsPublishStatus],[(auto)date],[(auto)date])"></property>
+		<property name="selectExpression" value="select count(1) from P12002 where f1=[pubdate] and f7=[title] and f16=[(map)type]"></property>
+		<property name="insertExpression" value="INSERT INTO P12002 (fv, ft, f1, f3, f7, f16, fs, fa, fn, fp, fu) VALUES([(auto)id],[(auto)id],[pubdate],[url],[title],[(map)type],[fsPublishStatus],[(auto)userid],[(auto)username],[(auto)date],[(auto)date])"></property>
 	</bean>
 
 	<bean id="typefieldrule" class="com.purang.grab.rule.FieldRule">
@@ -142,6 +142,8 @@
 		<property name="ruleExpression" value="/html/body/table[2]/tbody/tr/td[3]/table[2]/tbody/tr[2]/td/table/tbody/tr/td[2]/a/text()"></property> 
 		<property name="ruleType" value="xpath"></property> 
 		<property name="ruleResultType" value="2"></property> 
+		<property name="cutPrefix" value="-"></property> 
+		<property name="cutPostfix" value="（"></property> 
 	</bean>
 	<bean id="urlfieldrule" class="com.purang.grab.rule.FieldRule">
 		<property name="title" value="链接"></property> 

@@ -18,6 +18,11 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.selector.Html;
@@ -27,7 +32,7 @@ public class CommonUtils {
 	public static String configFile="grab.properties";
 	
 	
-	public static String[] AUTOFIELD=new String[]{"[(auto)id]","[(auto)date]"};
+	public static String[] AUTOFIELD=new String[]{"[(auto)id]","[(auto)date]","[(auto)username]","[(auto)userid]"};
 	
 	public static String getConfig(String key){
 		InputStream is=CommonUtils.class.getClassLoader().getResourceAsStream(configFile);
@@ -39,6 +44,15 @@ public class CommonUtils {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	
+	public static BeanFactory getBeanFactory(String xmlpath){
+		Resource resource = new FileSystemResource(xmlpath);
+		DefaultListableBeanFactory factory= new DefaultListableBeanFactory(); 
+		XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory); 
+		reader.loadBeanDefinitions(resource);  
+		return factory;
 	}
 	public static String getSelectorResult(Page page,String rule,String type){
 		String text=null;
@@ -185,9 +199,26 @@ public class CommonUtils {
 				return String.valueOf(DistributeUniqueId.getValue());
 			case "[(auto)date]":
 				return DateUtils.getCurrentDate("yyyyMMddHHmmss");
+			case "[(auto)username]":
+				return getConfig("ces.username");
+			case "[(auto)userid]":
+				return getConfig("ces.userid");
 		}
 		return null;
 	}
+	
+	
+	/*
+	 * 合并map 如果新map里key的value为blank 不替换
+	 */
+	public static void combineMap(Map result,Map<String,String> defaultValue){
+		for(String key:defaultValue.keySet()){
+			if(result.get(key)==null||result.get(key).equals("")){
+				result.put(key, defaultValue.get(key));
+			}
+		}
+	}
+	
 	
 	/*
 	 * 将map的value全部转为list
@@ -299,7 +330,7 @@ public class CommonUtils {
 		}
 		for(String autoField:CommonUtils.AUTOFIELD){
 			if(sql.indexOf(autoField)>0){
-				sql=sql.replace(autoField, CommonUtils.getAutoValue(autoField));
+				sql=sql.replace(autoField, "'"+CommonUtils.getAutoValue(autoField)+"'");
 			}
 		}
 		return sql;
@@ -328,10 +359,14 @@ public class CommonUtils {
         			fileType=fileName.substring(fileName.lastIndexOf("."), fileName.length());
         		}
         	}
+        	if(fileType.equals("")) {
+        		System.out.println(url);
+        		return null;
+        	}
 			
 			HttpEntity entity = response.getEntity();  
 			InputStream is = entity.getContent();
-			FtpClientUtils.upload(entity.getContentLength(),url,is, fileDir, fielName+fileType);
+			FtpClientUtils.upload(is, fileDir, fielName+fileType);
 			client.close();
 			return "ftp://"+FtpUtils.ftpserver+fileDir+fielName+fileType;
 		} catch (ClientProtocolException e) {

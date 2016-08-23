@@ -38,7 +38,7 @@
 
 </script>
 </head>
-<body>
+<body style="padding-bottom:0px;">
 
 	<header>
 		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -52,7 +52,7 @@
 					</button>
 			
 					<div class="brand">
-						<a class="navbar-brand" href="index.php"><span>Grab</span></a>
+						<a class="navbar-brand"><span>Grab</span></a>
 					</div>		
 				</div>
 
@@ -71,7 +71,7 @@
 				<div class="panel-heading" role="tab" id="heading2">
 					<h4 class="panel-title">
 						<a data-toggle="collapse" data-parent="#accordion" href="#collapse" aria-expanded="true" aria-controls="collapse">
-							<i class="fa fa-bar-chart-o"></i> 任务组
+							<i class="fa fa-bar-chart-o"></i> 任务列表
 							<i class="pull-right fa fa-caret-down"></i>
 						</a>
 					</h4>
@@ -94,17 +94,17 @@
 				
 				<div id="collapse2" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2">
 					<div id='taskgroupmenu' >
-						<a href="" class="list-group-item">bar Chart</a>
+						<a href="taskadd.jsp" target="mainFrame" class="list-group-item">新增任务</a>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>	</aside>
-	<div class="container-fluid">
-		<iframe id="mainFrame" name="mainFrame" src="tasklist.jsp" style="width:100%;height:100%;border:0px;">
-		
-		
-		</iframe>
+	<div class="container-fluid" style="height:100%;top:50px;">
+		<div class="row">
+			<iframe id="mainFrame" name="mainFrame" style="width:100%;height:100%;border:0px;">
+			</iframe>
+		</div>
 	</div>
 </div>
 		
