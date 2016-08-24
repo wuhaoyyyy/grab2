@@ -24,7 +24,7 @@
 	
 	<bean id="site" class="com.purang.grab.site.CommonSite">
 		<property name="charset" value="GBK"></property>
-		<property name="sleepTime" value="2000"></property>
+		<property name="sleepTime" value="1000"></property>
 		<property name="timeOut" value="60000"></property>
 		<property name="useGzip" value="false"></property>
 		<property name="headers">
@@ -126,7 +126,7 @@
 	        	<ref bean="27-2763"/>
         	</list>
 		</property>
-		<property name="threadCount" value="10"></property>
+		<property name="threadCount" value="15"></property>
 		<property name="pageProcessor" ref="processor"></property>
 		<property name="pipelineList">
         	<list>

@@ -56,13 +56,13 @@ public class TaskInfoUtils {
 						BeanFactory beanFactory=CommonUtils.getBeanFactory(taskConfigFilePath);
 						Task task=(Task)beanFactory.getBean("task");
 						Scheduler scheduler = (Scheduler) beanFactory.getBean("scheduler"); 
-						if(task.getAutostart()){
-							try {
-								scheduler.start();
-							} catch (SchedulerException e) {
-								e.printStackTrace();
-							}
-						}
+//						if(task.getAutostart()){
+//							try {
+//								scheduler.start();
+//							} catch (SchedulerException e) {
+//								e.printStackTrace();
+//							}
+//						}
 						
 						setTaskStatus(beanFactory);
 						taskPathMap.put(taskConfigFilePath, task);

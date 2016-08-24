@@ -366,7 +366,7 @@ public class CommonUtils {
 			
 			HttpEntity entity = response.getEntity();  
 			InputStream is = entity.getContent();
-			FtpClientUtils.upload(is, fileDir, fielName+fileType);
+			FtpUtils.upload(is, fileDir, fielName+fileType);
 			client.close();
 			return "ftp://"+FtpUtils.ftpserver+fileDir+fielName+fileType;
 		} catch (ClientProtocolException e) {

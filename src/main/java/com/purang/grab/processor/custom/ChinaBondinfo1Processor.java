@@ -18,7 +18,7 @@ import com.purang.grab.util.FtpClientUtils;
 import com.purang.grab.util.FtpUtils;
 import com.purang.grab.util.StringUtils;
 
-public class ChinaBondinfoProcessor extends AbstractProcessor {
+public class ChinaBondinfo1Processor extends AbstractProcessor {
 
 	@Override
 	public void gotoProcess(Page page, Map<String, Object> result) {

@@ -100,10 +100,10 @@ public class FtpUtils {
     }
     
 
-    public static void upload(long l,String url,InputStream is, String fileDir ,String fielName) {
+    public static void upload(InputStream is, String fileDir ,String fielName) {
     	FTPClient ftpClient=getConnection();
     	Mkdirs(ftpClient, fileDir);
-    	taskLog.info("文件下载..."+l/1024+"M,下载地址:"+url+"..."+downloadCount.getAndIncrement());
+    	//taskLog.info("文件下载..."+l/1024+"M,下载地址:"+url+"..."+downloadCount.getAndIncrement());
     	if(downloadCount.get()>1000000) {
     		downloadCount.set(0);
         	completeCount.set(0);
@@ -111,7 +111,6 @@ public class FtpUtils {
     	try {
     		if(!ftpClient.storeFile(fielName, is)){
     			//ftpClient.getReplyString()
-    			taskLog.info("f");
     			System.out.println(ftpClient.getReplyString());
     		}
     		else{

@@ -2,9 +2,11 @@ package com.purang.grab.servlet;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
@@ -41,13 +43,14 @@ public class TaskEditServlet extends HttpServlet {
 
 		StringBuffer sb=new StringBuffer();
 		File configFile=new File(taskConfigFilePath);
-		BufferedReader reader = null;
-		reader = new BufferedReader(new FileReader(configFile));
-        String tempString = null;
-        while ((tempString = reader.readLine()) != null) {
-        	sb.append(tempString).append("\r\n");
-        }
-        reader.close();
+		InputStreamReader fReader = new InputStreamReader(new FileInputStream(configFile),"UTF-8");
+		BufferedReader reader = new BufferedReader(fReader);
+		String line;
+		while ((line = reader.readLine()) != null)
+		{
+			sb.append(line).append("\r\n");     
+		}
+		reader.close();
         PrintWriter out = resp.getWriter();  
         out.write(sb.toString());  
 		//resp.sendRedirect("taskedit.jsp");

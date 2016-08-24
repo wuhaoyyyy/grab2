@@ -74,7 +74,7 @@
 	<bean id="site" class="com.purang.grab.site.CommonSite">
 		<property name="charset" value="UTF-8"></property>
 		<property name="sleepTime" value="1000"></property>
-		<property name="timeOut" value="60000"></property>
+		<property name="timeOut" value="300000"></property>
 		<property name="useGzip" value="false"></property>
 		<property name="headers">
 			<map>

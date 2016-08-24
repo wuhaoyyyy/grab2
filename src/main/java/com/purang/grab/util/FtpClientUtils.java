@@ -22,7 +22,7 @@ public class FtpClientUtils {
     public static String ftpuser;
     public static String ftppsw;
     public static String ftppoolsize;
-    public static String ftppassiveMode="false";
+    public static String ftppassiveMode="true";
     public static String ftpencode="GBK";;
 
     static{
@@ -88,7 +88,12 @@ public class FtpClientUtils {
     			}
     		}
 		} catch (Exception e) {
-			e.printStackTrace();
+	    	try {
+	    		is.close();
+		    	ftpClientPool.returnObject(ftpClient);
+			} catch (Exception ee) {
+				ee.printStackTrace();
+			}
 		}
     }
     
