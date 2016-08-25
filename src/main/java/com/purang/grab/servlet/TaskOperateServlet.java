@@ -1,6 +1,7 @@
 package com.purang.grab.servlet;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,8 +13,8 @@ import org.apache.commons.logging.LogFactory;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.BeanFactory;
-import com.purang.grab.util.TaskInfoUtils;
 
+import com.purang.grab.util.TaskInfoUtils;
 import com.purang.grab.task.Task;
 
 public class TaskOperateServlet extends HttpServlet {
@@ -57,7 +58,7 @@ public class TaskOperateServlet extends HttpServlet {
 			taskLog.error(e.toString());
 			e.printStackTrace();
 		}
-		resp.sendRedirect("tasklist.jsp");
+		resp.sendRedirect("tasklist.jsp?taskgroup="+URLEncoder.encode(taskgroup,"UTF-8"));
 	}
 	
 }

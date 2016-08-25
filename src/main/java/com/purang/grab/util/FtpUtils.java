@@ -40,6 +40,7 @@ public class FtpUtils {
 			ftpClient.connect(ftpserver, Integer.valueOf(ftpport));
 			ftpClient.login(ftpuser, ftppsw);
 			ftpClient.setSendBufferSize(1024);
+			
 			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
 			ftpClient.setControlEncoding(encode);
 //			ftpClient.enterLocalPassiveMode();

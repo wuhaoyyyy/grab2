@@ -59,6 +59,7 @@
 	}
 	function taskoper(taskname,operation){
 		document.taskOperate.taskname.value=taskname;
+		document.taskOperate.taskgroup.value='<%= taskgroup %>';
 		document.taskOperate.operation.value=operation;
 		document.taskOperate.submit();
 	}
@@ -73,6 +74,7 @@
 <body>
 <form name="taskOperate" action="<%= this.getServletContext().getContextPath() %>/taskoperate" method="post">
 <input type="hidden" name="taskname"/>
+<input type="hidden" name="taskgroup"/>
 <input type="hidden" name="operation"/>
 </form>
 <form name="taskEdit" action="<%= this.getServletContext().getContextPath() %>/taskedit" method="post">

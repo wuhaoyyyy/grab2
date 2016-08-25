@@ -14,6 +14,8 @@ import org.apache.commons.net.ftp.FTPReply;
 
 public class FtpClientUtils {
 	private static Log taskLog = LogFactory.getLog("grabtask");
+	private static AtomicInteger completeCount=new AtomicInteger(0);
+	private static AtomicInteger downloadCount=new AtomicInteger(0);
 	private static FtpClientPool ftpClientPool;
 	private static FtpClientFactory ftpClientFactory;
     private static FtpClientConfig ftpClientConfig;
@@ -75,11 +77,18 @@ public class FtpClientUtils {
 		}
     	Mkdirs(ftpClient, fileDir);
     	try {
+    		taskLog.info("文件下载..."+downloadCount.incrementAndGet());
     		if(!ftpClient.storeFile(fielName, is)){
     			taskLog.info("filedownload error:"+fielName+"-"+ftpClient.getReplyString());
-    			System.out.println(ftpClient.getReplyString());
+    	    	try {
+    	    		is.close();
+    		    	ftpClientPool.returnObject(ftpClient);
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
     		}
     		else{
+    			taskLog.info("文件下载完成...剩余"+downloadCount.decrementAndGet());
     	    	try {
     	    		is.close();
     		    	ftpClientPool.returnObject(ftpClient);

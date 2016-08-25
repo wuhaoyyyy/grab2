@@ -36,7 +36,12 @@ public class FtpClientFactory implements PoolableObjectFactory {
                    logger.warn("ftpClient login failed... username is {}", config.getUsername());  
                }  
                ftpClient.setFileType(config.getTransferFileType());  
-               ftpClient.setBufferSize(1024);  
+               ftpClient.setBufferSize(2048);  
+               ftpClient.setControlKeepAliveTimeout(600);
+               ftpClient.enterLocalPassiveMode();
+//               ftpClient.setControlKeepAliveReplyTimeout(15000);  
+//               ftpClient.setConnectTimeout(15000);  
+//               ftpClient.setControlKeepAliveTimeout(15000);  
                ftpClient.setControlEncoding(config.getEncoding());  
                if (config.getPassiveMode().equals("true")) {  
                     ftpClient.enterLocalPassiveMode();  

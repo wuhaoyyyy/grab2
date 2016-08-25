@@ -55,8 +55,10 @@ public class FtpClientPool implements ObjectPool {
      * 从连接池中获取对象 
      */  
     @Override  
-    public FTPClient borrowObject() throws Exception, NoSuchElementException, IllegalStateException {  
+    public FTPClient borrowObject() throws Exception, NoSuchElementException, IllegalStateException { 
+    	logger.info("---------------------before take"+String.valueOf(pool.size())); 
         FTPClient client = pool.take();  
+    	logger.info("---------------------after take"+String.valueOf(pool.size()));
         if(client == null) {  
             client = factory.makeObject();  
             addObject();  
@@ -76,12 +78,24 @@ public class FtpClientPool implements ObjectPool {
     public void returnObject(Object obj) throws Exception {  
 		FTPClient client=(FTPClient)obj;
         if ((client != null) && !pool.offer(client,3,TimeUnit.SECONDS)) {  
-               try {  
-                    factory.destroyObject(client);  
-               } catch (Exception e) {  
-                    throw e;  
-               }  
-          }  
+           try {  
+                factory.destroyObject(client);  
+           } catch (Exception e) {  
+                throw e;  
+           }  
+        }  
+        else{
+        	logger.error("---------------------pool.offer fail");
+        }
+    	logger.info("---------------------after return"+String.valueOf(pool.size()));
+//        if (client != null) {  
+//        	pool.put(client);
+//            try {  
+//                 factory.destroyObject(client);  
+//            } catch (Exception e) {  
+//                 throw e;  
+//            }  
+//         }  
     }  
       
     /** 
@@ -98,6 +112,7 @@ public class FtpClientPool implements ObjectPool {
      */  
     @Override  
     public void addObject() throws Exception, IllegalStateException, UnsupportedOperationException {  
+    	logger.info("---------------------after addObject"+String.valueOf(pool.size()));
         pool.offer(factory.makeObject(), 3, TimeUnit.SECONDS);  
     }  
       
