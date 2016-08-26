@@ -94,7 +94,7 @@
         	<ref bean="3-307-399-2"/>
         	</list>
 		</property>
-		<property name="threadCount" value="15"></property>
+		<property name="threadCount" value="10"></property>
 		<property name="pageProcessor" ref="processor"></property>
 		<property name="pipelineList">
         	<list>
@@ -115,11 +115,12 @@
 	<bean id="site" class="com.purang.grab.site.CommonSite">
 		<property name="charset" value="UTF-8"></property>
 		<property name="sleepTime" value="1000"></property>
-		<property name="timeOut" value="300000"></property>
+		<property name="timeOut" value="60000"></property>
 		<property name="useGzip" value="false"></property>
 		<property name="headers">
 			<map>
-				<entry key="Accept-Encoding" value="deflate"/>   
+				<entry key="Accept-Encoding" value="deflate"/>  
+				<entry key="Accept-Encoding" value="chunked"/>  
 			</map>
 		</property>
 		<property name="acceptStatCode">

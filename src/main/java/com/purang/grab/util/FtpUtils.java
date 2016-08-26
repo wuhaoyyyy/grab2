@@ -39,11 +39,14 @@ public class FtpUtils {
 		try {
 			ftpClient.connect(ftpserver, Integer.valueOf(ftpport));
 			ftpClient.login(ftpuser, ftppsw);
-			ftpClient.setSendBufferSize(1024);
+			ftpClient.setSendBufferSize(2048);
 			
 			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
 			ftpClient.setControlEncoding(encode);
-//			ftpClient.enterLocalPassiveMode();
+            ftpClient.enterLocalPassiveMode();
+            ftpClient.setControlKeepAliveReplyTimeout(15000);  
+            ftpClient.setConnectTimeout(15000);  
+            ftpClient.setControlKeepAliveTimeout(15000); 
 			
 			FTPFile[] f= ftpClient.listDirectories();
 			for(FTPFile ftpFile:f){
@@ -61,14 +64,15 @@ public class FtpUtils {
     public static FTPClient getConnection(){
     	FTPClient ftpClient=new FTPClient();
     	try {
-    		ftpClient.setDataTimeout(10000);
-    		ftpClient.setDefaultTimeout(10000);
+//    		ftpClient.setDataTimeout(10000);
+//    		ftpClient.setDefaultTimeout(10000);
 			ftpClient.connect(ftpserver, Integer.valueOf(ftpport));
 			ftpClient.login(ftpuser, ftppsw);
-			ftpClient.setSendBufferSize(1024);
+			ftpClient.setSendBufferSize(2048);
 			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
 			ftpClient.setControlEncoding(encode);
-//			ftpClient.enterRemotePassiveMode();
+            ftpClient.enterLocalPassiveMode();
+            
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		} catch (SocketException e) {
@@ -104,28 +108,37 @@ public class FtpUtils {
     public static void upload(InputStream is, String fileDir ,String fielName) {
     	FTPClient ftpClient=getConnection();
     	Mkdirs(ftpClient, fileDir);
-    	//taskLog.info("文件下载..."+l/1024+"M,下载地址:"+url+"..."+downloadCount.getAndIncrement());
-    	if(downloadCount.get()>1000000) {
-    		downloadCount.set(0);
-        	completeCount.set(0);
-    	}
     	try {
+    		taskLog.info(Thread.currentThread().getName()+"文件下载..."+downloadCount.incrementAndGet());
     		if(!ftpClient.storeFile(fielName, is)){
-    			//ftpClient.getReplyString()
-    			System.out.println(ftpClient.getReplyString());
-    		}
-    		else{
-    			taskLog.info("文件下载完成..."+completeCount.getAndIncrement());
+    			taskLog.info("filedownload error:"+fielName+"-"+ftpClient.getReplyString()+downloadCount.decrementAndGet());
     	    	try {
+    	    		ftpClient.logout();
+    	    		ftpClient.disconnect();
     	    		is.close();
-    				ftpClient.disconnect();
     			} catch (IOException e) {
     				e.printStackTrace();
     			}
-    	    	//if(completeCount.get()>1000000) completeCount.set(0);
+    		}
+    		else{
+    			taskLog.info(Thread.currentThread().getName()+"文件下载完成...剩余"+downloadCount.decrementAndGet());
+    	    	try {
+    	    		ftpClient.logout();
+    	    		ftpClient.disconnect();
+    	    		is.close();
+    			} catch (IOException e) {
+    				e.printStackTrace();
+    			}
     		}
 		} catch (Exception e) {
-			e.printStackTrace();
+	    	try {
+	    		ftpClient.logout();
+	    		ftpClient.disconnect();
+	    		is.close();
+			} catch (Exception ee) {
+				ee.printStackTrace();
+			}
+	    	e.printStackTrace();
 		}
     }
 

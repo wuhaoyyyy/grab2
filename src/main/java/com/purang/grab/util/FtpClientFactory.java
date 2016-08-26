@@ -39,13 +39,13 @@ public class FtpClientFactory implements PoolableObjectFactory {
                ftpClient.setBufferSize(2048);  
                ftpClient.setControlKeepAliveTimeout(600);
                ftpClient.enterLocalPassiveMode();
-//               ftpClient.setControlKeepAliveReplyTimeout(15000);  
-//               ftpClient.setConnectTimeout(15000);  
-//               ftpClient.setControlKeepAliveTimeout(15000);  
+               ftpClient.setControlKeepAliveReplyTimeout(15000);  
+               ftpClient.setConnectTimeout(15000);  
+               ftpClient.setControlKeepAliveTimeout(15000);  
                ftpClient.setControlEncoding(config.getEncoding());  
-               if (config.getPassiveMode().equals("true")) {  
-                    ftpClient.enterLocalPassiveMode();  
-               }  
+//               if (config.getPassiveMode().equals("true")) {  
+//                    ftpClient.enterLocalPassiveMode();  
+//               }  
           } catch (Exception e) {  
                logger.error("create ftp connection failed...{}", e);  
                throw e;  

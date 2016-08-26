@@ -1,7 +1,9 @@
 package com.purang.grab.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,14 +12,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.FileEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -31,7 +43,8 @@ public class CommonUtils {
 	
 	public static String configFile="grab.properties";
 	
-	
+	private static Log taskLog = LogFactory.getLog("grabtask");
+	private static AtomicInteger downloadCount=new AtomicInteger(0);
 	public static String[] AUTOFIELD=new String[]{"[(auto)id]","[(auto)date]","[(auto)username]","[(auto)userid]"};
 	
 	public static String getConfig(String key){
@@ -344,7 +357,7 @@ public class CommonUtils {
 		try {
 			CloseableHttpClient client = HttpClients.createDefault();
 			HttpGet httpget = new HttpGet(url);  
-			HttpResponse response = client.execute(httpget);  
+			CloseableHttpResponse response = client.execute(httpget);  
 			Header[] headers = response.getAllHeaders();
 			String fileType="";
         	for(int i=0;i<headers.length;i++) {
@@ -366,7 +379,22 @@ public class CommonUtils {
 			
 			HttpEntity entity = response.getEntity();  
 			InputStream is = entity.getContent();
-			FtpClientUtils.upload(is, fileDir, fielName+fileType);
+			taskLog.info(Thread.currentThread().getName()+"文件下载"+url+"..."+downloadCount.incrementAndGet());
+			String path="F:\\grabfiles\\"+fileDir+"\\"+fielName+fileType;
+			FileUtils.createFile(path);
+			FileOutputStream fos = new FileOutputStream(path);
+			byte[] b = new byte[102400];
+			int rc = 0;
+	        while ((rc = is.read(b, 0, 102400)) > 0) {
+	        	fos.write(b, 0, rc);
+	        }
+			fos.close();
+			is.close();
+			taskLog.info(Thread.currentThread().getName()+"文件下载完成...剩余"+downloadCount.decrementAndGet());
+
+//			taskLog.info("文件下载"+url);
+//			FtpClientUtils.upload(is, fileDir, fielName+fileType);
+			response.close();
 			client.close();
 			return "ftp://"+FtpUtils.ftpserver+fileDir+fielName+fileType;
 		} catch (ClientProtocolException e) {
@@ -407,4 +435,64 @@ public class CommonUtils {
 		return list;
 	}
 
+	
+
+	public static String fileDownloadHttpPost(String url, String fileDir ,String fielName,Map map){
+		url="http://www.shclearing.com/wcm/shch/pages/client/download/download.jsp";
+		try {
+			CloseableHttpClient client = HttpClients.createDefault();
+			HttpPost httppost = new HttpPost(url);
+            List<NameValuePair> nvps = new ArrayList<NameValuePair>();  
+            nvps.add(new BasicNameValuePair("FileName", (String) map.get("linkurl2")));  
+            nvps.add(new BasicNameValuePair("DownName", (String) map.get("title2")));  
+            httppost.setEntity(new UrlEncodedFormEntity(nvps));  
+
+			CloseableHttpResponse response = client.execute(httppost);  
+			Header[] headers = response.getAllHeaders();
+			String fileType="";
+        	for(int i=0;i<headers.length;i++) {
+        		//Content-Disposition==attachment; filename="fielname"  或者 Content-Disposition==attachment; filename=fielname
+        		if(headers[i].getName().equals("Content-Disposition")){
+        			String contentDisposition=headers[i].getValue();
+        			String desc="filename=";
+        			String fileName=contentDisposition.substring(contentDisposition.indexOf(desc)+desc.length(), contentDisposition.length());
+        			if(fileName.startsWith("\"")&&fileName.endsWith("\"")){
+        				fileName=fileName.substring(1,fileName.length()-1);
+        			}
+        			fileType=fileName.substring(fileName.lastIndexOf("."), fileName.length());
+        		}
+        	}
+        	if(fileType.equals("")) {
+        		System.out.println(url);
+        		return null;
+        	}
+			
+			HttpEntity entity = response.getEntity();  
+			InputStream is = entity.getContent();
+			taskLog.info(Thread.currentThread().getName()+"文件下载"+url+"..."+downloadCount.incrementAndGet());
+			String path="F:\\grabfiles\\"+fileDir+"\\"+fielName+fileType;
+			FileUtils.createFile(path);
+			FileOutputStream fos = new FileOutputStream(path);
+			byte[] b = new byte[102400];
+			int rc = 0;
+	        while ((rc = is.read(b, 0, 102400)) > 0) {
+	        	fos.write(b, 0, rc);
+	        }
+			fos.close();
+			is.close();
+			taskLog.info(Thread.currentThread().getName()+"文件下载完成...剩余"+downloadCount.decrementAndGet());
+
+			response.close();
+			client.close();
+			return "ftp://"+FtpUtils.ftpserver+fileDir+fielName+fileType;
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 }

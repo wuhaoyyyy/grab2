@@ -77,29 +77,29 @@ public class FtpClientUtils {
 		}
     	Mkdirs(ftpClient, fileDir);
     	try {
-    		taskLog.info("文件下载..."+downloadCount.incrementAndGet());
+    		taskLog.info(Thread.currentThread().getName()+"文件下载..."+downloadCount.incrementAndGet());
     		if(!ftpClient.storeFile(fielName, is)){
-    			taskLog.info("filedownload error:"+fielName+"-"+ftpClient.getReplyString());
+    			taskLog.info("filedownload error:"+fielName+"-"+ftpClient.getReplyString()+downloadCount.decrementAndGet());
+		    	ftpClientPool.returnObject(ftpClient);
     	    	try {
     	    		is.close();
-    		    	ftpClientPool.returnObject(ftpClient);
     			} catch (IOException e) {
     				e.printStackTrace();
     			}
     		}
     		else{
-    			taskLog.info("文件下载完成...剩余"+downloadCount.decrementAndGet());
+    			taskLog.info(Thread.currentThread().getName()+"文件下载完成...剩余"+downloadCount.decrementAndGet());
+		    	ftpClientPool.returnObject(ftpClient);
     	    	try {
     	    		is.close();
-    		    	ftpClientPool.returnObject(ftpClient);
     			} catch (IOException e) {
     				e.printStackTrace();
     			}
     		}
 		} catch (Exception e) {
 	    	try {
-	    		is.close();
 		    	ftpClientPool.returnObject(ftpClient);
+	    		is.close();
 			} catch (Exception ee) {
 				ee.printStackTrace();
 			}

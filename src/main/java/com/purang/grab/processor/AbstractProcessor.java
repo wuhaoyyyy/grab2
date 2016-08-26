@@ -86,24 +86,27 @@ public abstract class AbstractProcessor implements Processor {
 		if(this.defaultValue!=null){
 			result.putAll(this.defaultValue);
 		}	
-		if(fieldRuleList!=null){
-			boolean allempty=true;
-			for(FieldRule fieldRule:fieldRuleList){
-				Object value=fieldRule.getRuleResult(page);
-				result.put(fieldRule.getField(),value);
-				if(value!=null&&(value instanceof List &&((List) value).size()>0)) {
-					allempty=false;
+		Map<String,String> headerMap=page.getResultItems().get("responseHeader");
+		if(headerMap!=null&&headerMap.get("Content-Disposition")==null){
+			if(fieldRuleList!=null){
+				boolean allempty=true;
+				for(FieldRule fieldRule:fieldRuleList){
+					Object value=fieldRule.getRuleResult(page);
+					result.put(fieldRule.getField(),value);
+					if(value!=null&&(value instanceof List &&((List) value).size()>0)) {
+						allempty=false;
+					}
+					else if(value instanceof String && !value.equals("")){
+						allempty=false;
+					}
+					
 				}
-				else if(value instanceof String && !value.equals("")){
-					allempty=false;
+				if(allempty) {
+					taskLog.info("exit-nodata:"+page.getRequest().getUrl());
+					return;
 				}
-				
-			}
-			if(allempty) {
-				taskLog.info("exit-nodata:"+page.getRequest().getUrl());
-				return;
-			}
-		}	
+			}	
+		}
 		
 		
 		if(exitRule!=null) {

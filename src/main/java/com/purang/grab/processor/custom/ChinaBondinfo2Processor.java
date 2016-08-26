@@ -11,18 +11,14 @@ import org.apache.http.HttpEntity;
 import us.codecraft.webmagic.Page;
 
 import com.purang.grab.processor.AbstractProcessor;
-import com.purang.grab.servlet.TaskListServlet;
 import com.purang.grab.util.CommonUtils;
 import com.purang.grab.util.DbUtils;
 import com.purang.grab.util.DistributeUniqueId;
 import com.purang.grab.util.FtpClientUtils;
 import com.purang.grab.util.FtpUtils;
 import com.purang.grab.util.StringUtils;
-/**
- * 如果
- *
- */
-public class ChinaBondinfo1Processor extends AbstractProcessor {
+
+public class ChinaBondinfo2Processor extends AbstractProcessor {
 
 	@Override
 	public void gotoProcess(Page page, Map<String, Object> result) {
@@ -71,7 +67,7 @@ public class ChinaBondinfo1Processor extends AbstractProcessor {
 					is = entity.getContent();
 					String filePath="/bondannounce/"+((List)result.get("pubdate")).get(i)+"/";
 					String fileSaveName=id+fileType;
-					FtpUtils.upload(is, filePath, fileSaveName);
+					FtpClientUtils.upload(is, filePath, fileSaveName);
 					insertsql=insertsql.replace("[ftp]","ftp://"+FtpUtils.ftpserver+filePath+fileSaveName);
 					insertsql=CommonUtils.getSingleSql(insertsql,result,null,i,id);
 					try {

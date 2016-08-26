@@ -108,6 +108,7 @@ public class InsertSave implements Save{
 					}
 					try{
 						String file=CommonUtils.fileDownloadHttpGet(filedownloadurl, path, id);
+//						String file=CommonUtils.fileDownloadHttpPost(filedownloadurl, path, id,singleMap);
 						if(!StringUtils.isNotBlank(file)){
 							file="";
 						}
