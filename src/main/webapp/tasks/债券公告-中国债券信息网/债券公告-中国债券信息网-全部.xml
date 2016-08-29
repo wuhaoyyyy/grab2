@@ -21,10 +21,12 @@
 		<property name="repeatCount" value="0" />
 		<property name="repeatInterval" value="1" />
 	</bean>
+	<bean id="headerAddHttpClientDownloader" class="com.purang.grab.downloader.HeaderAddHttpClientDownloader">
+	</bean>
 	<bean id="task" scope="singleton" class="com.purang.grab.task.CommonTask">
+		<property name="downloader" ref="headerAddHttpClientDownloader"></property>
 		<property name="taskName" value="债券公告-中国债券信息网-全部"></property>
 		<property name="taskDesc" value="债券公告-中国债券信息网-全部"></property>
-		<property name="downloader" ref="httpClientDownloader"></property>
 		<!-- 所有分类的翻页  包含第一页firstUrl-->
 		<property name="requestList">
         	<list>				
@@ -79,7 +81,7 @@
 <!-- 				<ref bean="1-101-10105-109"/> -->
 <!-- 				<ref bean="1-101-10105-199"/> -->
 				
-				<ref bean="1-102-101"/>
+<!-- 				<ref bean="1-102-101"/> -->
 <!-- 				<ref bean="1-102-102"/> -->
 <!-- 				<ref bean="1-102-103"/> -->
 <!-- 				<ref bean="1-102-104"/> -->
@@ -90,7 +92,7 @@
 <!-- 				<ref bean="1-102-109"/> -->
 <!-- 				<ref bean="1-102-199"/> -->
 				
-<!-- 				<ref bean="1-103-101"/> -->
+				<ref bean="1-103-101"/>
 <!-- 				<ref bean="1-103-102"/> -->
 <!-- 				<ref bean="1-103-103"/> -->
 <!-- 				<ref bean="1-103-104"/> -->
@@ -338,8 +340,8 @@
 		<property name="site" ref="site"></property>
 		<property name="processorList">
         	<list>
-        		<ref bean="commonprocessor" />
-        		<ref bean="chinaBondinfoProcessor" />
+        		<ref bean="commonProcessor" />
+        		<ref bean="chinaBondinfo1Processor" />
         	</list>
 		</property>
 	</bean>
@@ -361,8 +363,8 @@
 		</property>
 	</bean>
 	
-	<!-- 如果response有文件下载，直接下载并保存数据退出，没有进入gotolink，第二个Processor-->
-	<bean id="commonprocessor" class="com.purang.grab.processor.CommonProcessor">
+	<!-- 如果有附件 列表下载保存，没有保存退出 -->
+	<bean id="commonProcessor" class="com.purang.grab.processor.CommonProcessor">
 		<property name="fieldRuleList">
 			<list>
 				<ref bean="titlefieldrule"/>
@@ -372,14 +374,7 @@
 			</list>
 		</property>
 	</bean>
-	<!-- 如果有附件 列表下载保存，没有保存退出 -->
-	<bean id="chinaBondinfoProcessor" class="com.purang.grab.processor.custom.ChinaBondinfo1Processor">
-		<property name="fieldRuleList">
-			<list>
-				<ref bean="title2fieldrule"/>
-				<ref bean="linkurl2fieldrule"/>
-			</list>
-		</property>
+	<bean id="chinaBondinfo1Processor" class="com.purang.grab.processor.custom.ChinaBondinfo1Processor">
 	</bean>
 	<!-- 无处理退出 -->
 	<bean id="pipeline1" class="com.purang.grab.pipeline.CommonPipeline">

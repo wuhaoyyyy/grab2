@@ -25,7 +25,7 @@ public class Test3 {
 		CloseableHttpClient httpclient = HttpClients.createDefault();  
         try {    
 //            HttpGet httpget = new HttpGet("http://www.chinamoney.com.cn/fe/CMS5_G20306002Resource?info=20148387;res=14615987673451992362710;download=");
-        	HttpGet httpget = new HttpGet("http://www.chinabond.com.cn/Info/344734");
+        	HttpGet httpget = new HttpGet("http://www.chinabond.com.cn/Info/24352205");
         	System.out.println("executing request " + httpget.getURI());  
             CloseableHttpResponse response = httpclient.execute(httpget);  
             try {  
@@ -39,8 +39,8 @@ public class Test3 {
                 HttpEntity entity = response.getEntity();  
                 
                 
-                InputStream is = entity.getContent();
-                FtpClientUtils.upload(is, "aa","aa");
+//                InputStream is = entity.getContent();
+//                FtpClientUtils.upload(is, "aa","aa");
 //                String path="F:\\grabfiles2\\test.pdf";
 //    			FileUtils.createFile(path);
 //    			FileOutputStream fos = new FileOutputStream(path);

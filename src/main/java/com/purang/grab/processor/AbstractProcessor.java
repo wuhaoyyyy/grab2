@@ -87,7 +87,7 @@ public abstract class AbstractProcessor implements Processor {
 			result.putAll(this.defaultValue);
 		}	
 		Map<String,String> headerMap=page.getResultItems().get("responseHeader");
-		if(headerMap!=null&&headerMap.get("Content-Disposition")==null){
+		if(headerMap==null||(headerMap!=null&&headerMap.get("Content-Disposition")==null)){
 			if(fieldRuleList!=null){
 				boolean allempty=true;
 				for(FieldRule fieldRule:fieldRuleList){

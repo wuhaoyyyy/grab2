@@ -45,7 +45,7 @@ public class CommonUtils {
 	
 	private static Log taskLog = LogFactory.getLog("grabtask");
 	private static AtomicInteger downloadCount=new AtomicInteger(0);
-	public static String[] AUTOFIELD=new String[]{"[(auto)id]","[(auto)date]","[(auto)username]","[(auto)userid]"};
+	public static String[] AUTOFIELD=new String[]{"[(auto)fv]","[(auto)ft]","[(auto)date]","[(auto)username]","[(auto)userid]"};
 	
 	public static String getConfig(String key){
 		InputStream is=CommonUtils.class.getClassLoader().getResourceAsStream(configFile);
@@ -210,6 +210,10 @@ public class CommonUtils {
 		switch(autoField){
 			case "[(auto)id]":
 				return String.valueOf(DistributeUniqueId.getValue());
+			case "[(auto)fv]":
+				return String.valueOf(DistributeUniqueId.getValue());
+			case "[(auto)ft]":
+				return String.valueOf(DistributeUniqueId.getValue());
 			case "[(auto)date]":
 				return DateUtils.getCurrentDate("yyyyMMddHHmmss");
 			case "[(auto)username]":
@@ -267,10 +271,16 @@ public class CommonUtils {
 			}
 			else if(value instanceof List){
 				List<String> l=(List<String>) value;//list少于最大数 补全
-				if(l.size()<listsize){
+				if(l.size()<listsize&&l.size()>0){
 					int differ=listsize-l.size();
 					for(int i=0;i<differ;i++){
-						l.add("");
+						l.add(l.get(0));
+					}
+				}
+				else if(l.size()==0){
+					int differ=listsize-l.size();
+					for(int i=0;i<differ;i++){
+						l.add(l.get(0));
 					}
 				}
 				mapNew.put(key, l);
@@ -380,7 +390,7 @@ public class CommonUtils {
 			HttpEntity entity = response.getEntity();  
 			InputStream is = entity.getContent();
 			taskLog.info(Thread.currentThread().getName()+"文件下载"+url+"..."+downloadCount.incrementAndGet());
-			String path="F:\\grabfiles\\"+fileDir+"\\"+fielName+fileType;
+			String path="C:\\grabfiles\\"+fileDir+"\\"+fielName+fileType;
 			FileUtils.createFile(path);
 			FileOutputStream fos = new FileOutputStream(path);
 			byte[] b = new byte[102400];

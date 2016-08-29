@@ -1,7 +1,9 @@
-package com.purang.grab.downloader;
+package com.purang.grab.downloader.custom;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,6 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
+import com.purang.grab.util.CommonUtils;
+import com.purang.grab.util.DbUtils;
+import com.purang.grab.util.DistributeUniqueId;
+import com.purang.grab.util.FtpUtils;
 
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;
@@ -25,10 +31,12 @@ import us.codecraft.webmagic.downloader.HttpClientDownloader;
 import us.codecraft.webmagic.downloader.HttpClientGenerator;
 import us.codecraft.webmagic.proxy.Proxy;
 
-/*
- * 为page添加response header
+/**
+ * 
+ * 直接判断是否下载文件
+ *
  */
-public class HeaderAddHttpClientDownloader extends HttpClientDownloader {
+public class ChinaBondInfoDownloader extends HttpClientDownloader {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private final Map<String, CloseableHttpClient> httpClients = new HashMap<String, CloseableHttpClient>();
@@ -66,8 +74,6 @@ public class HeaderAddHttpClientDownloader extends HttpClientDownloader {
         } else {
             acceptStatCode = Sets.newHashSet(200);
         }
-        
-        
         logger.info("downloading page {}", request.getUrl());
         CloseableHttpResponse httpResponse = null;
         int statusCode=0;
@@ -85,24 +91,18 @@ public class HeaderAddHttpClientDownloader extends HttpClientDownloader {
             httpResponse = getHttpClient(site, proxy).execute(httpUriRequest);
             statusCode = httpResponse.getStatusLine().getStatusCode();
             request.putExtra(Request.STATUS_CODE, statusCode);
-
-            Header[] responseHeaders = httpResponse.getAllHeaders();// add header map
-            Map<String,String> headerMap=new HashMap<String, String>();
-        	for(int i=0;i<responseHeaders.length;i++) {
-        		headerMap.put(responseHeaders[i].getName(), new String(responseHeaders[i].getValue().getBytes("ISO-8859-1"),"UTF-8"));
-        	}
-        	if(headerMap.get("Content-Type")!=null){
-    			if(headerMap.get("Content-Type").indexOf("UTF-8")>0){
-    				site.setCharset("UTF-8");
-    			}
-    			else if(headerMap.get("Content-Type").indexOf("GBK")>0){
-    				site.setCharset("GBK");
-    			}
-    		}
             
+        	
             if (statusAccept(acceptStatCode, statusCode)) {
                 Page page = handleResponse(request, charset, httpResponse, task);
                 onSuccess(request);
+                
+                
+                Header[] responseHeaders = httpResponse.getAllHeaders();// add header map
+                Map<String,String> headerMap=new HashMap<String, String>();
+            	for(int i=0;i<responseHeaders.length;i++) {
+            		headerMap.put(responseHeaders[i].getName(), new String(responseHeaders[i].getValue().getBytes("ISO-8859-1"),"UTF-8"));
+            	}
             	page.putField("responseHeader", headerMap);
             	if(headerMap.get("Content-Disposition")!=null){
             		page.putField("responseHttpEntity", httpResponse.getEntity());
@@ -131,5 +131,4 @@ public class HeaderAddHttpClientDownloader extends HttpClientDownloader {
             }
         }
     }
-
 }
